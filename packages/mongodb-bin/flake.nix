@@ -11,7 +11,7 @@
     flake-utils.lib.eachSystem [ "aarch64-darwin" "x86_64-darwin" ] (system:
       let
         pkgs = nixpkgs.legacyPackages."${system}";
-        mongodb-4_4 = pkgs.callPackage ./packages/mongodb-4_4.nix { };
+        mongodb-4_4 = pkgs.callPackage ./mongodb-4_4.nix { };
       in
       {
         packages = { inherit mongodb-4_4; };
