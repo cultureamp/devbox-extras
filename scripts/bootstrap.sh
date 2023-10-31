@@ -64,7 +64,7 @@ install_nix_direnv() {
   if [ ! -e "$HOME/.config/direnv/direnvrc" ]; then
     echo "=== direnvrc doesn't exist, creating it with config"
     mkdir -p "$HOME/.config/direnv"
-    echo "source $HOME/.nix-profile/share/nix-direnv/direnvrc" >"$HOME/.config/direnv/direnvrc"
+    echo "source \$HOME/.nix-profile/share/nix-direnv/direnvrc" >"$HOME/.config/direnv/direnvrc"
   else
     if grep -q "^source.*\/nix-direnv\/direnvrc$" "$HOME/.config/direnv/direnvrc"; then
       echo "=== direnvrc exists and is configured to use nix-direnv, doing nothing"
