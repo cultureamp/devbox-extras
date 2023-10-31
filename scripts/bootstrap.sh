@@ -32,6 +32,10 @@ install_nix() {
       --extra-conf "trusted-users = root $(whoami)" \
       --ssl-cert-file "$NETSKOPE_DATA_DIR/nscacert_combined.pem"
   echo "=== nix installed..."
+
+  echo "=== sourcing nix daemon so we can use it in this script..."
+  . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+  echo "=== nix daemon sourced..."
 }
 
 install_devbox() {
