@@ -10,15 +10,19 @@ NETSKOPE_DATA_DIR="/Library/Application Support/Netskope/STAgent/data"
 # https://docs.netskope.com/en/netskope-help/data-security/netskope-secure-web-gateway/configuring-cli-based-tools-and-development-frameworks-to-work-with-netskope-ssl-interception/#mac-1
 generate_combined_netskope_cert() {
 	echo "=== generating combined CA certificate from system keychain..."
+	if [ "$TMPDIR" = "" ]; then
+		TMPDIR=$(getconf DARWIN_USER_TEMP_DIR)
+	fi
+
 	security find-certificate -a -p \
 		/System/Library/Keychains/SystemRootCertificates.keychain \
 		/Library/Keychains/System.keychain \
-		>/tmp/nscacert_combined.pem
+		>"$TMPDIR/nscacert_combined.pem"
 	echo "=== combined CA certificate generated"
 
 	echo "=== moving combined CA certificate to Netskope data folder (requires sudo)..."
 	sudo mkdir -p "$NETSKOPE_DATA_DIR"
-	sudo cp /tmp/nscacert_combined.pem "$NETSKOPE_DATA_DIR"
+	sudo cp "$TMPDIR/nscacert_combined.pem" "$NETSKOPE_DATA_DIR"
 	echo "=== moved combined CA certificate"
 }
 
