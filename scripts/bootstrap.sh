@@ -10,15 +10,19 @@ NETSKOPE_DATA_DIR="/Library/Application Support/Netskope/STAgent/data"
 # https://docs.netskope.com/en/netskope-help/data-security/netskope-secure-web-gateway/configuring-cli-based-tools-and-development-frameworks-to-work-with-netskope-ssl-interception/#mac-1
 generate_combined_netskope_cert() {
 	echo "=== generating combined CA certificate from system keychain..."
+	if [ "$TMPDIR" = "" ]; then
+		TMPDIR=$(getconf DARWIN_USER_TEMP_DIR)
+	fi
+
 	security find-certificate -a -p \
 		/System/Library/Keychains/SystemRootCertificates.keychain \
 		/Library/Keychains/System.keychain \
-		>/tmp/nscacert_combined.pem
+		>"$TMPDIR/nscacert_combined.pem"
 	echo "=== combined CA certificate generated"
 
 	echo "=== moving combined CA certificate to Netskope data folder (requires sudo)..."
 	sudo mkdir -p "$NETSKOPE_DATA_DIR"
-	sudo cp /tmp/nscacert_combined.pem "$NETSKOPE_DATA_DIR"
+	sudo cp "$TMPDIR/nscacert_combined.pem" "$NETSKOPE_DATA_DIR"
 	echo "=== moved combined CA certificate"
 }
 
@@ -29,7 +33,7 @@ install_nix() {
 	echo "=== installing nix (requires sudo)..."
 	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
 		sh -s -- install --no-confirm \
-			--extra-conf "trusted-users = root $(whoami)" \
+			--extra-conf "trusted-users = root @admin" \
 			--ssl-cert-file "$NETSKOPE_DATA_DIR/nscacert_combined.pem"
 	echo "=== nix installed..."
 
@@ -42,6 +46,11 @@ install_devbox() {
 	echo "=== installing devbox..."
 	curl -fsSL https://get.jetpack.io/devbox | FORCE=1 bash
 	echo "=== devbox installed..."
+}
+
+add_current_user_to_admin_group() {
+	echo "=== add current user to admin group"
+	sudo dseditgroup -o edit -a "$(whoami)" -t user admin
 }
 
 install_direnv() {
@@ -130,6 +139,7 @@ print_further_steps() {
 }
 
 main() {
+	add_current_user_to_admin_group
 	generate_combined_netskope_cert
 	install_nix
 	install_devbox
