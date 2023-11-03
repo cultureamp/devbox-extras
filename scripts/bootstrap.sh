@@ -33,7 +33,7 @@ install_nix() {
 	echo "=== installing nix (requires sudo)..."
 	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
 		sh -s -- install --no-confirm \
-			--extra-conf "trusted-users = root $(whoami)" \
+			--extra-conf "trusted-users = root @admin" \
 			--ssl-cert-file "$NETSKOPE_DATA_DIR/nscacert_combined.pem"
 	echo "=== nix installed..."
 
@@ -46,6 +46,11 @@ install_devbox() {
 	echo "=== installing devbox..."
 	curl -fsSL https://get.jetpack.io/devbox | FORCE=1 bash
 	echo "=== devbox installed..."
+}
+
+add_current_user_to_admin_group() {
+	echo "=== add current user to admin group"
+	sudo dseditgroup -o edit -a "$(whoami)" -t user admin
 }
 
 install_direnv() {
@@ -134,6 +139,7 @@ print_further_steps() {
 }
 
 main() {
+	add_current_user_to_admin_group
 	generate_combined_netskope_cert
 	install_nix
 	install_devbox
