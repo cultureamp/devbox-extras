@@ -3,7 +3,7 @@
 # command to convert hash to correct format
 # nix-hash --to-sri --type sha256 hash-from-downloads-page
 
-{ stdenv, fetchzip, makeWrapper, jdk11 }:
+{ stdenv, fetchzip, makeWrapper, jdk17 }:
 let
   pname = "dynamodb_local";
   version = "2.1.0";
@@ -25,7 +25,7 @@ stdenv.mkDerivation {
     mkdir -p $out/bin
     cp DynamoDBLocal.jar $out/DynamoDBLocal.jar
     cp -r DynamoDBLocal_lib $out/DynamoDBLocal_lib
-    makeWrapper ${jdk11}/bin/java \
+    makeWrapper ${jdk17}/bin/java \
       $out/bin/dynamodb_local --add-flags "\
       -jar $out/DynamoDBLocal.jar -sharedDb \
       -dbPath \''${DYNAMODB_DATA_PATH:-data} \
