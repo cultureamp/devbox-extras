@@ -1,6 +1,6 @@
 {
   "name": "dynamodb_local",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "readme": "Plugin for dynamodb_local",
   "env": {
     "DYNAMODB_DATA_PATH": "{{ .Virtenv }}/data",
