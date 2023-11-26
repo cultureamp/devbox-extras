@@ -1,0 +1,10 @@
+version: "0.5"
+
+processes:
+  dynamodb_local:
+    # `cd` so this command is run from a git ignored directory, because
+    # it creates a metadata file in the directory it starts in, and we
+    # want that to be hidden
+    command: cd {{ .Virtenv }} && dynamodb_local
+    availability:
+      restart: on_failure

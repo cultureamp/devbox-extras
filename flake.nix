@@ -8,12 +8,13 @@
 
   outputs = { nixpkgs, flake-utils, ... }:
     # this flake only works for darwin binaries (for now)
-    flake-utils.lib.eachSystem [ "aarch64-darwin" "x86_64-darwin" ] (system:
+    flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages."${system}";
         mongodb-4_4 = pkgs.callPackage ./packages/mongodb-4_4.nix { };
+        dynamodb_local = pkgs.callPackage ./packages/dynamodb_local.nix { };
       in
       {
-        packages = { inherit mongodb-4_4; };
+        packages = { inherit mongodb-4_4 dynamodb_local; };
       });
 }
