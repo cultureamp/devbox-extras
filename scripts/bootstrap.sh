@@ -130,7 +130,6 @@ install_nix_direnv() {
 print_further_steps() {
 	echo "================================================================"
 	echo "Nix, direnv, and devbox have been installed and setup"
-	echo "but there is ONE MANUAL STEP LEFT!"
 
 	if [ "$DID_INSTALL_DIRENV" ]; then
 		echo "You had direnv already installed, if you've already configured it you can skip the last step"

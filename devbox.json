@@ -1,0 +1,20 @@
+{
+  "env": {
+    "DEVBOX_SHARE_DIR": "$PWD/.devbox/nix/profile/default/share"
+  },
+  "packages": [
+    "bats@latest",
+    "bats.libraries.bats-assert",
+    "bats.libraries.bats-support"
+  ],
+  "shell": {
+    "init_hook": [
+      "echo 'Welcome to devbox!' > /dev/null"
+    ],
+    "scripts": {
+      "test": [
+        "bats test/bootstrap-script.bats"
+      ]
+    }
+  }
+}
