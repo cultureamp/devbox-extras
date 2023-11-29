@@ -33,12 +33,10 @@ install_nix() {
 	echo "=== installing nix (requires sudo)..."
 	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
 		sh -s -- install $INSTALLER_EXTRA_ARGS --no-confirm \
-			--extra-conf "trusted-users = root @admin" \
-			--ssl-cert-file "$NETSKOPE_DATA_DIR/nscacert_combined.pem"
+			--extra-conf "trusted-users = root @admin" 
 	echo "=== nix installed..."
 
 	echo "=== sourcing nix daemon so we can use it in this script..."
-	export NIX_SSL_CERT_FILE="$NETSKOPE_DATA_DIR/nscacert_combined.pem"
 	. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 	echo "=== nix daemon sourced..."
 }
@@ -109,7 +107,7 @@ direnv_shell_integration() {
 
 install_nix_direnv() {
 	echo "=== installing nix-direnv..."
-	sudo nix profile install nixpkgs#nix-direnv
+	nix profile install nixpkgs#nix-direnv
 	echo "=== nix-direnv installed"
 
 	if [ ! -e "$HOME/.config/direnv/direnvrc" ]; then
