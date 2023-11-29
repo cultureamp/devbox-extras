@@ -3,9 +3,6 @@ name: 'bootstrap-test'
 on:
   pull_request:
     branches: ['main']
-  # TODO: remove before PR
-  push:
-    branches: ['docker-test']
   
 jobs:
   test-bootstrap:
