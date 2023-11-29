@@ -14,6 +14,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Build docker images
-        run: docker build -t bootstrap-script-test < Dockerfile
+        run: docker build -t bootstrap-script-test .
       - name: Run tests
         run: docker run bootstrap-script-test
