@@ -6,6 +6,8 @@ on:
   pull_request:
     branches: ['main']
   
-runs:
-  using: 'docker'
-  image: 'Dockerfile'
+jobs:
+  docker:
+    runs:
+      using: 'docker'
+      image: 'Dockerfile'
