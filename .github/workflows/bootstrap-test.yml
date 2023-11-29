@@ -1,0 +1,11 @@
+name: 'bootstrap-test'
+
+description: 'tests the bootstrap script correctly installed and configured programs as required'
+
+on:
+  pull_request:
+    branches: ['main']
+  
+runs:
+  using: 'docker'
+  image: 'Dockerfile'
