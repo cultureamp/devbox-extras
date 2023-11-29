@@ -7,7 +7,19 @@ on:
     branches: ['main']
   
 jobs:
-  docker:
-    runs:
-      using: 'docker'
-      image: 'Dockerfile'
+  build:
+    name: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: check out repo
+        uses: actions/checkout@v2
+      - name: build test
+        container:
+          image: ".devcontainer/Dockerfile"
+        steps:
+          - name: Check out code
+            uses: actions/checkout@v3
+          - name: Build docker images
+            run: docker build -t bootstrap-script-test < .devcontainer/Dockerfile
+          - name: Run tests
+            run: docker run bootstrap-script-test
