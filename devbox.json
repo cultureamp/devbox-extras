@@ -1,6 +1,7 @@
 {
   "env": {
     "DEVBOX_SHARE_DIR": "$PWD/.devbox/nix/profile/default/share"
+    "NETSKOPE_CERT_PATH": "/Library/Application Support/Netskope/STAgent/data/nscacert.pem"
   },
   "packages": [
     "bats@latest",
@@ -13,7 +14,7 @@
     ],
     "scripts": {
       "test": [
-        "bats test/bootstrap-script.bats"
+        "docker build . --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\""
       ]
     }
   }
