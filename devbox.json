@@ -14,7 +14,8 @@
     ],
     "scripts": {
       "test": [
-        "docker build . --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\""
+        "docker build -t bootstrap-script-test --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" .",
+        "docker run bootstrap-script-test"
       ]
     }
   }
