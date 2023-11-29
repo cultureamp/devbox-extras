@@ -1,6 +1,6 @@
 {
   "env": {
-    "DEVBOX_SHARE_DIR": "$PWD/.devbox/nix/profile/default/share"
+    "DEVBOX_SHARE_DIR": "$PWD/.devbox/nix/profile/default/share",
     "NETSKOPE_CERT_PATH": "/Library/Application Support/Netskope/STAgent/data/nscacert.pem"
   },
   "packages": [
