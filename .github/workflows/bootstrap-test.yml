@@ -5,6 +5,7 @@ description: 'tests the bootstrap script correctly installed and configured prog
 on:
   pull_request:
     branches: ['main']
+  workflow_dispatch:
   
 jobs:
   build:
