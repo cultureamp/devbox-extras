@@ -3,17 +3,18 @@ name: 'bootstrap-test'
 on:
   pull_request:
     branches: ['main']
+  # TODO: remove before PR
   push:
     branches: ['docker-test']
   
 jobs:
-  build:
+  test-bootstrap:
     name: build
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-      - name: Build docker images
+      - name: Build docker image with bootstrap script
         run: docker build -t bootstrap-script-test .
-      - name: Run tests
-        run: docker run bootstrap-script-test
+      - name: Run bats test
+        run: docker run bootstrap-script-test via devbox
