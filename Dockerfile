@@ -19,4 +19,5 @@ RUN ./mock_functions.sh
 
 # CMD command 
 # TODO: introduce optionality for individual shell tests
+RUN ["devbox", "run", "echo", "installed"]
 CMD ["devbox", "run", "bats", "test"]

@@ -6,6 +6,7 @@ mkdir -p /tmp/test-metadata
 export TMPDIR="/tmp"
 export INSTALLER_EXTRA_ARGS="linux --init none"
 export SHELL="zsh"
+export NIX_FINAL_SSL_FILE="/etc/ssl/certs/ca-certificates.crt"
 
 echo '
 #!/bin/sh

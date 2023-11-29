@@ -5,6 +5,7 @@ set -e
 # Script to install `nix`, `devbox`, `direnv`, and `nix-direnv` and get them all working together
 
 NETSKOPE_DATA_DIR="/Library/Application Support/Netskope/STAgent/data"
+NIX_FINAL_SSL_FILE="${NIX_FINAL_SSL_FILE:-NETSKOPE_DATA_DIR/nscacert_combined.pem}"
 
 # Copy create Netskope combined cert and save to known location recommended by their docs:
 # https://docs.netskope.com/en/netskope-help/data-security/netskope-secure-web-gateway/configuring-cli-based-tools-and-development-frameworks-to-work-with-netskope-ssl-interception/#mac-1
@@ -33,10 +34,12 @@ install_nix() {
 	echo "=== installing nix (requires sudo)..."
 	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
 		sh -s -- install $INSTALLER_EXTRA_ARGS --no-confirm \
-			--extra-conf "trusted-users = root @admin" 
+			--extra-conf "trusted-users = root @admin" \
+			--ssl-cert-file "$NIX_FINAL_SSL_FILE"
 	echo "=== nix installed..."
 
 	echo "=== sourcing nix daemon so we can use it in this script..."
+	export NIX_SSL_CERT_FILE="$NIX_FINAL_SSL_FILE"
 	. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 	echo "=== nix daemon sourced..."
 }
