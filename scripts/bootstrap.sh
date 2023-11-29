@@ -32,7 +32,7 @@ generate_combined_netskope_cert() {
 install_nix() {
 	echo "=== installing nix (requires sudo)..."
 	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
-		sh -s -- install --no-confirm \
+		sh -s -- install $INSTALLER_EXTRA_ARGS --no-confirm \
 			--extra-conf "trusted-users = root @admin" \
 			--ssl-cert-file "$NETSKOPE_DATA_DIR/nscacert_combined.pem"
 	echo "=== nix installed..."
@@ -102,14 +102,14 @@ direnv_shell_integration() {
 		EOF
 		;;
 	*)
-		fail "Don't know how to setup for shell $SHELL. checkout https://direnv.net/docs/hook.html"
+		echo "Don't know how to setup for shell $SHELL. checkout https://direnv.net/docs/hook.html"
 		;;
 	esac
 }
 
 install_nix_direnv() {
 	echo "=== installing nix-direnv..."
-	nix profile install nixpkgs#nix-direnv
+	sudo nix profile install nixpkgs#nix-direnv
 	echo "=== nix-direnv installed"
 
 	if [ ! -e "$HOME/.config/direnv/direnvrc" ]; then

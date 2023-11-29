@@ -1,14 +1,14 @@
 FROM ubuntu:latest
 
+RUN apt-get update \
+ && apt-get install -y sudo curl ca-certificates
+
 ARG NETSKOPE_CERT
-RUN if ge[ "${NETSKOPE_CERT}z" != "z" ];  then \
+RUN if [ "${NETSKOPE_CERT}z" != "z" ];  then \
       echo "Installing Netskope MitM certificates" && \
       echo "${NETSKOPE_CERT}" >> /usr/local/share/ca-certificates/netskope.crt; \
       update-ca-certificates; \
     fi 
-
-RUN apt-get update \
- && apt-get install -y sudo curl
 
 WORKDIR /app
 

@@ -39,3 +39,8 @@ load "$DEVBOX_SHARE_DIR/bats/bats-assert/load.bash"
 	run cat ~/.config/direnv/direnvrc
 	assert_output "source \$HOME/.nix-profile/share/nix-direnv/direnvrc"
 }
+
+#TODO: shorten name
+@test "nix-ssl-cert-env-var-set" {
+	test -n $NIX_SSL_CERT_FILE
+}
