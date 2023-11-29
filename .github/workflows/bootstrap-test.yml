@@ -5,7 +5,7 @@ description: 'tests the bootstrap script correctly installed and configured prog
 on:
   pull_request:
     branches: ['main']
-  commit:
+  push:
     branches: ['docker-test']
   
 jobs:
