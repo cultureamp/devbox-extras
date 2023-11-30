@@ -45,5 +45,5 @@ load "$DEVBOX_SHARE_DIR/bats/bats-assert/load.bash"
 
 @test "user-added-to-admin-group" {
 	run cat /tmp/test-metadata/dseditgroup.txt
-	assert_output "dseditgroup ran with args: -o edit -a \"$(whoami)\" -t user admin"
+	assert_output "dseditgroup ran with args: -o edit -a $(whoami) -t user admin"
 }
