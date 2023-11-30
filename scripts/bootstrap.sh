@@ -6,6 +6,9 @@ set -e
 
 NETSKOPE_DATA_DIR="/Library/Application Support/Netskope/STAgent/data"
 
+# This variable is set by docker in mock_functions.sh to provide the linux path rather than the typical MacOS path
+NIX_FINAL_SSL_FILE="${NIX_FINAL_SSL_FILE:-NETSKOPE_DATA_DIR/nscacert_combined.pem}"
+
 # Copy create Netskope combined cert and save to known location recommended by their docs:
 # https://docs.netskope.com/en/netskope-help/data-security/netskope-secure-web-gateway/configuring-cli-based-tools-and-development-frameworks-to-work-with-netskope-ssl-interception/#mac-1
 generate_combined_netskope_cert() {
@@ -32,13 +35,16 @@ generate_combined_netskope_cert() {
 install_nix() {
 	echo "=== installing nix (requires sudo)..."
 	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
-		sh -s -- install --no-confirm \
+		# $INSTALLER_EXTRA_ARGS below is required by docker as default install expects systemd for a linux install
+		# That alone is able to be set by an env var in the docker environment, 
+		# however we also have to provide 'linux' as an argument for the installing script
+		sh -s -- install $INSTALLER_EXTRA_ARGS --no-confirm \
 			--extra-conf "trusted-users = root @admin" \
-			--ssl-cert-file "$NETSKOPE_DATA_DIR/nscacert_combined.pem"
+			--ssl-cert-file "$NIX_FINAL_SSL_FILE"
 	echo "=== nix installed..."
 
 	echo "=== sourcing nix daemon so we can use it in this script..."
-	export NIX_SSL_CERT_FILE="$NETSKOPE_DATA_DIR/nscacert_combined.pem"
+	export NIX_SSL_CERT_FILE="$NIX_FINAL_SSL_FILE"
 	. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 	echo "=== nix daemon sourced..."
 }
@@ -102,7 +108,7 @@ direnv_shell_integration() {
 		EOF
 		;;
 	*)
-		fail "Don't know how to setup for shell $SHELL. checkout https://direnv.net/docs/hook.html"
+		echo "Don't know how to setup for shell $SHELL. checkout https://direnv.net/docs/hook.html"
 		;;
 	esac
 }
@@ -130,7 +136,6 @@ install_nix_direnv() {
 print_further_steps() {
 	echo "================================================================"
 	echo "Nix, direnv, and devbox have been installed and setup"
-	echo "but there is ONE MANUAL STEP LEFT!"
 
 	if [ "$DID_INSTALL_DIRENV" ]; then
 		echo "You had direnv already installed, if you've already configured it you can skip the last step"
