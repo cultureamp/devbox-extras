@@ -1,7 +1,7 @@
 FROM ubuntu:latest
 
 RUN apt-get update \
- && apt-get install -y sudo curl ca-certificates git fish
+ && apt-get install -y sudo curl ca-certificates git
 
 ARG NETSKOPE_CERT
 RUN if [ "${NETSKOPE_CERT}z" != "z" ];  then \

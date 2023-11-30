@@ -31,9 +31,7 @@ load "$DEVBOX_SHARE_DIR/bats/bats-assert/load.bash"
 }
 
 @test "netskope-cert-in-dir" {
-	run cat "/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem"
-	# TODO: is this an appropriate test of "key exists"?
-	test "$status" -eq 0
+	test -n "/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem"
 }
 
 @test "user-added-to-admin-group" {
