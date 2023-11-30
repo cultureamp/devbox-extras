@@ -1,12 +1,6 @@
 load "$DEVBOX_SHARE_DIR/bats/bats-support/load.bash"
 load "$DEVBOX_SHARE_DIR/bats/bats-assert/load.bash"
 
-@test "hello-world" {
-	run echo "Hello, world!"
-	test "$status" -eq 0 
-	assert_output "Hello, world!"
-}
-
 @test "installed-nix" {
 	run which nix
 	test "$status" -eq 0
@@ -24,20 +18,16 @@ load "$DEVBOX_SHARE_DIR/bats/bats-assert/load.bash"
 
 @test "direnv-integrated-to-zsh" {
 	run cat ~/.zshrc
-	# QUESTION what is the best way to test this string?
-	# NOTE: I am ignoring any cert file path in the final export
 	assert_output --partial "export DIRENV_BIN="
 	assert_output --partial "eval \"\$(\$DIRENV_BIN hook zsh)\""
 	assert_output --partial "export NIX_SSL_CERT_FILE="
 }
 
-# TODO: rename test
-@test "direnv-configured-" {
+@test "direnv-configured-to-nix" {
 	run cat ~/.config/direnv/direnvrc
 	assert_output "source \$HOME/.nix-profile/share/nix-direnv/direnvrc"
 }
 
-#TODO: shorten name
-@test "nix-ssl-cert-env-var-set" {
+@test "nix-ssl-cert-set" {
 	test -n $NIX_SSL_CERT_FILE
 }
