@@ -16,19 +16,16 @@
         "devbox run test-fish"
       ],
       "test-bash" : [
-        "devbox run build-test-image",
+        "docker build -t bootstrap-script-test --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" --build-arg SHELL_VAR=bash -f ./bootstrap-test.Dockerfile .",
         "docker run bootstrap-script-test bats test/bootstrap-agnostic.bats test/bootstrap-bash.bats"
       ],
       "test-zsh" :[
-        "devbox run build-test-image",
+        "docker build -t bootstrap-script-test --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" --build-arg SHELL_VAR=zsh -f ./bootstrap-test.Dockerfile .",
         "docker run bootstrap-script-test bats test/bootstrap-agnostic.bats test/bootstrap-zsh.bats"
       ],
       "test-fish" :[
-        "devbox run build-test-image",
+        "docker build -t bootstrap-script-test --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" --build-arg SHELL_VAR=fish -f ./bootstrap-test.Dockerfile .",
         "docker run bootstrap-script-test bats test/bootstrap-agnostic.bats test/bootstrap-fish.bats"
-      ],
-      "build-test-image" : [
-        "docker build -t bootstrap-script-test --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" -f ./bootstrap-test.Dockerfile .",
       ]
     }
   }
