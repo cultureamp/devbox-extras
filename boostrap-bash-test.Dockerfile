@@ -14,7 +14,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN ./scripts/docker-test-wrapper-zsh.sh
+RUN ./scripts/docker-test-wrapper-bash.sh
 
 RUN ["devbox", "run", "echo", "installed"]
-CMD ["devbox", "run", "bats", "test/bootstrap-zsh.bats"]
+CMD ["devbox", "run", "bats", "test/bootstrap-bash.bats"]

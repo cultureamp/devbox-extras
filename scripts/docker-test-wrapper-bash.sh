@@ -1,4 +1,4 @@
 #!/bin/sh
-export SHELL="/bin/zsh"
 
+export SHELL="/bin/bash"
 . ./scripts/docker-test-wrapper-agnostic.sh
