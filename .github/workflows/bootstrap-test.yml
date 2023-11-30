@@ -1,8 +1,7 @@
 name: 'bootstrap-test'
 
 on:
-  pull_request:
-    branches: ['main']
+  pull_request
   
 jobs:
   test-bootstrap:
