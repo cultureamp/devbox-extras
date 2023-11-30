@@ -11,7 +11,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Build docker image with bootstrap script
-        run: docker build -t bootstrap-script-test-zsh -f ./bootstrap-zsh-test.Dockerfile .
+        run: docker build -t bootstrap-script-test-zsh -f ./bootstrap-test.Dockerfile .
       - name: Run bats-zsh test via devbox
         run: docker run bootstrap-script-test-zsh
   test-bootstrap-bash:
@@ -21,7 +21,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Build docker image with bootstrap script
-        run: docker build -t bootstrap-script-test-bash -f ./bootstrap-bash-test.Dockerfile .
+        run: docker build -t bootstrap-script-test-bash -f ./bootstrap-test.Dockerfile .
       - name: Run bats-bash test via devbox
         run: docker run bootstrap-script-test-bash
   test-bootstrap-fish:
@@ -31,6 +31,6 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Build docker image with bootstrap script
-        run: docker build -t bootstrap-script-test-fish -f ./bootstrap-fish-test.Dockerfile .
+        run: docker build -t bootstrap-script-test-fish -f ./bootstrap-test.Dockerfile .
       - name: Run bats-fish test via devbox
         run: docker run bootstrap-script-test-fish
