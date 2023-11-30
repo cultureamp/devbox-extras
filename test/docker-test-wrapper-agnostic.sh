@@ -21,6 +21,6 @@ sudo chmod a+x /bin/security
 # Required as the docker container runs as root and the docker container 
 # must be run as root because the nix installer only supports single user 
 # root installs in containers 
-sed -i 's/sudo / /g' ./scripts/bootstrap.sh 
+# sed -i 's/sudo / /g' ./scripts/bootstrap.sh 
 
 . ./scripts/bootstrap.sh
