@@ -33,7 +33,6 @@ load "$DEVBOX_SHARE_DIR/bats/bats-assert/load.bash"
 }
 
 @test "generated-netskope-cert" {
-	# NOTE: hardcoding tmp here, $TMPDIR won't expand
-	run cat /tmp/nscacert_combined.pem
+	run cat /tmp/test-metadata/security.txt
 	assert_output "security ran with args: find-certificate -a -p /System/Library/Keychains/SystemRootCertificates.keychain /Library/Keychains/System.keychain"
 }
