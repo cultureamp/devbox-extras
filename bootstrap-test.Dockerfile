@@ -10,11 +10,13 @@ RUN if [ "${NETSKOPE_CERT}z" != "z" ];  then \
       update-ca-certificates; \
     fi 
 
+
 WORKDIR /app
 
 COPY . .
 
-RUN ./scripts/docker-test-wrapper-zsh.sh
+ARG SHELL_VAR
+RUN "./test/docker-test-wrapper-$SHELL_VAR.sh"
 
 RUN ["devbox", "run", "echo", "installed"]
-CMD ["devbox", "run", "bats", "test"]
+ENTRYPOINT ["devbox", "run"]
