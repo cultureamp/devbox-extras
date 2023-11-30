@@ -17,4 +17,4 @@ COPY . .
 RUN ./scripts/docker-test-wrapper-bash.sh
 
 RUN ["devbox", "run", "echo", "installed"]
-CMD ["devbox", "run", "bats", "test/bootstrap-bash.bats"]
+CMD ["devbox", "run", "bats", "test/bootstrap-agnostic.bats", "test/bootstrap-bash.bats"]

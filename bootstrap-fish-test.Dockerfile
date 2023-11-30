@@ -17,4 +17,4 @@ COPY . .
 RUN ./scripts/docker-test-wrapper-fish.sh
 
 RUN ["devbox", "run", "echo", "installed"]
-CMD ["devbox", "run", "bats", "test/bootstrap-fish.bats"]
+CMD ["devbox", "run", "bats", "test/bootstrap-agnostic.bats", "test/bootstrap-fish.bats"]

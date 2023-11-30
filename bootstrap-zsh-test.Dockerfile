@@ -17,4 +17,4 @@ COPY . .
 RUN ./scripts/docker-test-wrapper-zsh.sh
 
 RUN ["devbox", "run", "echo", "installed"]
-CMD ["devbox", "run", "bats", "test/bootstrap-zsh.bats"]
+CMD ["devbox", "run", "bats", "test/bootstrap-agnostic.bats", "test/bootstrap-zsh.bats"]
