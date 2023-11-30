@@ -13,7 +13,7 @@ jobs:
       - name: Build docker image with bootstrap script
         run: docker build -t bootstrap-script-test-zsh -f ./bootstrap-test.Dockerfile . --build-arg SHELL_VAR=zsh
       - name: Run bats-zsh test via devbox
-        run: docker run bootstrap-script-test-zsh
+        run: docker run bootstrap-script-test bats test/bootstrap-agnostic.bats test/bootstrap-zsh.bats
   test-bootstrap-bash:
     name: bash-integration
     runs-on: ubuntu-latest
@@ -23,7 +23,7 @@ jobs:
       - name: Build docker image with bootstrap script
         run: docker build -t bootstrap-script-test-bash -f ./bootstrap-test.Dockerfile . --build-arg SHELL_VAR=bash
       - name: Run bats-bash test via devbox
-        run: docker run bootstrap-script-test-bash
+        run: docker run bootstrap-script-test bats test/bootstrap-agnostic.bats test/bootstrap-bash.bats
   test-bootstrap-fish:
     name: fish-integration
     runs-on: ubuntu-latest
@@ -33,4 +33,4 @@ jobs:
       - name: Build docker image with bootstrap script
         run: docker build -t bootstrap-script-test-fish -f ./bootstrap-test.Dockerfile . --build-arg SHELL_VAR=fish
       - name: Run bats-fish test via devbox
-        run: docker run bootstrap-script-test-fish
+        run: docker run bootstrap-script-test bats test/bootstrap-agnostic.bats test/bootstrap-fish.bats
