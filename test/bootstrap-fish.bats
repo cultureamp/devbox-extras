@@ -33,7 +33,17 @@ load "$DEVBOX_SHARE_DIR/bats/bats-assert/load.bash"
 }
 
 @test "generated-netskope-cert" {
-	# NOTE: hardcoding tmp here, $TMPDIR won't expand
-	run cat /tmp/nscacert_combined.pem
+	run cat /tmp/test-metadata/security.txt
 	assert_output "security ran with args: find-certificate -a -p /System/Library/Keychains/SystemRootCertificates.keychain /Library/Keychains/System.keychain"
+}
+
+@test "netskope-cert-in-dir" {
+	run cat "/Library/Application Support/Netskope/STAgent/data/nscacert_combined.pem"
+	# TODO: is this an appropriate test of "key exists"?
+	test "$status" -eq 0
+}
+
+@test "user-added-to-admin-group" {
+	run cat /tmp/test-metadata/dseditgroup.txt
+	assert_output "dseditgroup ran with args: -o edit -a \"$(whoami)\" -t user admin"
 }
