@@ -18,6 +18,8 @@ echo '
 echo "security ran with args: $@"' | sudo tee -a /bin/security
 sudo chmod a+x /bin/security
 
+# The below removes all sudo commands from install script
+# Required as the docker container runs as root 
 sed -i 's/ sudo / /g' ./scripts/bootstrap.sh 
 
 . ./scripts/bootstrap.sh
