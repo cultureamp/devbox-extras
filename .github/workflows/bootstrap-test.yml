@@ -5,12 +5,30 @@ on:
   
 jobs:
   test-bootstrap:
-    name: build
+    name: zsh-integration
     runs-on: ubuntu-latest
     steps:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Build docker image with bootstrap script
-        run: docker build -t bootstrap-script-test -f ./boostrap-zsh-test.Dockerfile .
-      - name: Run bats test via devbox
-        run: docker run bootstrap-script-test
+        run: docker build -t bootstrap-script-test-zsh -f ./boostrap-zsh-test.Dockerfile .
+      - name: Run bats-zsh test via devbox
+        run: docker run bootstrap-script-test-zsh
+    name: bash-integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Build docker image with bootstrap script
+        run: docker build -t bootstrap-script-test-bash -f ./boostrap-bash-test.Dockerfile .
+      - name: Run bats-zsh test via devbox
+        run: docker run bootstrap-script-test-bash
+    name: fish-integration
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v3
+      - name: Build docker image with bootstrap script
+        run: docker build -t bootstrap-script-test-fish -f ./boostrap-fish-test.Dockerfile .
+      - name: Run bats-zsh test via devbox
+        run: docker run bootstrap-script-test-fish
