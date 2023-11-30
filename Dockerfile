@@ -14,7 +14,7 @@ WORKDIR /app
 
 COPY . .
 
-RUN ./mock_functions.sh
+RUN ./scripts/docker-test-wrapper.sh
 
 RUN ["devbox", "run", "echo", "installed"]
 CMD ["devbox", "run", "bats", "test"]
