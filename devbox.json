@@ -9,29 +9,26 @@
     "bats.libraries.bats-support"
   ],
   "shell": {
-    "init_hook": [
-      "echo 'Welcome to devbox!' > /dev/null"
-    ],
     "scripts": {
       "test": [
-        "docker build -t bootstrap-script-test-zsh --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" -f ./bootstrap-zsh-test.Dockerfile .",
-        "docker run bootstrap-script-test-zsh",
-        "docker build -t bootstrap-script-test-bash --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" -f ./bootstrap-bash-test.Dockerfile .",
-        "docker run bootstrap-script-test-bash",
-        "docker build -t bootstrap-script-test-fish --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" -f ./bootstrap-fish-test.Dockerfile .",
-        "docker run bootstrap-script-test-fish"
+        "devbox run test-bash",
+        "devbox run test-zsh",
+        "devbox run test-fish"
       ],
       "test-bash" : [
-        "docker build -t bootstrap-script-test-bash --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" -f ./bootstrap-bash-test.Dockerfile .",
-        "docker run bootstrap-script-test-bash"
+        "devbox run build-test-image",
+        "docker run bootstrap-script-test bats test/bootstrap-agnostic.bats test/bootstrap-bash.bats"
       ],
       "test-zsh" :[
-        "docker build -t bootstrap-script-test-zsh --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" -f ./bootstrap-zsh-test.Dockerfile .",
-        "docker run bootstrap-script-test-zsh"
+        "devbox run build-test-image",
+        "docker run bootstrap-script-test bats test/bootstrap-agnostic.bats test/bootstrap-zsh.bats"
       ],
       "test-fish" :[
-        "docker build -t bootstrap-script-test-fish --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" -f ./bootstrap-fish-test.Dockerfile .",
-        "docker run bootstrap-script-test-fish"
+        "devbox run build-test-image",
+        "docker run bootstrap-script-test bats test/bootstrap-agnostic.bats test/bootstrap-fish.bats"
+      ],
+      "build-test-image" : [
+        "docker build -t bootstrap-script-test --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" -f ./bootstrap-test.Dockerfile .",
       ]
     }
   }
