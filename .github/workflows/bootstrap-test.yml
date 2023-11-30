@@ -4,7 +4,7 @@ on:
   pull_request
   
 jobs:
-  test-bootstrap:
+  test-bootstrap-zsh:
     name: zsh-integration
     runs-on: ubuntu-latest
     steps:
@@ -14,6 +14,7 @@ jobs:
         run: docker build -t bootstrap-script-test-zsh -f ./boostrap-zsh-test.Dockerfile .
       - name: Run bats-zsh test via devbox
         run: docker run bootstrap-script-test-zsh
+  test-bootstrap-bash:
     name: bash-integration
     runs-on: ubuntu-latest
     steps:
@@ -21,8 +22,9 @@ jobs:
         uses: actions/checkout@v3
       - name: Build docker image with bootstrap script
         run: docker build -t bootstrap-script-test-bash -f ./boostrap-bash-test.Dockerfile .
-      - name: Run bats-zsh test via devbox
+      - name: Run bats-bash test via devbox
         run: docker run bootstrap-script-test-bash
+  test-bootstrap-fish:
     name: fish-integration
     runs-on: ubuntu-latest
     steps:
@@ -30,5 +32,5 @@ jobs:
         uses: actions/checkout@v3
       - name: Build docker image with bootstrap script
         run: docker build -t bootstrap-script-test-fish -f ./boostrap-fish-test.Dockerfile .
-      - name: Run bats-zsh test via devbox
+      - name: Run bats-fish test via devbox
         run: docker run bootstrap-script-test-fish
