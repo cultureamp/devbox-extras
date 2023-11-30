@@ -14,7 +14,7 @@ sudo chmod a+x /bin/dseditgroup
 
 echo '
 #!/bin/sh
-echo "security ran with args: $@"' | sudo tee -a /bin/security
+echo "security ran with args: $@" > /tmp/test-metadata/security.txt' | sudo tee -a /bin/security
 sudo chmod a+x /bin/security
 
 # The below removes all sudo commands from install script
