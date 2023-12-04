@@ -11,10 +11,12 @@
     flake-utils.lib.eachDefaultSystem (system:
       let
         pkgs = nixpkgs.legacyPackages."${system}";
-        mongodb-4_4 = pkgs.callPackage ./packages/mongodb-4_4.nix { };
-        dynamodb_local = pkgs.callPackage ./packages/dynamodb_local.nix { };
       in
       {
-        packages = { inherit mongodb-4_4 dynamodb_local; };
+        packages = {
+          mongodb-4_4 = pkgs.callPackage ./packages/mongodb-4_4.nix { };
+          dynamodb_local = pkgs.callPackage ./packages/dynamodb_local.nix { };
+          adr-tools = pkgs.callPackage ./packages/adr-tools.nix { };
+        };
       });
 }
