@@ -1,7 +1,7 @@
 { lib, stdenv, fetchFromGitHub, getopt, bashInteractive }:
-let 
-  inherit (lib) licenses maintainers platforms;
-  in 
+let
+  inherit (lib) licenses;
+in
 stdenv.mkDerivation rec {
   name = "adr-tools-${version}";
   version = "3.0.0";
@@ -35,7 +35,7 @@ stdenv.mkDerivation rec {
   '';
 
   meta = {
-    homepage = https://github.com/npryce/adr-tools;
+    homepage = "https://github.com/npryce/adr-tools";
     description = "Command-line tools for working with Architecture Decision Records";
     license = licenses.gpl3;
   };
