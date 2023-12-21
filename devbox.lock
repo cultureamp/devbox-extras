@@ -1,6 +1,10 @@
 {
   "lockfile_version": "1",
   "packages": {
+    "bats": {
+      "resolved": "github:NixOS/nixpkgs/75a52265bda7fd25e06e3a67dee3f0354e73243c#bats",
+      "source": "nixpkg"
+    },
     "bats.libraries.bats-assert": {
       "resolved": "github:NixOS/nixpkgs/75a52265bda7fd25e06e3a67dee3f0354e73243c#bats.libraries.bats-assert",
       "source": "nixpkg"
@@ -9,25 +13,25 @@
       "resolved": "github:NixOS/nixpkgs/75a52265bda7fd25e06e3a67dee3f0354e73243c#bats.libraries.bats-support",
       "source": "nixpkg"
     },
-    "bats@latest": {
-      "last_modified": "2023-11-19T17:46:56Z",
-      "resolved": "github:NixOS/nixpkgs/0bf3f5cf6a98b5d077cdcdb00a6d4b3d92bc78b5#bats",
-      "source": "devbox-search",
-      "version": "1.10.0",
-      "systems": {
-        "aarch64-darwin": {
-          "store_path": "/nix/store/gkb8zmmzsqn8lshha7zddbjmr87mc056-bats-1.10.0"
-        },
-        "aarch64-linux": {
-          "store_path": "/nix/store/z8xiwh8m8qc00j94bp7xvb2mnfxv8gs6-bats-1.10.0"
-        },
-        "x86_64-darwin": {
-          "store_path": "/nix/store/00kmcikc4xbc3mgz0z4vjs0yn1mz4cal-bats-1.10.0"
-        },
-        "x86_64-linux": {
-          "store_path": "/nix/store/1sw93sc9pzmbwn359lbj7pxd7ril3whd-bats-1.10.0"
-        }
-      }
+    "nixpkgs-fmt": {
+      "resolved": "github:NixOS/nixpkgs/75a52265bda7fd25e06e3a67dee3f0354e73243c#nixpkgs-fmt",
+      "source": "nixpkg"
+    },
+    "nodePackages.prettier": {
+      "resolved": "github:NixOS/nixpkgs/75a52265bda7fd25e06e3a67dee3f0354e73243c#nodePackages.prettier",
+      "source": "nixpkg"
+    },
+    "shellcheck": {
+      "resolved": "github:NixOS/nixpkgs/75a52265bda7fd25e06e3a67dee3f0354e73243c#shellcheck",
+      "source": "nixpkg"
+    },
+    "shfmt": {
+      "resolved": "github:NixOS/nixpkgs/75a52265bda7fd25e06e3a67dee3f0354e73243c#shfmt",
+      "source": "nixpkg"
+    },
+    "statix": {
+      "resolved": "github:NixOS/nixpkgs/75a52265bda7fd25e06e3a67dee3f0354e73243c#statix",
+      "source": "nixpkg"
     }
   }
 }

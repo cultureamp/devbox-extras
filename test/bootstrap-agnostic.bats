@@ -22,7 +22,7 @@ load "$DEVBOX_SHARE_DIR/bats/bats-assert/load.bash"
 }
 
 @test "nix-ssl-cert-set" {
-	test -n $NIX_SSL_CERT_FILE
+	test -n "$NIX_SSL_CERT_FILE"
 }
 
 @test "generated-netskope-cert" {

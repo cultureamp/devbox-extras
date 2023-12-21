@@ -5,3 +5,13 @@ Devbox is something we're trialing internally, we need some plugins. So putting 
 This repo is public as it's only used to configure open source software, there will likely be a bit of company specific stuff in here but nothing sensitive.
 
 Once we're happy with there plugins we'll attempt to upstream them as appropriate.
+
+# Formatting and linting
+
+```sh
+# check formatting and linting
+devbox run lint
+
+# autofix (where possible) formatting and linting
+devbox run lint:fix
+```
