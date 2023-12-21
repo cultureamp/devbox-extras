@@ -2,7 +2,7 @@
   description = "mongodb packaged from the official binaries to avoid compilation";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-23.11";
+    nixpkgs.url = "nixpkgs/nixos-unstable";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
