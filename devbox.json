@@ -10,7 +10,8 @@
     "nixpkgs-fmt",
     "statix",
     "shellcheck",
-    "shfmt"
+    "shfmt",
+    "nodePackages.prettier"
   ],
   "shell": {
     "scripts": {
@@ -19,12 +20,14 @@
         "statix check --ignore .devbox &",
         "shellcheck **/*.{sh,bats} &",
         "shfmt --diff **/*.{sh,bats} &",
+        "prettier . --check &",
         "wait"
       ],
       "lint:fix": [
         "nixpkgs-fmt .",
         "statix fix --ignore .devbox",
-        "shfmt --write **/*.{sh,bats}"
+        "shfmt --write **/*.{sh,bats}",
+        "prettier . --write"
       ],
       "test": [
         "devbox run test-bash",

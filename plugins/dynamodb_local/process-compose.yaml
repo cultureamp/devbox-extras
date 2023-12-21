@@ -2,9 +2,10 @@ version: "0.5"
 
 processes:
   dynamodb_local:
-    # working_dir set so command is run from a git ignored directory. 
+    # working_dir set so command is run from a git ignored directory.
     # dynamodb_local creates a metadata file in the directory it starts in, and we
     # want that to be hidden.
+    # prettier-ignore
     working_dir: {{ .Virtenv }}
     command: dynamodb_local
     availability:
