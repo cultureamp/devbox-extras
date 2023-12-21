@@ -1,5 +1,5 @@
 #!/bin/sh
-# Mocking MacOS programs for linux based docker container 
+# Mocking MacOS programs for linux based docker container
 
 mkdir -p /tmp/test-metadata
 

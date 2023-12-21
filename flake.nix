@@ -13,13 +13,14 @@
 
         # common parts of making derivations for flake checks
         # from: https://msfjarvis.dev/posts/writing-your-own-nix-flake-checks/
-        mkCheck = nativeBuildInputs: checkPhase: pkgs.stdenvNoCC.mkDerivation {
-          inherit nativeBuildInputs checkPhase;
-          name = "flake-check";
+        mkCheck = { name, nativeBuildInputs, checkPhase }: pkgs.stdenvNoCC.mkDerivation {
+          inherit name nativeBuildInputs checkPhase;
           src = ./.;
           dontBuild = true;
           doCheck = true;
-          installPhase = '' mkdir "$out" '';
+          installPhase = ''
+            mkdir "$out"
+          '';
         };
       in
       {
@@ -27,9 +28,26 @@
         formatter = pkgs.nixpkgs-fmt;
 
         checks = {
-          nix-formatting = mkCheck [ pkgs.nixpkgs-fmt ] "nixpkgs-fmt --check .";
-          nix-linting = mkCheck [ pkgs.statix ] "statix check";
-          shellcheck = mkCheck [ pkgs.shellcheck ] "shellcheck **/*.sh";
+          nix-formatting = mkCheck {
+            name = "nix-formatting";
+            nativeBuildInputs = [ pkgs.nixpkgs-fmt ];
+            checkPhase = "nixpkgs-fmt --check .";
+          };
+          nix-linting = mkCheck {
+            name = "nix-linting";
+            nativeBuildInputs = [ pkgs.statix ];
+            checkPhase = "statix check";
+          };
+          shell-linting = mkCheck {
+            name = "shell-linting";
+            nativeBuildInputs = [ pkgs.shellcheck ];
+            checkPhase = "shellcheck **/*.{sh,bash,bats}";
+          };
+          shell-formatting = mkCheck {
+            name = "shell-formatting";
+            nativeBuildInputs = [ pkgs.shfmt ];
+            checkPhase = "shfmt --write **/*.{sh,bash,bats}";
+          };
         };
 
         packages = {

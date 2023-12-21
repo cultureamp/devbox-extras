@@ -36,7 +36,7 @@ install_nix() {
 	echo "=== installing nix (requires sudo)..."
 	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
 		# $INSTALLER_EXTRA_ARGS below is required by docker as default install expects systemd for a linux install
-		# That alone is able to be set by an env var in the docker environment, 
+		# That alone is able to be set by an env var in the docker environment,
 		# however we also have to provide 'linux' as an argument for the installing script
 		sh -s -- install "$INSTALLER_EXTRA_ARGS" --no-confirm \
 			--extra-conf "trusted-users = root @admin" \
@@ -45,7 +45,7 @@ install_nix() {
 
 	echo "=== sourcing nix daemon so we can use it in this script..."
 	export NIX_SSL_CERT_FILE="$NIX_FINAL_SSL_FILE"
-  # shellcheck source=/dev/null
+	# shellcheck source=/dev/null
 	. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 	echo "=== nix daemon sourced..."
 }
