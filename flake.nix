@@ -10,7 +10,7 @@
     # this flake only works for darwin binaries (for now)
     flake-utils.lib.eachDefaultSystem (system:
       let
-        pkgs = nixpkgs.legacyPackages."${system}";
+        pkgs = import nixpkgs { system = "${system}"; config.allowUnfree = true;};
         mongodb-4_4 = pkgs.callPackage ./packages/mongodb-4_4.nix { };
         dynamodb_local = pkgs.callPackage ./packages/dynamodb_local.nix { };
         adr-tools = pkgs.callPackage ./packages/adr-tools.nix {};

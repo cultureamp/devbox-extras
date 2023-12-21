@@ -38,7 +38,5 @@ stdenv.mkDerivation rec {
     homepage = https://github.com/npryce/adr-tools;
     description = "Command-line tools for working with Architecture Decision Records";
     license = licenses.gpl3;
-    maintainers = [ maintainers.aepsil0n ];
-    platforms = platforms.darwin;
   };
 }
