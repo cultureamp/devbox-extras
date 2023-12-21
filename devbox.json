@@ -4,9 +4,13 @@
     "NETSKOPE_CERT_PATH": "/Library/Application Support/Netskope/STAgent/data/nscacert.pem"
   },
   "packages": [
-    "bats@latest",
+    "bats",
     "bats.libraries.bats-assert",
-    "bats.libraries.bats-support"
+    "bats.libraries.bats-support",
+    "nixpkgs-fmt",
+    "statix",
+    "shellcheck",
+    "shfmt"
   ],
   "shell": {
     "scripts": {
@@ -15,15 +19,15 @@
         "devbox run test-zsh",
         "devbox run test-fish"
       ],
-      "test-bash" : [
+      "test-bash": [
         "docker build -t bootstrap-script-test --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" --build-arg SHELL_VAR=bash -f ./bootstrap-test.Dockerfile .",
         "docker run bootstrap-script-test bats test/bootstrap-agnostic.bats test/bootstrap-bash.bats"
       ],
-      "test-zsh" :[
+      "test-zsh": [
         "docker build -t bootstrap-script-test --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" --build-arg SHELL_VAR=zsh -f ./bootstrap-test.Dockerfile .",
         "docker run bootstrap-script-test bats test/bootstrap-agnostic.bats test/bootstrap-zsh.bats"
       ],
-      "test-fish" :[
+      "test-fish": [
         "docker build -t bootstrap-script-test --build-arg NETSKOPE_CERT=\"$(cat \"$NETSKOPE_CERT_PATH\")\" --build-arg SHELL_VAR=fish -f ./bootstrap-test.Dockerfile .",
         "docker run bootstrap-script-test bats test/bootstrap-agnostic.bats test/bootstrap-fish.bats"
       ]
