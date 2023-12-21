@@ -2,7 +2,7 @@
   description = "mongodb packaged from the official binaries to avoid compilation";
 
   inputs = {
-    nixpkgs.url = "nixpkgs/nixos-23.05";
+    nixpkgs.url = "nixpkgs/nixos-23.11";
     flake-utils.url = "github:numtide/flake-utils";
   };
 
@@ -13,8 +13,9 @@
         pkgs = nixpkgs.legacyPackages."${system}";
         mongodb-4_4 = pkgs.callPackage ./packages/mongodb-4_4.nix { };
         dynamodb_local = pkgs.callPackage ./packages/dynamodb_local.nix { };
+        adr-tools = pkgs.callPackage ./packages/adr-tools.nix {};
       in
       {
-        packages = { inherit mongodb-4_4 dynamodb_local; };
+        packages = { inherit mongodb-4_4 dynamodb_local adr-tools; };
       });
 }
