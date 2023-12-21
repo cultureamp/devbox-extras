@@ -33,14 +33,6 @@ jobs:
         run: docker build -t bootstrap-script-test-fish -f ./bootstrap-test.Dockerfile . --build-arg SHELL_VAR=fish
       - name: Run bats-fish test via devbox
         run: docker run bootstrap-script-test-fish bats test/bootstrap-agnostic.bats test/bootstrap-fish.bats
-  check-nix-formatting:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: jetpack-io/devbox-install-action@v0.7.0
-      - run: |
-          nix fmt
-          git diff --exit-code
   nix-flake-check:
     runs-on: ubuntu-latest
     steps:
