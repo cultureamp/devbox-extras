@@ -34,6 +34,7 @@ generate_combined_netskope_cert() {
 # And set the ssl cert file globally
 install_nix() {
 	echo "=== installing nix (requires sudo)..."
+	# shellcheck disable=SC2086
 	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
 		# $INSTALLER_EXTRA_ARGS below is required by docker as default install expects systemd for a linux install
 		# That alone is able to be set by an env var in the docker environment,
