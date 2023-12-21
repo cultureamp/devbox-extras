@@ -33,10 +33,9 @@ jobs:
         run: docker build -t bootstrap-script-test-fish -f ./bootstrap-test.Dockerfile . --build-arg SHELL_VAR=fish
       - name: Run bats-fish test via devbox
         run: docker run bootstrap-script-test-fish bats test/bootstrap-agnostic.bats test/bootstrap-fish.bats
-  nix-flake-check:
+  check-linting-and-formatting:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      - name: Install Nix
-        uses: DeterminateSystems/nix-installer-action@main
-      - run: nix flake check --keep-going --print-build-logs
+      - uses: jetpack-io/devbox-install-action@v0.7.0
+      - run: devbox run lint

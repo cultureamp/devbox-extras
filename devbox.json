@@ -14,6 +14,18 @@
   ],
   "shell": {
     "scripts": {
+      "lint": [
+        "nixpkgs-fmt --check . &",
+        "statix check --ignore .devbox &",
+        "shellcheck **/*.{sh,bats} &",
+        "shfmt --diff **/*.{sh,bats} &",
+        "wait"
+      ],
+      "lint:fix": [
+        "nixpkgs-fmt .",
+        "statix fix --ignore .devbox",
+        "shfmt --write **/*.{sh,bats}"
+      ],
       "test": [
         "devbox run test-bash",
         "devbox run test-zsh",
