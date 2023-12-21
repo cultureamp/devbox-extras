@@ -41,3 +41,10 @@ jobs:
       - run: |
           nix fmt
           git diff --exit-code
+  nix-flake-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install Nix
+        uses: DeterminateSystems/nix-installer-action@main
+      - run: nix flake check --keep-going --print-build-logs
