@@ -14,10 +14,10 @@
       in
       {
         # set formatter binary for `nix fmt` command
-        formatter = pkgs.nixpkgs-fmt;
+      formatter = pkgs.nixpkgs-fmt;
 
         packages = {
-          mongodb-4_4 = pkgs.callPackage ./packages/mongodb-4_4.nix { };
+          mongodb-4_4 = pkgs.callPackage ./packages/mongodb-4_4.nix {};
           dynamodb_local = pkgs.callPackage ./packages/dynamodb_local.nix { };
           adr-tools = pkgs.callPackage ./packages/adr-tools.nix { };
         };
