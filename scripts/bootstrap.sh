@@ -7,7 +7,7 @@ set -e
 NETSKOPE_DATA_DIR="/Library/Application Support/Netskope/STAgent/data"
 
 # This variable is set by docker in mock_functions.sh to provide the linux path rather than the typical MacOS path
-NIX_FINAL_SSL_FILE="${NIX_FINAL_SSL_FILE:-NETSKOPE_DATA_DIR/nscacert_combined.pem}"
+NIX_FINAL_SSL_FILE="${NIX_FINAL_SSL_FILE:-$NETSKOPE_DATA_DIR/nscacert_combined.pem}"
 
 # Copy create Netskope combined cert and save to known location recommended by their docs:
 # https://docs.netskope.com/en/netskope-help/data-security/netskope-secure-web-gateway/configuring-cli-based-tools-and-development-frameworks-to-work-with-netskope-ssl-interception/#mac-1
