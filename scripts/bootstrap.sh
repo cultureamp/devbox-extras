@@ -74,7 +74,7 @@ install_direnv() {
 	fi
 }
 
-direnv_shell_integration() {
+shell_integrations() {
 	DIRENV_BIN="$(command -v direnv)"
 	DIRENV_BIN="${DIRENV_BIN:-$HOME/.nix-profile/bin/direnv}"
 	shell=$(basename "$SHELL")
@@ -157,7 +157,7 @@ main() {
 	install_nix
 	install_devbox
 	install_direnv
-	direnv_shell_integration
+	shell_integrations
 	install_nix_direnv
 	print_further_steps
 }
