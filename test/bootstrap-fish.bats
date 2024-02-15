@@ -1,5 +1,5 @@
-load "$DEVBOX_SHARE_DIR/bats/bats-support/load.bash"
-load "$DEVBOX_SHARE_DIR/bats/bats-assert/load.bash"
+bats_load_library bats-support
+bats_load_library bats-assert
 
 @test "direnv-integrated-to-fish" {
 	run cat /root/.local/share/fish/vendor_conf.d/direnv.fish
