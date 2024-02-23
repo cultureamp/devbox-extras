@@ -6,15 +6,24 @@ When using corepack, running `pnpm` or `yarn` will always use the correct versio
 
 ## Use and activation
 
+1. Make sure you already have a `nodejs` listed as one of your packages in `devbox.json`. You don't need to list `pnpm` or `yarn`:
+
+```json
+{
+  "packages": ["nodejs@18.19.1"]
+}
+```
+
 1. Add this plugin to the `include` section of your `devbox.json`:
 
 ```json
 {
+  "packages": ["nodejs@18.19.1"],
   "include": ["github:cultureamp/devbox-extras?dir=plugins/corepack"]
 }
 ```
 
-2. Ensure your `package.json` sets the `packageManager` field:
+2. Ensure your `package.json` sets a `packageManager` field, for example:
 
 ```json
 {
@@ -29,6 +38,8 @@ or
   "packageManager": "yarn@1.22.21"
 }
 ```
+
+When you run `pnpm -v` or `yarn -v` you should see that the versions used match what you've set in the `packageManager` field.
 
 ## Motivation
 
@@ -46,9 +57,13 @@ v18.18.0
 
 This happens because nix bundles all dependencies into every package, yarn is getting it’s own copy of Node.js, which may be more recent than the Node.js version the project is using.
 
-Corepack by default tries to install shim scripts for both `yarn` and `pnpm` in the same directory that `node` is found in. Unfortunately when using devbox, the `node` binary is in the Nix store, which is read only, so Corepack fails to set up correctly.
+Corepack is a tool included with Node.js that manages PNPM and Yarn versions for you, installing the requested versions as needed and switching seamlessly. Using Corepack would mean that we don't need Devbox / Nix to provide pnpm or Yarn binaries.
 
-This plugin works by:
+But corepack by default tries to install shim scripts for both `yarn` and `pnpm` in the same directory that `node` is found in. Unfortunately when using devbox, the `node` binary is in the Nix store, which is read only, so Corepack gives an error similar to:
+
+> `Internal Error: EACCES: permission denied, unlink '/nix/store/0r6wvd9rr6lsrv8j9b3nv9s9lw7vfb37-profile/bin/pnpm'`
+
+This Devbox plugin works by:
 
 - creating a folder in `.devbox/virtenv/pnpm_plugin/bin/`
 - running `corepack enable --install-directory "./devbox/virtenv/pnpm_plugin/bin/"`, which adds the `pnpm` and `yarn` shim scripts
