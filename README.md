@@ -1,7 +1,9 @@
 # Tooling install for local development environments
 
 You can find the install script for the local development environment at [./scripts/bootstrap.sh](./scripts/bootstrap.sh).
-The recommended command to run this install script is `curl --proto '=https' --tlsv1.2 -sSf -L https://raw.githubusercontent.com/cultureamp/devbox-extras/main/scripts/bootstrap.sh | sh`
+The recommended command to run this install script is: 
+
+`curl --proto '=https' --tlsv1.2 -sSf -L https://raw.githubusercontent.com/cultureamp/devbox-extras/main/scripts/bootstrap.sh | sh`
 
 # devbox-plugins
 
