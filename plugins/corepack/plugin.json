@@ -1,0 +1,14 @@
+{
+  "name": "corepack",
+  "version": "0.0.1",
+  "readme": "README.md",
+  "env": {
+    "PATH": "{{ .Virtenv }}/bin/:$PATH"
+  },
+  "shell": {
+    "init_hook": [
+      "mkdir -p {{ .Virtenv }}/bin",
+      "corepack enable --install-directory \"{{ .Virtenv }}/bin/\""
+    ]
+  }
+}
