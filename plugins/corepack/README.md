@@ -65,6 +65,7 @@ But corepack by default tries to install shim scripts for both `yarn` and `pnpm`
 
 This Devbox plugin works by:
 
-- creating a folder in `.devbox/virtenv/pnpm_plugin/bin/`
-- running `corepack enable --install-directory "./devbox/virtenv/pnpm_plugin/bin/"`, which adds the `pnpm` and `yarn` shim scripts
-- and then adding `./devbox/virtenv/pnpm_plugin/bin/` to the `PATH` environment variable.
+- creating a folder in `{{ .Virtenv }}/corepack-bin`
+- running `corepack enable --install-directory "{{ .Virtenv }}/corepack-bin"`, which adds the `pnpm` and `yarn` shim scripts
+- and then adding `{{ .Virtenv }}/corepack-bin` to the `PATH` environment variable.
+- where `{{ .Virtenv }}` is a directory the plugin manages, and will be something like `.devbox/virtenv/cultureamp-devbox-extras/`
