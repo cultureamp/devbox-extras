@@ -1,25 +1,40 @@
-{ stdenv, fetchzip, mongodb-6_0 }:
+{ system, stdenv, fetchzip, mongodb-6_0 }:
+# compiling mongodb is slow (10-30mins) so for macOS will pull in the binary from mongo's
+# download page (same a homebrew's packing does)
 
-# the linux builds of mongo work fine, so default to the standard nixpkgs version if we're on linux
-if !stdenv.isDarwin then
-  mongodb-6_0
+let
+  pname = "mongodb-6_0";
+  version = "6.0.14";
+  installPhase = ''
+    runHook preInstall
+    mkdir -p $out/bin
+    cp bin/{mongod,mongos} $out/bin/
+    runHook postInstall
+  '';
+in
 
-# aarch darwin builds of this version of mongo don't exist, and compiling the x86 version is >20mins
-# so provide the x86 binary version to any macOS system (this is exactly what homebrew does)
-else
-  stdenv.mkDerivation rec {
-    pname = "mongodb-6_0";
-    version = "6.0.13";
+if system == "x86_64-darwin" then
+  stdenv.mkDerivation
+  rec {
+    inherit pname version installPhase;
 
     src = fetchzip {
       url = "https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-${version}.tgz";
-      hash = "sha256-2ZyrMsXxt4AZPWbrSKcu89Uys9yCpEYDqpxqpNIcPmY=";
+      hash = "sha256-ZW8GMRr5wXGOyBy12Dq5CnTxpqda/csfszuoYZ1pRtM=";
     };
-
-    installPhase = ''
-      runHook preInstall
-      mkdir -p $out/bin
-      cp bin/{mongod,mongos} $out/bin/
-      runHook postInstall
-    '';
   }
+
+else if system == "aarch64-darwin" then
+  stdenv.mkDerivation
+  {
+    inherit pname version installPhase;
+
+    src = fetchzip {
+      url = "https://fastdl.mongodb.org/osx/mongodb-macos-arm64-${version}.tgz";
+      hash = "sha256-F6etuVeRMGZGyfQKdhrTy6LvFNHCIgrZDOzxOw/jCus=";
+    };
+  }
+
+# we can't use binary packages on Linux as they're different per distro, so we fall back
+# to the nixpkgs version
+else mongodb-6_0
