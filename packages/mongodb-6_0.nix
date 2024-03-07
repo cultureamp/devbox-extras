@@ -5,7 +5,7 @@
 
 let
   pname = "mongodb-6_0";
-  version = "6.0.14";
+  version = "6.0.13";
   installPhase = ''
     runHook preInstall
     mkdir -p $out/bin
@@ -21,7 +21,7 @@ if system == "x86_64-darwin" then
 
     src = fetchzip {
       url = "https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-${version}.tgz";
-      hash = "sha256-ZW8GMRr5wXGOyBy12Dq5CnTxpqda/csfszuoYZ1pRtM=";
+      hash = "sha256-2ZyrMsXxt4AZPWbrSKcu89Uys9yCpEYDqpxqpNIcPmY=";
     };
   }
 
@@ -32,7 +32,7 @@ else if system == "aarch64-darwin" then
 
     src = fetchzip {
       url = "https://fastdl.mongodb.org/osx/mongodb-macos-arm64-${version}.tgz";
-      hash = "sha256-F6etuVeRMGZGyfQKdhrTy6LvFNHCIgrZDOzxOw/jCus=";
+      hash = "sha256-C0eW1CHKiF308QsPbFcS/7nLHYDmVboUynGn6VxQtA8=";
     };
   }
 
