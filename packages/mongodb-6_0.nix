@@ -1,6 +1,7 @@
 { system, stdenv, fetchzip, mongodb-6_0 }:
-# compiling mongodb is slow (10-30mins) so for macOS will pull in the binary from mongo's
-# download page (same a homebrew's packing does)
+# compiling mongodb is slow (10-30mins) so for macOS we pull in the binary from mongo's
+# download page (same a homebrew's package does)
+# see: https://www.mongodb.com/download-center/community/releases
 
 let
   pname = "mongodb-6_0";
