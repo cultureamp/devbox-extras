@@ -9,11 +9,11 @@ if !stdenv.isDarwin then
 else
   stdenv.mkDerivation rec {
     pname = "mongodb-4_4";
-    version = "4.4.25";
+    version = "4.4.28";
 
     src = fetchzip {
       url = "https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-${version}.tgz";
-      hash = "sha256-zZtpcSFhzxdC39pJY4F+yaoc4RXfcP+e2lnw8wi/avk=";
+      hash = "sha256-0K4yL2UMfM02/rzD8Xx2TwG1Zi0bZbn7hopd4g/1NoM=";
     };
 
     installPhase = ''
