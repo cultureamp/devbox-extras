@@ -16,7 +16,7 @@ in
 
 if system == "x86_64-darwin" then
   stdenv.mkDerivation
-  rec {
+  {
     inherit pname version installPhase;
 
     src = fetchzip {
