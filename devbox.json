@@ -1,6 +1,6 @@
 {
   "env": {
-    "DEVBOX_SHARE_DIR": "$PWD/.devbox/nix/profile/default/share",
+    "DEVBOX_SHARE_DIR":   "$PWD/.devbox/nix/profile/default/share",
     "NETSKOPE_CERT_PATH": "/Library/Application Support/Netskope/STAgent/data/nscacert.pem"
   },
   "packages": [
@@ -11,8 +11,10 @@
     "statix",
     "shellcheck",
     "shfmt",
-    "nodePackages.prettier"
+    "nodePackages.prettier",
+    "nodejs@20"
   ],
+  "include": ["github:cultureamp/devbox-extras?dir=plugins/corepack"],
   "shell": {
     "scripts": {
       "lint": [
