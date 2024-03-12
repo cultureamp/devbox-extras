@@ -1,0 +1,531 @@
+<application>
+  <component name="ProjectJdkTable">
+    <jdk version="2">
+      <name value="11" />
+      <type value="JavaSDK" />
+      <version value="java version &quot;11.0.22&quot;" />
+      <homePath value="$USER_HOME$/.nix-profile" />
+      <roots>
+        <annotationsPath>
+          <root type="composite">
+            <root url="jar://$APPLICATION_HOME_DIR$/plugins/java/lib/resources/jdkAnnotations.jar!/" type="simple" />
+          </root>
+        </annotationsPath>
+        <classPath>
+          <root type="composite">
+            <root url="jrt://$USER_HOME$/.nix-profile!/com.azul.crs.client" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/com.azul.tooling" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.base" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.compiler" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.datatransfer" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.desktop" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.instrument" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.logging" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.management" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.management.rmi" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.naming" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.net.http" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.prefs" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.rmi" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.scripting" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.se" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.security.jgss" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.security.sasl" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.smartcardio" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.sql" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.sql.rowset" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.transaction.xa" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.xml" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/java.xml.crypto" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.accessibility" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.attach" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.charsets" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.compiler" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.crypto.cryptoki" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.crypto.ec" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.dynalink" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.editpad" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.hotspot.agent" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.httpserver" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.internal.ed" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.internal.jvmstat" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.internal.le" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.internal.opt" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.internal.vm.ci" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.internal.vm.compiler" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.internal.vm.compiler.management" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.jartool" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.javadoc" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.jcmd" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.jconsole" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.jdeps" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.jdi" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.jdwp.agent" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.jfr" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.jlink" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.jshell" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.jsobject" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.jstatd" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.localedata" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.management" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.management.agent" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.management.jfr" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.naming.dns" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.naming.ldap" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.naming.rmi" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.net" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.pack" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.rmic" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.scripting.nashorn" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.scripting.nashorn.shell" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.sctp" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.security.auth" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.security.jgss" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.unsupported" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.unsupported.desktop" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.xml.dom" type="simple" />
+            <root url="jrt://$USER_HOME$/.nix-profile!/jdk.zipfs" type="simple" />
+          </root>
+        </classPath>
+        <javadocPath>
+          <root type="composite" />
+        </javadocPath>
+        <sourcePath>
+          <root type="composite">
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.se" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.jdi" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.jfr" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.net" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.rmi" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.sql" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.xml" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.jcmd" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.pack" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.rmic" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.sctp" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.base" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.jdeps" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.jlink" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.zipfs" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.prefs" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.attach" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.jshell" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.jstatd" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.naming" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.editpad" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.jartool" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.javadoc" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.xml.dom" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.desktop" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.logging" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.charsets" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.compiler" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.dynalink" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.jconsole" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.jsobject" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.compiler" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.net.http" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.crypto.ec" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.scripting" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.httpserver" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.jdwp.agent" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.localedata" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.management" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.naming.dns" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.naming.rmi" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.instrument" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.management" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.sql.rowset" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.xml.crypto" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.internal.ed" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.internal.le" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.naming.ldap" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.unsupported" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/com.azul.tooling" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.smartcardio" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.internal.opt" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.datatransfer" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.accessibility" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.hotspot.agent" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.security.auth" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.security.jgss" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.security.jgss" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.security.sasl" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.internal.vm.ci" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.management.jfr" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/com.azul.crs.client" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.management.rmi" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/java.transaction.xa" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.crypto.cryptoki" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.internal.jvmstat" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.management.agent" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.scripting.nashorn" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.unsupported.desktop" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.internal.vm.compiler" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.scripting.nashorn.shell" type="simple" />
+            <root url="jar://$USER_HOME$/.nix-profile/lib/src.zip!/jdk.internal.vm.compiler.management" type="simple" />
+          </root>
+        </sourcePath>
+      </roots>
+      <additional />
+    </jdk>
+    <jdk version="2">
+      <name value="zulu-17" />
+      <type value="JavaSDK" />
+      <version value="Azul Zulu version 17.0.10" />
+      <homePath value="/nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10" />
+      <roots>
+        <annotationsPath>
+          <root type="composite">
+            <root url="jar://$APPLICATION_HOME_DIR$/plugins/java/lib/resources/jdkAnnotations.jar!/" type="simple" />
+          </root>
+        </annotationsPath>
+        <classPath>
+          <root type="composite">
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/com.azul.crs.client" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/com.azul.tooling" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.base" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.compiler" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.datatransfer" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.desktop" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.instrument" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.logging" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.management" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.management.rmi" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.naming" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.net.http" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.prefs" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.rmi" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.scripting" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.se" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.security.jgss" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.security.sasl" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.smartcardio" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.sql" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.sql.rowset" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.transaction.xa" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.xml" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/java.xml.crypto" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.accessibility" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.attach" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.charsets" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.compiler" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.crypto.cryptoki" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.crypto.ec" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.dynalink" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.editpad" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.hotspot.agent" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.httpserver" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.incubator.foreign" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.incubator.vector" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.internal.ed" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.internal.jvmstat" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.internal.le" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.internal.opt" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.internal.vm.ci" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.internal.vm.compiler" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.internal.vm.compiler.management" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.jartool" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.javadoc" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.jcmd" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.jconsole" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.jdeps" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.jdi" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.jdwp.agent" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.jfr" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.jlink" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.jpackage" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.jshell" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.jsobject" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.jstatd" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.localedata" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.management" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.management.agent" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.management.jfr" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.naming.dns" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.naming.rmi" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.net" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.nio.mapmode" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.random" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.sctp" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.security.auth" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.security.jgss" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.unsupported" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.unsupported.desktop" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.xml.dom" type="simple" />
+            <root url="jrt:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10!/jdk.zipfs" type="simple" />
+          </root>
+        </classPath>
+        <javadocPath>
+          <root type="composite" />
+        </javadocPath>
+        <sourcePath>
+          <root type="composite">
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.se" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.jdi" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.jfr" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.net" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.rmi" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.sql" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.xml" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.jcmd" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.sctp" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.base" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.jdeps" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.jlink" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.zipfs" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.prefs" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.attach" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.jshell" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.jstatd" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.random" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.naming" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.editpad" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.jartool" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.javadoc" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.xml.dom" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.desktop" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.logging" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.charsets" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.compiler" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.dynalink" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.jconsole" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.jpackage" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.jsobject" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.compiler" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.net.http" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.crypto.ec" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.scripting" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.httpserver" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.jdwp.agent" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.localedata" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.management" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.naming.dns" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.naming.rmi" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.instrument" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.management" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.sql.rowset" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.xml.crypto" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.internal.ed" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.internal.le" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.nio.mapmode" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.unsupported" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/com.azul.tooling" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.smartcardio" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.internal.opt" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.datatransfer" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.accessibility" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.hotspot.agent" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.security.auth" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.security.jgss" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.security.jgss" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.security.sasl" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.internal.vm.ci" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.management.jfr" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/com.azul.crs.client" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.management.rmi" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/java.transaction.xa" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.crypto.cryptoki" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.incubator.vector" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.internal.jvmstat" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.management.agent" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.incubator.foreign" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.unsupported.desktop" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.internal.vm.compiler" type="simple" />
+            <root url="jar:///nix/store/4p4k1w2q7fz1hwc55wjk44bza0vhh71h-zulu-ca-jdk-17.0.10/lib/src.zip!/jdk.internal.vm.compiler.management" type="simple" />
+          </root>
+        </sourcePath>
+      </roots>
+      <additional />
+    </jdk>
+    <jdk version="2">
+      <name value="zulu-17 (2)" />
+      <type value="JavaSDK" />
+      <version value="Azul Zulu version 17.0.10" />
+      <homePath value="$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default" />
+      <roots>
+        <annotationsPath>
+          <root type="composite">
+            <root url="jar://$APPLICATION_HOME_DIR$/plugins/java/lib/resources/jdkAnnotations.jar!/" type="simple" />
+          </root>
+        </annotationsPath>
+        <classPath>
+          <root type="composite">
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/com.azul.crs.client" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/com.azul.tooling" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.base" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.compiler" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.datatransfer" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.desktop" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.instrument" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.logging" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.management" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.management.rmi" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.naming" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.net.http" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.prefs" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.rmi" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.scripting" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.se" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.security.jgss" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.security.sasl" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.smartcardio" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.sql" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.sql.rowset" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.transaction.xa" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.xml" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/java.xml.crypto" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.accessibility" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.attach" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.charsets" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.compiler" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.crypto.cryptoki" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.crypto.ec" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.dynalink" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.editpad" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.hotspot.agent" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.httpserver" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.incubator.foreign" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.incubator.vector" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.internal.ed" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.internal.jvmstat" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.internal.le" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.internal.opt" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.internal.vm.ci" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.internal.vm.compiler" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.internal.vm.compiler.management" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.jartool" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.javadoc" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.jcmd" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.jconsole" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.jdeps" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.jdi" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.jdwp.agent" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.jfr" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.jlink" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.jpackage" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.jshell" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.jsobject" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.jstatd" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.localedata" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.management" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.management.agent" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.management.jfr" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.naming.dns" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.naming.rmi" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.net" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.nio.mapmode" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.random" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.sctp" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.security.auth" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.security.jgss" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.unsupported" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.unsupported.desktop" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.xml.dom" type="simple" />
+            <root url="jrt://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default!/jdk.zipfs" type="simple" />
+          </root>
+        </classPath>
+        <javadocPath>
+          <root type="composite" />
+        </javadocPath>
+        <sourcePath>
+          <root type="composite">
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.se" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.jdi" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.jfr" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.net" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.rmi" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.sql" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.xml" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.jcmd" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.sctp" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.base" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.jdeps" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.jlink" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.zipfs" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.prefs" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.attach" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.jshell" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.jstatd" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.random" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.naming" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.editpad" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.jartool" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.javadoc" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.xml.dom" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.desktop" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.logging" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.charsets" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.compiler" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.dynalink" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.jconsole" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.jpackage" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.jsobject" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.compiler" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.net.http" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.crypto.ec" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.scripting" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.httpserver" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.jdwp.agent" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.localedata" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.management" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.naming.dns" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.naming.rmi" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.instrument" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.management" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.sql.rowset" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.xml.crypto" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.internal.ed" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.internal.le" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.nio.mapmode" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.unsupported" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/com.azul.tooling" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.smartcardio" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.internal.opt" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.datatransfer" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.accessibility" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.hotspot.agent" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.security.auth" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.security.jgss" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.security.jgss" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.security.sasl" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.internal.vm.ci" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.management.jfr" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/com.azul.crs.client" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.management.rmi" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/java.transaction.xa" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.crypto.cryptoki" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.incubator.vector" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.internal.jvmstat" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.management.agent" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.incubator.foreign" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.unsupported.desktop" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.internal.vm.compiler" type="simple" />
+            <root url="jar://$USER_HOME$/dev/manager-lab/.devbox/nix/profile/default/lib/src.zip!/jdk.internal.vm.compiler.management" type="simple" />
+          </root>
+        </sourcePath>
+      </roots>
+      <additional />
+    </jdk>
+    <jdk version="2">
+      <name value="Kotlin SDK" />
+      <type value="KotlinSDK" />
+      <homePath value="" />
+      <roots>
+        <annotationsPath>
+          <root type="composite" />
+        </annotationsPath>
+        <classPath>
+          <root type="composite" />
+        </classPath>
+        <javadocPath>
+          <root type="composite" />
+        </javadocPath>
+        <sourcePath>
+          <root type="composite" />
+        </sourcePath>
+      </roots>
+      <additional />
+    </jdk>
+  </component>
+</application>

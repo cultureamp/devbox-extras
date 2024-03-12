@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "foo": "npx ts-node app.ts"
+    "parse": "npx ts-node app.ts"
   },
   "keywords": [],
   "author": "",
@@ -18,5 +18,9 @@
     "@types/node": "^20.11.25",
     "node:w": "link:@types/node:w",
     "typescript": "^5.4.2"
+  },
+  "prettier": {
+    "arrowParens": "avoid",
+    "semi": false
   }
 }
