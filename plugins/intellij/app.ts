@@ -2,6 +2,7 @@ import { inspect } from "util"
 
 import { XMLParser, XMLBuilder } from "fast-xml-parser"
 import * as fs from "fs"
+import * as Jdk from "./src/jdk-table-types"
 
 const XMLData = fs.readFile(
   "/Users/tom.monaghan/Library/Application Support/JetBrains/IdeaIC2023.3/options/jdk.table.xml",
@@ -16,12 +17,11 @@ const XMLData = fs.readFile(
     }
 
     const parser = new XMLParser(options)
-    var jdkTables = parser.parse(data)
-
-    console.log(inspect(jdkTables, false, 1000, true))
+    var jdkTables: Jdk.JdkTable = parser.parse(data)
 
     // console.log(jdkTables[0]["application"][0]["component"][0]["jdk"][0])
-    const injectedComponent = {
+
+    const injectedComponent: Jdk.Jdk = {
       jdk: [
         {
           name: [],
@@ -41,7 +41,7 @@ const XMLData = fs.readFile(
     jdkTables[0]["application"][0]["component"] =
       jdkTables[0]["application"][0]["component"].concat(injectedComponent)
 
-    console.log(jdkTables[0]["application"][0]["component"][4]["jdk"][0])
+    console.log(jdkTables[0]["application"][0]["component"][0].jdk)
 
     const builder = new XMLBuilder(options)
     let xmlDataStr = builder.build(jdkTables)

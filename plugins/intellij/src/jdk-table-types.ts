@@ -15,7 +15,7 @@ type Component = {
   ":@": Pick<KeyValues, "name">
 }
 
-type Jdk = {
+export type Jdk = {
   jdk: JdkChildren[]
   ":@": Pick<KeyValues, "version">
 }
