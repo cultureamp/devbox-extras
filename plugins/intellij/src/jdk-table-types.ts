@@ -1,73 +1,40 @@
-type Application = {
-  application: Component[]
+type KeyValues = "version" | "value" | "type" | "url" | "name"
+
+interface ChildArray<QueryKey extends string, Child> {
+  data: {
+    [key in QueryKey]: Child[]
+  }
 }
 
-type KeyValues = {
-  version?: string
-  value?: string
-  type?: string
-  url?: string
-  name?: string
+interface KeyValueElement<KeyValue extends KeyValues> {
+  ":@": {
+    [key in KeyValue]: string
+  }
 }
 
-type Component = {
-  component: Jdk[]
-  ":@": Pick<KeyValues, "name">
-}
+type ConditionalKeyValue<KeyValue> = KeyValue extends KeyValues
+  ? KeyValueElement<KeyValue>
+  : {}
 
-export type Jdk = {
-  jdk: JdkChildren[]
-  ":@": Pick<KeyValues, "version">
-}
+type XmlElement<
+  QueryKey extends string,
+  KeyValue extends KeyValues | undefined,
+  Child
+> = ChildArray<QueryKey, Child>["data"] & ConditionalKeyValue<KeyValue>
+
+type Name = XmlElement<"name", "value", undefined>
+type Type = XmlElement<"type", "value", undefined>
+type Version = XmlElement<"version", "value", undefined>
+type HomePath = XmlElement<"homePath", "value", undefined>
+type Additional = XmlElement<"additional", undefined, undefined>
+
+type Roots = XmlElement<"roots", undefined, undefined>
+// Roots has missing children
 
 type JdkChildren = Name | Type | Version | HomePath | Roots | Additional
 
-type Name = {
-  name: []
-  ":@": Pick<KeyValues, "value">
-}
+type Component = XmlElement<"component", "name", JDK>
+type JDK = XmlElement<"jdk", "version", JdkChildren>
+type Application = XmlElement<"application", undefined, Component>
 
-type Type = {
-  type: []
-  ":@": Pick<KeyValues, "value">
-}
-
-type Version = {
-  version: []
-  ":@": Pick<KeyValues, "value">
-}
-
-type HomePath = {
-  homePath: []
-  ":@": Pick<KeyValues, "value">
-}
-
-type Roots = {
-  roots: []
-}
-
-type Additional = {
-  additional: []
-}
-
-export type JdkTable = Application[]
-
-const jdkTable: JdkTable = [
-  {
-    application: [
-      {
-        component: [
-          {
-            jdk: [],
-            ":@": {
-              version: "2",
-            },
-          },
-        ],
-        ":@": {
-          name: "11",
-        },
-      },
-    ],
-  },
-]
+// We are missing the types for Everything below the roots element
