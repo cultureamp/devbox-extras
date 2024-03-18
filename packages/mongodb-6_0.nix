@@ -12,12 +12,13 @@ let
     cp bin/{mongod,mongos} $out/bin/
     runHook postInstall
   '';
+  dontStrip = true; # this is a binary package, we don't need to strip debug info
 in
 
 if system == "x86_64-darwin" then
   stdenv.mkDerivation
   {
-    inherit pname version installPhase;
+    inherit pname version installPhase dontStrip;
 
     src = fetchzip {
       url = "https://fastdl.mongodb.org/osx/mongodb-macos-x86_64-${version}.tgz";
@@ -28,7 +29,7 @@ if system == "x86_64-darwin" then
 else if system == "aarch64-darwin" then
   stdenv.mkDerivation
   {
-    inherit pname version installPhase;
+    inherit pname version installPhase dontStrip;
 
     src = fetchzip {
       url = "https://fastdl.mongodb.org/osx/mongodb-macos-arm64-${version}.tgz";
