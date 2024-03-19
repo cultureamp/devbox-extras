@@ -65,9 +65,13 @@ install_devbox() {
 	# QUESTION: Are there any requirements on version?
 	# - Must be stable?
 	# - Does 0.9 -> 0.10 complicate this?
-	echo "=== installing devbox..."
-	curl -fsSL https://get.jetpack.io/devbox | FORCE=1 bash
-	echo "=== devbox installed..."
+	if command -v devbox version >/dev/null 2>&1; then
+		echo "=== devbox is already installed, doing nothing"
+	else
+		echo "=== installing devbox..."
+		curl -fsSL https://get.jetpack.io/devbox | FORCE=1 bash
+		echo "=== devbox installed..."
+	fi
 }
 
 add_current_user_to_admin_group() {
@@ -180,7 +184,7 @@ main() {
 	add_current_user_to_admin_group
 	# generate_combined_netskope_cert
 	# install_nix
-	# install_devbox
+	install_devbox
 	install_direnv
 	# shell_integrations
 	install_nix_direnv
