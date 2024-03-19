@@ -73,7 +73,7 @@ install_devbox() {
 add_current_user_to_admin_group() {
 	if id -Gn "$USER" | grep -q -w admin;
 	then
-		echo "=== user is already added to admin group, skipping step"
+		echo "=== user is already added to admin group, doing nothing"
 	else
 	echo "=== add current user to admin group"
 	sudo dseditgroup -o edit -a "$(whoami)" -t user admin
@@ -81,7 +81,6 @@ add_current_user_to_admin_group() {
 }
 
 install_direnv() {
-	# TODO: Test direnv is installed (with nix?)
 	if command -v direnv >/dev/null 2>&1; then
 		echo "=== direnv is already installed, doing nothing"
 		DID_INSTALL_DIRENV=0
@@ -138,22 +137,26 @@ shell_integrations() {
 }
 
 install_nix_direnv() {
-	# TODO: Check nix-direnv installation, does a nix install run idempotently?
-	echo "=== installing nix-direnv..."
-	nix profile install nixpkgs#nix-direnv
-	echo "=== nix-direnv installed"
-
-	if [ ! -e "$HOME/.config/direnv/direnvrc" ]; then
-		echo "=== direnvrc doesn't exist, creating it with config"
-		mkdir -p "$HOME/.config/direnv"
-		echo "source \$HOME/.nix-profile/share/nix-direnv/direnvrc" >"$HOME/.config/direnv/direnvrc"
+	# This is giving a broken pipe error ¯\_(ツ)_/¯
+	if nix profile list | grep -q -w nix-direnv; then
+		echo "=== nix-direnv already installed, doing nothing"
 	else
-		if grep -q "^source.*\/nix-direnv\/direnvrc$" "$HOME/.config/direnv/direnvrc"; then
-			echo "=== direnvrc exists and is configured to use nix-direnv, doing nothing"
+		echo "=== installing nix-direnv..."
+		nix profile install nixpkgs#nix-direnv
+		echo "=== nix-direnv installed"
+
+		if [ ! -e "$HOME/.config/direnv/direnvrc" ]; then
+			echo "=== direnvrc doesn't exist, creating it with config"
+			mkdir -p "$HOME/.config/direnv"
+			echo "source \$HOME/.nix-profile/share/nix-direnv/direnvrc" >"$HOME/.config/direnv/direnvrc"
 		else
-			echo "=== direnvrc exists but is not configured to use nix-direnv, updating..."
-			echo "source $HOME/.nix-profile/share/nix-direnv/direnvrc" >>"$HOME/.config/direnv/direnvrc"
-			echo "=== direnvrc updated to use nix-direnv"
+			if grep -q "^source.*\/nix-direnv\/direnvrc$" "$HOME/.config/direnv/direnvrc"; then
+				echo "=== direnvrc exists and is configured to use nix-direnv, doing nothing"
+			else
+				echo "=== direnvrc exists but is not configured to use nix-direnv, updating..."
+				echo "source $HOME/.nix-profile/share/nix-direnv/direnvrc" >>"$HOME/.config/direnv/direnvrc"
+				echo "=== direnvrc updated to use nix-direnv"
+			fi
 		fi
 	fi
 }
@@ -178,9 +181,9 @@ main() {
 	# generate_combined_netskope_cert
 	# install_nix
 	# install_devbox
-	# install_direnv
+	install_direnv
 	# shell_integrations
-	# install_nix_direnv
+	install_nix_direnv
 	# print_further_steps
 }
 
