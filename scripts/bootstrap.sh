@@ -23,6 +23,9 @@ generate_combined_netskope_cert() {
 		>"$TMPDIR/nscacert_combined.pem"
 	echo "=== combined CA certificate generated"
 
+	# TODO: Test if $NETSKOPE_DATA_DIR/nscacert_combined.pem is made and populated
+	# QUESTION: Can we test the validity? diff $> security ... & nscacert_combined.pem
+
 	echo "=== moving combined CA certificate to Netskope data folder (requires sudo)..."
 	sudo mkdir -p "$NETSKOPE_DATA_DIR"
 	sudo cp "$TMPDIR/nscacert_combined.pem" "$NETSKOPE_DATA_DIR"
@@ -33,6 +36,12 @@ generate_combined_netskope_cert() {
 # Also set current user as a trusted user so they can add substituters/caches
 # And set the ssl cert file globally
 install_nix() {
+
+	# TODO: Check a suitable nix is installed, what are the reqs?
+	# Reqs:
+	# - root and admin are trusted users
+	# - nix has the ssl file which points to $NIX_FINAL_SSL_FILE
+
 	echo "=== installing nix (requires sudo)..."
 	# shellcheck disable=SC2086
 	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
@@ -52,17 +61,27 @@ install_nix() {
 }
 
 install_devbox() {
+	# TODO: Check devbox is installed
+	# QUESTION: Are there any requirements on version?
+	# - Must be stable?
+	# - Does 0.9 -> 0.10 complicate this?
 	echo "=== installing devbox..."
 	curl -fsSL https://get.jetpack.io/devbox | FORCE=1 bash
 	echo "=== devbox installed..."
 }
 
 add_current_user_to_admin_group() {
+	if id -Gn "$USER" | grep -q -w admin;
+	then
+		echo "=== user is already added to admin group, skipping step"
+	else
 	echo "=== add current user to admin group"
 	sudo dseditgroup -o edit -a "$(whoami)" -t user admin
+	fi
 }
 
 install_direnv() {
+	# TODO: Test direnv is installed (with nix?)
 	if command -v direnv >/dev/null 2>&1; then
 		echo "=== direnv is already installed, doing nothing"
 		DID_INSTALL_DIRENV=0
@@ -75,6 +94,8 @@ install_direnv() {
 }
 
 shell_integrations() {
+	# TODO: Based on shell, test inclusion of shell integration in rc file
+
 	DIRENV_BIN="$(command -v direnv)"
 	DIRENV_BIN="${DIRENV_BIN:-$HOME/.nix-profile/bin/direnv}"
 	shell=$(basename "$SHELL")
@@ -117,6 +138,7 @@ shell_integrations() {
 }
 
 install_nix_direnv() {
+	# TODO: Check nix-direnv installation, does a nix install run idempotently?
 	echo "=== installing nix-direnv..."
 	nix profile install nixpkgs#nix-direnv
 	echo "=== nix-direnv installed"
@@ -153,13 +175,13 @@ print_further_steps() {
 
 main() {
 	add_current_user_to_admin_group
-	generate_combined_netskope_cert
-	install_nix
-	install_devbox
-	install_direnv
-	shell_integrations
-	install_nix_direnv
-	print_further_steps
+	# generate_combined_netskope_cert
+	# install_nix
+	# install_devbox
+	# install_direnv
+	# shell_integrations
+	# install_nix_direnv
+	# print_further_steps
 }
 
 main
