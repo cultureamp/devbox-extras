@@ -61,14 +61,15 @@ install_nix() {
 
 	if command -v /nix/nix-installer > /dev/null && /nix/nix-installer self-test > /dev/null 2>&1; then
 		echo "=== ✅ nix is already installed, doing nothing"
-		pattern="ssl-cert-file = $NIX_FINAL_SSL_FILE"
-		if nix show-config | grep -qF "$pattern"; then
-			echo "=== ✅ nix ssl certificate pointing to correct path"
-		else
-			# TODO: Double check if we need to reboot
-			echo "=== nix ssl file pointing to incorrect path, path has been fixed, a reboot may be required"
-			launchctl setenv NIX_SSL_CERT_FILE "$NIX_FINAL_SSL_FILE"
-		fi
+		# TODO: I'm not sure this checks what I think it does
+		# pattern="ssl-cert-file = $NIX_FINAL_SSL_FILE"
+		# if nix show-config | grep -qF "$pattern"; then
+		# 	echo "=== ✅ nix ssl certificate pointing to correct path"
+		# else
+		# 	# TODO: Double check if we need to reboot
+		# 	echo "=== nix ssl file pointing to incorrect path, path has been fixed, a reboot may be required"
+		# 	launchctl setenv NIX_SSL_CERT_FILE "$NIX_FINAL_SSL_FILE"
+		# fi
 	else
 
 	echo "=== installing nix (requires sudo)..."
