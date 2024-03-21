@@ -98,12 +98,11 @@ add_current_user_to_admin_group() {
 install_direnv() {
 	if command -v direnv >/dev/null 2>&1; then
 		echo "=== direnv is already installed, doing nothing"
-		DID_INSTALL_DIRENV=0
+		DIDNT_INSTALL_DIRENV=0
 	else
 		echo "=== direnv is not installed, installing..."
 		nix profile install nixpkgs#direnv
 		echo "=== direnv installed"
-		DID_INSTALL_DIRENV=1
 	fi
 }
 
@@ -189,7 +188,7 @@ print_further_steps() {
 	echo "================================================================"
 	echo "Nix, direnv, and devbox have been installed and setup"
 
-	if [ "$DID_INSTALL_DIRENV" ]; then
+	if [ "$DIDNT_INSTALL_DIRENV"  ]; then
 		echo "You had direnv already installed, if you've already configured it you can skip the last step"
 	fi
 
