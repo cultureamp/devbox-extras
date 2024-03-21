@@ -9,6 +9,17 @@ NETSKOPE_DATA_DIR="/Library/Application Support/Netskope/STAgent/data"
 # This variable is set by docker in mock_functions.sh to provide the linux path rather than the typical MacOS path
 NIX_FINAL_SSL_FILE="${NIX_FINAL_SSL_FILE:-$NETSKOPE_DATA_DIR/nscacert_combined.pem}"
 
+verify_setup_conditions() {
+	if ! test -d "/Library/Application Support/Netskope";then
+		echo "=== It appears as if Netskope is not installed on your machine, please make a post in the community_devbox channel in slack"
+		exit 1		
+	fi
+	if command -v nix > /dev/null && ! test -e /nix/nix-installer; then
+		echo "=== It appears as if your nix was not installed with our preferred installer, please make a post in the community_devbox channel in slack"
+		exit 1
+	fi
+}
+
 # Copy create Netskope combined cert and save to known location recommended by their docs:
 # https://docs.netskope.com/en/netskope-help/data-security/netskope-secure-web-gateway/configuring-cli-based-tools-and-development-frameworks-to-work-with-netskope-ssl-interception/#mac-1
 generate_combined_netskope_cert() {
@@ -53,29 +64,36 @@ install_nix() {
 	# - root and admin are trusted users
 	# - nix has the ssl file which points to $NIX_FINAL_SSL_FILE
 
-	echo "=== installing nix (requires sudo)..."
-	# shellcheck disable=SC2086
-	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
-		# $INSTALLER_EXTRA_ARGS below is required by docker as default install expects systemd for a linux install
-		# That alone is able to be set by an env var in the docker environment,
-		# however we also have to provide 'linux' as an argument for the installing script
-		sh -s -- install $INSTALLER_EXTRA_ARGS --no-confirm \
-			--extra-conf "trusted-users = root @admin" \
-			--ssl-cert-file "$NIX_FINAL_SSL_FILE"
-	echo "=== nix installed..."
+	# NOTE: https://github.com/juspay/nix-browser/tree/main/crates/nix_health
+	# Could be useful
 
-	echo "=== sourcing nix daemon so we can use it in this script..."
-	export NIX_SSL_CERT_FILE="$NIX_FINAL_SSL_FILE"
-	# shellcheck source=/dev/null
-	. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
-	echo "=== nix daemon sourced..."
+	# TODO: Check nix-installer path exists
+	# TODO: Check self-test returns 0
+	if command -v /nix/nix-installer > /dev/null && /nix/nix-installer self-test > /dev/null 2>&1; then
+		echo "=== nix is already installed, doing nothing"
+	else
+	echo "=== installing nix (requires sudo)..."
+	# # shellcheck disable=SC2086
+	# curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
+	# 	# $INSTALLER_EXTRA_ARGS below is required by docker as default install expects systemd for a linux install
+	# 	# That alone is able to be set by an env var in the docker environment,
+	# 	# however we also have to provide 'linux' as an argument for the installing script
+	# 	sh -s -- install $INSTALLER_EXTRA_ARGS --no-confirm \
+	# 		--extra-conf "trusted-users = root @admin" \
+	# 		--ssl-cert-file "$NIX_FINAL_SSL_FILE"
+	# echo "=== nix installed..."
+	fi
+
+
+	# TODO: Check nix daemon sourced
+	# echo "=== sourcing nix daemon so we can use it in this script..."
+	# export NIX_SSL_CERT_FILE="$NIX_FINAL_SSL_FILE"
+	# # shellcheck source=/dev/null
+	# . /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
+	# echo "=== nix daemon sourced..."
 }
 
 install_devbox() {
-	# TODO: Check devbox is installed
-	# QUESTION: Are there any requirements on version?
-	# - Must be stable?
-	# - Does 0.9 -> 0.10 complicate this?
 	if command -v devbox version >/dev/null 2>&1; then
 		echo "=== devbox is already installed, doing nothing"
 	else
@@ -98,7 +116,7 @@ add_current_user_to_admin_group() {
 install_direnv() {
 	if command -v direnv >/dev/null 2>&1; then
 		echo "=== direnv is already installed, doing nothing"
-		DIDNT_INSTALL_DIRENV=0
+		DIDNT_INSTALL_DIRENV=1
 	else
 		echo "=== direnv is not installed, installing..."
 		nix profile install nixpkgs#direnv
@@ -142,15 +160,19 @@ set -gx DIRENV_BIN $DIRENV_BIN
 \$DIRENV_BIN hook fish | source
 set -gx NIX_SSL_CERT_FILE '$NETSKOPE_DATA_DIR/nscacert_combined.pem'"
 
-		echo "$integration_string" > /tmp/integration
-		if awk '/### Do not/,/set -gx NIX_SSL_CERT_FILE/' "$rcfile" 2>/dev/null | grep -q .; then
+		# Test for all four strings seperately
+		# Otherwise, try grep -z
+		# if awk '/### Do not/,/set -gx NIX_SSL_CERT_FILE/' "$rcfile" 2>/dev/null | grep -q .; then
+		if grep -zq "$integration_string" "$rcfile"; then
 			echo "=== fish shell integration already exists, doing nothing"
 		else
-			mkdir -p "$(dirname "$rcfile")"
-			printf "\n" >>"$rcfile"
-			cat <<-EOF >>"$rcfile"
-				$integration_string
-			EOF
+			# NOTE: any file here can be overwritten
+			echo "NAUGHTY PATH"
+			# mkdir -p "$(dirname "$rcfile")"
+			# printf "\n" >>"$rcfile"
+			# cat <<-EOF >>"$rcfile"
+			# 	$integration_string
+			# EOF
 		fi
 			;;
 	*)
@@ -200,14 +222,15 @@ print_further_steps() {
 }
 
 main() {
+	verify_setup_conditions
 	add_current_user_to_admin_group
 	generate_combined_netskope_cert
-	# install_nix
+	install_nix
 	install_devbox
 	install_direnv
 	shell_integrations
 	install_nix_direnv
-	# print_further_steps
+	print_further_steps
 }
 
 main
