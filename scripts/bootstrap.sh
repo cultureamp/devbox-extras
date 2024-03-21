@@ -23,13 +23,24 @@ generate_combined_netskope_cert() {
 		>"$TMPDIR/nscacert_combined.pem"
 	echo "=== combined CA certificate generated"
 
-	# TODO: Test if $NETSKOPE_DATA_DIR/nscacert_combined.pem is made and populated
-	# QUESTION: Can we test the validity? diff $> security ... & nscacert_combined.pem
+	if test -f "$NETSKOPE_DATA_DIR"/nscacert_combined.pem ; then
+		if diff -q "$NETSKOPE_DATA_DIR"/nscacert_combined.pem "$TMPDIR/nscacert_combined.pem";then 
+			echo "=== Netskope Cert is already placed, doing nothing"
+		else
+		CERT_NOT_MATCHING=1
+		fi
+	else
+	 CERT_NOT_MATCHING=1
+	fi
 
-	echo "=== moving combined CA certificate to Netskope data folder (requires sudo)..."
-	sudo mkdir -p "$NETSKOPE_DATA_DIR"
-	sudo cp "$TMPDIR/nscacert_combined.pem" "$NETSKOPE_DATA_DIR"
-	echo "=== moved combined CA certificate"
+	if [ -n "$CERT_NOT_MATCHING" ]; then
+		echo "=== moving combined CA certificate to Netskope data folder (requires sudo)..."
+		sudo mkdir -p "$NETSKOPE_DATA_DIR"
+		sudo cp "$TMPDIR/nscacert_combined.pem" "$NETSKOPE_DATA_DIR"
+		echo "=== moved combined CA certificate"
+	fi
+
+
 }
 
 # Install nix using the determinate systems installer because it has good defaults and an uninstall script
@@ -191,7 +202,7 @@ print_further_steps() {
 
 main() {
 	add_current_user_to_admin_group
-	# generate_combined_netskope_cert
+	generate_combined_netskope_cert
 	# install_nix
 	install_devbox
 	install_direnv
