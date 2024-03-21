@@ -36,7 +36,7 @@ generate_combined_netskope_cert() {
 
 	if test -f "$NETSKOPE_DATA_DIR"/nscacert_combined.pem ; then
 		if diff -q "$NETSKOPE_DATA_DIR"/nscacert_combined.pem "$TMPDIR/nscacert_combined.pem";then 
-			echo "=== Netskope certificate is already placed, doing nothing"
+			echo "=== ✅ Netskope certificate is already placed, doing nothing"
 		else
 		CERT_NOT_MATCHING=1
 		fi
@@ -60,10 +60,10 @@ generate_combined_netskope_cert() {
 install_nix() {
 
 	if command -v /nix/nix-installer > /dev/null && /nix/nix-installer self-test > /dev/null 2>&1; then
-		echo "=== nix is already installed, doing nothing"
+		echo "=== ✅ nix is already installed, doing nothing"
 		pattern="ssl-cert-file = $NIX_FINAL_SSL_FILE"
 		if nix show-config | grep -qF "$pattern"; then
-			echo "=== nix ssl certificate pointing to correct path"
+			echo "=== ✅ nix ssl certificate pointing to correct path"
 		else
 			# TODO: Double check if we need to reboot
 			echo "=== nix ssl file pointing to incorrect path, path has been fixed, a reboot may be required"
@@ -84,7 +84,7 @@ install_nix() {
 	fi
 
 	if pgrep -q nix-daemon;then 
-		echo "=== nix daemon running, doing nothing"
+		echo "=== ✅ nix daemon running, doing nothing"
 	else
 	echo "=== sourcing nix daemon so we can use it in this script..."
 	export NIX_SSL_CERT_FILE="$NIX_FINAL_SSL_FILE"
@@ -96,7 +96,7 @@ install_nix() {
 
 install_devbox() {
 	if command -v devbox version >/dev/null 2>&1; then
-		echo "=== devbox is already installed, doing nothing"
+		echo "=== ✅ devbox is already installed, doing nothing"
 	else
 		echo "=== installing devbox..."
 		curl -fsSL https://get.jetpack.io/devbox | FORCE=1 bash
@@ -107,7 +107,7 @@ install_devbox() {
 add_current_user_to_admin_group() {
 	if id -Gn "$USER" | grep -q -w admin;
 	then
-		echo "=== user is already added to admin group, doing nothing"
+		echo "=== ✅ user is already added to admin group, doing nothing"
 	else
 	echo "=== add current user to admin group"
 	sudo dseditgroup -o edit -a "$(whoami)" -t user admin
@@ -116,7 +116,7 @@ add_current_user_to_admin_group() {
 
 install_direnv() {
 	if command -v direnv >/dev/null 2>&1; then
-		echo "=== direnv is already installed, doing nothing"
+		echo "=== ✅ direnv is already installed, doing nothing"
 		DIDNT_INSTALL_DIRENV=1
 	else
 		echo "=== direnv is not installed, installing..."
@@ -165,7 +165,7 @@ set -gx NIX_SSL_CERT_FILE '$NETSKOPE_DATA_DIR/nscacert_combined.pem'"
 		# Otherwise, try grep -z
 		# if awk '/### Do not/,/set -gx NIX_SSL_CERT_FILE/' "$rcfile" 2>/dev/null | grep -q .; then
 		if grep -zq "$integration_string" "$rcfile"; then
-			echo "=== fish shell integration already exists, doing nothing"
+			echo "=== ✅ fish shell integration already exists, doing nothing"
 		else
 			# NOTE: any file here can be overwritten
 			# mkdir -p "$(dirname "$rcfile")"
@@ -185,7 +185,7 @@ set -gx NIX_SSL_CERT_FILE '$NETSKOPE_DATA_DIR/nscacert_combined.pem'"
 install_nix_direnv() {
 	# TODO: This is giving a broken pipe error ¯\_(ツ)_/¯
 	if nix profile list | grep -q -w nix-direnv; then
-		echo "=== nix-direnv already installed, doing nothing"
+		echo "=== ✅ nix-direnv already installed, doing nothing"
 	else
 		echo "=== installing nix-direnv..."
 		nix profile install nixpkgs#nix-direnv
