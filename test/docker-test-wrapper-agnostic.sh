@@ -3,6 +3,7 @@
 
 mkdir -p /tmp/test-metadata
 
+mkdir -p "/Library/Application Support/Netskope"
 export TMPDIR="/tmp"
 export INSTALLER_EXTRA_ARGS="linux --init none"
 export NIX_FINAL_SSL_FILE="/etc/ssl/certs/ca-certificates.crt"
