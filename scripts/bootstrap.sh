@@ -213,7 +213,7 @@ main() {
 	install_nix
 	install_devbox
 	install_direnv
-	# shell_integrations
+	shell_integrations
 	install_nix_direnv
 	print_further_steps
 }
