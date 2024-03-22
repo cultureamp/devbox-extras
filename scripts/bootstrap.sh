@@ -126,8 +126,6 @@ install_direnv() {
 }
 
 shell_integrations() {
-	# TODO: Based on shell, test inclusion of shell integration in rc file
-
 	DIRENV_BIN="$(command -v direnv)"
 	DIRENV_BIN="${DIRENV_BIN:-$HOME/.nix-profile/bin/direnv}"
 	shell=$(basename "$SHELL")
