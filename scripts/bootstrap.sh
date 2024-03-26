@@ -9,10 +9,21 @@ NETSKOPE_DATA_DIR="/Library/Application Support/Netskope/STAgent/data"
 # This variable is set by docker in mock_functions.sh to provide the linux path rather than the typical MacOS path
 NIX_FINAL_SSL_FILE="${NIX_FINAL_SSL_FILE:-$NETSKOPE_DATA_DIR/nscacert_combined.pem}"
 
+verify_setup_conditions() {
+	if ! test -d "/Library/Application Support/Netskope";then
+		echo "=== ❌ It appears as if Netskope is not installed on your machine, please make a post in the community_devbox channel in slack"
+		exit 1		
+	fi
+	if command -v nix > /dev/null && ! test -e /nix/nix-installer; then
+		echo "=== ❌ It appears as if your nix was not installed with our preferred installer, please make a post in the community_devbox channel in slack"
+		exit 1
+	fi
+}
+
 # Copy create Netskope combined cert and save to known location recommended by their docs:
 # https://docs.netskope.com/en/netskope-help/data-security/netskope-secure-web-gateway/configuring-cli-based-tools-and-development-frameworks-to-work-with-netskope-ssl-interception/#mac-1
 generate_combined_netskope_cert() {
-	echo "=== generating combined CA certificate from system keychain..."
+	echo "=== 🔐 generating combined CA certificate from system keychain..."
 	if [ "$TMPDIR" = "" ]; then
 		TMPDIR=$(getconf DARWIN_USER_TEMP_DIR)
 	fi
@@ -21,18 +32,45 @@ generate_combined_netskope_cert() {
 		/System/Library/Keychains/SystemRootCertificates.keychain \
 		/Library/Keychains/System.keychain \
 		>"$TMPDIR/nscacert_combined.pem"
-	echo "=== combined CA certificate generated"
+	echo "=== 🔐 combined CA certificate generated"
 
-	echo "=== moving combined CA certificate to Netskope data folder (requires sudo)..."
-	sudo mkdir -p "$NETSKOPE_DATA_DIR"
-	sudo cp "$TMPDIR/nscacert_combined.pem" "$NETSKOPE_DATA_DIR"
-	echo "=== moved combined CA certificate"
+	if test -f "$NETSKOPE_DATA_DIR"/nscacert_combined.pem ; then
+		if diff -q "$NETSKOPE_DATA_DIR"/nscacert_combined.pem "$TMPDIR/nscacert_combined.pem";then 
+			echo "=== ✅ Netskope certificate is already placed, doing nothing"
+		else
+		CERT_NOT_MATCHING=1
+		fi
+	else
+	 CERT_NOT_MATCHING=1
+	fi
+
+	if [ -n "$CERT_NOT_MATCHING" ]; then
+		echo "=== moving combined CA certificate to Netskope data folder (requires sudo)..."
+		sudo mkdir -p "$NETSKOPE_DATA_DIR"
+		sudo cp "$TMPDIR/nscacert_combined.pem" "$NETSKOPE_DATA_DIR"
+		echo "=== moved combined CA certificate"
+	fi
+
+
 }
 
 # Install nix using the determinate systems installer because it has good defaults and an uninstall script
 # Also set current user as a trusted user so they can add substituters/caches
 # And set the ssl cert file globally
 install_nix() {
+
+	if command -v /nix/nix-installer > /dev/null && /nix/nix-installer self-test > /dev/null 2>&1; then
+		echo "=== ✅ nix is already installed, checking ssl certificate"
+		pattern="ssl-cert-file = $NIX_FINAL_SSL_FILE"
+
+		if nix show-config | grep -qF "$pattern"; then
+			echo "=== ✅ nix ssl certificate pointing to correct path"
+		else
+			echo "=== ❌ nix ssl is not correctly configured, please make a post in the community_devbox channel in slack"
+			exit 1
+		fi
+	else
+
 	echo "=== installing nix (requires sudo)..."
 	# shellcheck disable=SC2086
 	curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix |
@@ -43,6 +81,7 @@ install_nix() {
 			--extra-conf "trusted-users = root @admin" \
 			--ssl-cert-file "$NIX_FINAL_SSL_FILE"
 	echo "=== nix installed..."
+	fi
 
 	echo "=== sourcing nix daemon so we can use it in this script..."
 	export NIX_SSL_CERT_FILE="$NIX_FINAL_SSL_FILE"
@@ -52,25 +91,33 @@ install_nix() {
 }
 
 install_devbox() {
-	echo "=== installing devbox..."
-	curl -fsSL https://get.jetpack.io/devbox | FORCE=1 bash
-	echo "=== devbox installed..."
+	if command -v devbox version >/dev/null 2>&1; then
+		echo "=== ✅ devbox is already installed, doing nothing"
+	else
+		echo "=== installing devbox..."
+		curl -fsSL https://get.jetpack.io/devbox | FORCE=1 bash
+		echo "=== devbox installed..."
+	fi
 }
 
 add_current_user_to_admin_group() {
+	if id -Gn "$USER" | grep -q -w admin;
+	then
+		echo "=== ✅ user is already added to admin group, doing nothing"
+	else
 	echo "=== add current user to admin group"
 	sudo dseditgroup -o edit -a "$(whoami)" -t user admin
+	fi
 }
 
 install_direnv() {
 	if command -v direnv >/dev/null 2>&1; then
-		echo "=== direnv is already installed, doing nothing"
-		DID_INSTALL_DIRENV=0
+		echo "=== ✅ direnv is already installed, doing nothing"
+		DIDNT_INSTALL_DIRENV=1
 	else
 		echo "=== direnv is not installed, installing..."
 		nix profile install nixpkgs#direnv
 		echo "=== direnv installed"
-		DID_INSTALL_DIRENV=1
 	fi
 }
 
@@ -117,21 +164,25 @@ shell_integrations() {
 }
 
 install_nix_direnv() {
-	echo "=== installing nix-direnv..."
-	nix profile install nixpkgs#nix-direnv
-	echo "=== nix-direnv installed"
-
-	if [ ! -e "$HOME/.config/direnv/direnvrc" ]; then
-		echo "=== direnvrc doesn't exist, creating it with config"
-		mkdir -p "$HOME/.config/direnv"
-		echo "source \$HOME/.nix-profile/share/nix-direnv/direnvrc" >"$HOME/.config/direnv/direnvrc"
+	if nix profile list | grep -w nix-direnv >/dev/null; then
+		echo "=== ✅ nix-direnv already installed, doing nothing"
 	else
-		if grep -q "^source.*\/nix-direnv\/direnvrc$" "$HOME/.config/direnv/direnvrc"; then
-			echo "=== direnvrc exists and is configured to use nix-direnv, doing nothing"
+		echo "=== installing nix-direnv..."
+		nix profile install nixpkgs#nix-direnv
+		echo "=== nix-direnv installed"
+
+		if [ ! -e "$HOME/.config/direnv/direnvrc" ]; then
+			echo "=== direnvrc doesn't exist, creating it with config"
+			mkdir -p "$HOME/.config/direnv"
+			echo "source \$HOME/.nix-profile/share/nix-direnv/direnvrc" >"$HOME/.config/direnv/direnvrc"
 		else
-			echo "=== direnvrc exists but is not configured to use nix-direnv, updating..."
-			echo "source $HOME/.nix-profile/share/nix-direnv/direnvrc" >>"$HOME/.config/direnv/direnvrc"
-			echo "=== direnvrc updated to use nix-direnv"
+			if grep -q "^source.*\/nix-direnv\/direnvrc$" "$HOME/.config/direnv/direnvrc"; then
+				echo "=== direnvrc exists and is configured to use nix-direnv, doing nothing"
+			else
+				echo "=== direnvrc exists but is not configured to use nix-direnv, updating..."
+				echo "source $HOME/.nix-profile/share/nix-direnv/direnvrc" >>"$HOME/.config/direnv/direnvrc"
+				echo "=== direnvrc updated to use nix-direnv"
+			fi
 		fi
 	fi
 }
@@ -140,7 +191,7 @@ print_further_steps() {
 	echo "================================================================"
 	echo "Nix, direnv, and devbox have been installed and setup"
 
-	if [ "$DID_INSTALL_DIRENV" ]; then
+	if [ "$DIDNT_INSTALL_DIRENV"  ]; then
 		echo "You had direnv already installed, if you've already configured it you can skip the last step"
 	fi
 
@@ -152,6 +203,7 @@ print_further_steps() {
 }
 
 main() {
+	verify_setup_conditions
 	add_current_user_to_admin_group
 	generate_combined_netskope_cert
 	install_nix
