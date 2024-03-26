@@ -83,15 +83,11 @@ install_nix() {
 	echo "=== nix installed..."
 	fi
 
-	if pgrep -q nix-daemon;then 
-		echo "=== ✅ nix daemon running, doing nothing"
-	else
 	echo "=== sourcing nix daemon so we can use it in this script..."
 	export NIX_SSL_CERT_FILE="$NIX_FINAL_SSL_FILE"
 	# shellcheck source=/dev/null
 	. /nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh
 	echo "=== nix daemon sourced..."
-	fi
 }
 
 install_devbox() {
