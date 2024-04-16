@@ -1,12 +1,13 @@
 {
   "name": "corepack",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "readme": "README.md",
   "env": {
     "PATH": "{{ .Virtenv }}/corepack-bin/:$PATH"
   },
   "shell": {
     "init_hook": [
+      "echo WARNING: corepack plugin is built into devbox since v0.10 and can be removed from devbox.json",
       "mkdir -p {{ .Virtenv }}/corepack-bin",
       "corepack enable --install-directory \"{{ .Virtenv }}/corepack-bin/\""
     ]

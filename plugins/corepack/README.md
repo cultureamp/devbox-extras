@@ -1,3 +1,7 @@
+> [!WARNING]
+> This plugin is built into devbox since v0.10 and should not be included from this repo anymore.
+> [see devbox docs for usage](https://www.jetify.com/devbox/docs/devbox_examples/languages/nodejs/#adding-yarn-npm-or-pnpm-as-your-node-package-manager)
+
 # Corepack plugin
 
 This plugin sets up [Corepack](https://github.com/nodejs/corepack/), a NodeJS feature to automatically install the correct version of Yarn or PNPM.
