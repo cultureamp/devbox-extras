@@ -7,7 +7,7 @@
   },
   "shell": {
     "init_hook": [
-      "echo WARNING: corepack plugin is built into devbox since v0.10 and can be removed from devbox.json",
+      "echo WARNING: corepack plugin is built into devbox since v0.10 and can be removed from devbox.json and replaced with the env var DEVBOX_COREPACK_ENABLED=1",
       "mkdir -p {{ .Virtenv }}/corepack-bin",
       "corepack enable --install-directory \"{{ .Virtenv }}/corepack-bin/\""
     ]
