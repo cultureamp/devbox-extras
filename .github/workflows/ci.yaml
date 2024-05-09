@@ -40,7 +40,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Authenticate to gh
-        run: echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
       - name: Run bootstrap
         run: ./scripts/bootstrap.sh
   check-linting-and-formatting:
