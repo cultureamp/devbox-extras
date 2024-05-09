@@ -33,16 +33,16 @@ jobs:
         run: docker build -t bootstrap-script-test-fish -f ./bootstrap-test.Dockerfile . --build-arg SHELL_VAR=fish
       - name: Run bats-fish test via devbox
         run: docker run bootstrap-script-test-fish bats test/bootstrap-agnostic.bats test/bootstrap-fish.bats
-  macos-tests:
+  macos-test:
     name: macos-zsh-integration
     runs-on: macos-14
     steps:
       - name: Check out code
         uses: actions/checkout@v3
-      - name: Run tests
+      - name: Authenticate to gh
+        run: echo ${{ secrets.GITHUB_TOKEN }} | gh auth login --with-token
+      - name: Run bootstrap
         run: ./scripts/bootstrap.sh
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   check-linting-and-formatting:
     runs-on: ubuntu-latest
     steps:
