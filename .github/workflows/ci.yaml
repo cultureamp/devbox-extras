@@ -42,7 +42,7 @@ jobs:
       - name: Run bootstrap
         run: |
           security add-generic-password -s github-api -a macos-runner -w "${{ secrets.GITHUB_TOKEN }}"
-          security find-generic-password -s github-api -a macos-runner -w | gh auth login --with-token
+          security find-generic-password -s github-api -a macos-runner -w ^| gh auth login --with-token
           ./scripts/bootstrap.sh
   check-linting-and-formatting:
     runs-on: ubuntu-latest
