@@ -39,13 +39,15 @@ jobs:
     steps:
       - name: Check out code
         uses: actions/checkout@v3
+      - name: Set generic password
+        uses: security add-generic-password -s github-api -a macos-runner -w "foobarbaz"
+      - name: Get generic password
+        uses: security find-generic-password -s github-api -a macos-runner -w
       - name: Authenticate to gh
         run: echo "${{ secrets.GITHUB_TOKEN }}" | gh auth login --with-token
       - name: Run bootstrap
-        run: |
-          security add-generic-password -s github-api -a macos-runner -w "${{ secrets.GITHUB_TOKEN }}"
-          security find-generic-password -s github-api -a macos-runner -w ^| gh auth login --with-token
-          ./scripts/bootstrap.sh
+        run: ./scripts/bootstrap.sh
+
   check-linting-and-formatting:
     runs-on: ubuntu-latest
     steps:
