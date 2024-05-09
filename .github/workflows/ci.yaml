@@ -40,7 +40,7 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v3
       - name: Run bootstrap
-        run:
+        run: |
           security add-generic-password -s github-api -a macos-runner -w "${{ secrets.GITHUB_TOKEN }}"
           security find-generic-password -s github-api -a macos-runner -w | gh auth login --with-token
           ./scripts/bootstrap.sh
