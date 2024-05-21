@@ -2,7 +2,7 @@
   "name": "pnpm-fish-shell-completion",
   "version": "0.0.1",
   "description": "Provides tab completion for the fish shell",
-  "packages": ["pnpm-shell-completion@latest"],
+  "packages": ["pnpm-shell-completion@0.5.4"],
   "shell": {
     "init_hook": "set -ax fish_complete_path {{ .Virtenv }}"
   },
