@@ -2,13 +2,13 @@
 
 set -e
 
-hotel_bin_path="${XDG_DATA_DIR:-$HOME/.local/share}/hotel/bin/hotel"
+hotel_bin_path="${XDG_DATA_DIR:-$HOME/.local/share}/hotel/bin/"
 hotel_tarball_name="hotel_$(uname)_$(uname -m).tar.gz"
 
 # {{{ secrets
 service_name="com.cultureamp.hotel"
 account_name="github"
-hotel_secrets_path="${XDG_DATA_DIR:-$HOME/.local/share}/hotel/secrets"
+hotel_secrets_path="${XDG_DATA_DIR:-$HOME/.local/share}/hotel/secrets/"
 
 store_github_token() {
   new_password="$1"
@@ -81,15 +81,6 @@ get_and_store_github_key() {
   echo "$PASSWORD"
 }
 
-install_launcher() {
-  TMPDIR=$(mktemp -d)
-  launcher_url="https://raw.githubusercontent.com/cultureamp/devbox-extras/new-bootstrap/scripts/launcher.sh" # FIXME point to main branch before merging
-  curl "$launcher_url" >"$TMPDIR/hotel"
-  chmod +x "$TMPDIR/hotel"
-  >&2 echo "==installing hotel, this will require a sudo password=="
-  sudo mv "$TMPDIR/hotel" "/usr/local/bin/"
-}
-
 download_latest_hotel() {
   github_token="$1"
   if [ -z "$github_token" ]; then
@@ -121,17 +112,19 @@ download_latest_hotel() {
 }
 
 install_hotel() {
+  >&2 echo "==installing hotel, this will ask for a sudo password=="
   INITIAL_DIR="$PWD"
   TMPDIR=$(mktemp -d)
   download_latest_hotel "$1"
+  mkdir -p "$hotel_bin_path"
   mv hotel "$hotel_bin_path"
   cd "$INITIAL_DIR"
   rm -rf "$TMPDIR"
+  sudo "$hotel_bin_path/hotel" setup launcher
 }
 
 main() {
   github_token=$(get_and_store_github_key)
-  install_launcher
   install_hotel "$github_token"
 }
 
