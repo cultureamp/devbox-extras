@@ -28,8 +28,8 @@ store_github_token() {
 
 retrieve_github_token() {
   if [ "$(uname)" = "Darwin" ]; then
-    security find-generic-password -s "$service_name" -a "$account_name" -w 2>/dev/null
-    return $?
+    token_result=$(security find-generic-password -s "$service_name" -a "$account_name" -w 2>/dev/null) || return 1
+    echo "$token_result"
   else
     if [ -f "$hotel_secrets_path/$account_name" ]; then
       cat "$hotel_secrets_path/$account_name"
@@ -55,8 +55,10 @@ is_github_token_valid() {
 # }}}
 
 get_and_store_github_key() {
+  set +e
   existing_token=$(retrieve_github_token)
   find_token_result=$?
+  set -e
   if [ $find_token_result -eq 0 ] && is_github_token_valid "$existing_token"; then
     # if token exists and is valid we can successfully exit this function
     echo "$existing_token"
