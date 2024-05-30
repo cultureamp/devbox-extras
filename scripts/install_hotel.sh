@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/bin/sh
 
 set -e
 
@@ -71,7 +71,7 @@ get_and_store_github_key() {
   >&2 echo
   # no token found, ask user
   printf "Github token: "
-  read -s -r PASSWORD
+  /usr/bin/read -s -r PASSWORD # TODO does this work on linux?
   if ! is_github_token_valid "$PASSWORD"; then
     >&2 echo "=> provided token not valid"
     exit 1
