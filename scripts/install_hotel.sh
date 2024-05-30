@@ -1,4 +1,4 @@
-#! /bin/sh
+#!/usr/bin/env bash
 
 set -e
 
@@ -68,10 +68,8 @@ get_and_store_github_key() {
   echo "    https://github.com/settings/tokens/new?scopes=repo "
   echo
   # no token found, ask user
-  stty -echo
   printf "Github token: "
-  read -r PASSWORD
-  stty echo
+  read -s -r PASSWORD
   if ! is_github_token_valid "$PASSWORD"; then
     echo "=> provided token not valid"
     exit 1
