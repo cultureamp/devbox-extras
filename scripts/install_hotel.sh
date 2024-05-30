@@ -28,7 +28,7 @@ store_github_token() {
 
 retrieve_github_token() {
   if [ "$(uname)" = "Darwin" ]; then
-    security find-generic-password -s "$service_name" -a "$account_name" 2>/dev/null
+    security find-generic-password -s "$service_name" -a "$account_name" -w 2>/dev/null
     return $?
   else
     if [ -f "$hotel_secrets_path/$account_name" ]; then
