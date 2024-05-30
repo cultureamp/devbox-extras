@@ -44,11 +44,11 @@ is_github_token_valid() {
     grep '^x-oauth-scopes: ' |
     sed 's/^x-oauth-scopes: //')
   if [ "$scopes" = "" ]; then
-    echo "token not valid"
+    >&2 echo "token not valid"
     return 1
   fi
   if ! echo "$scopes" | grep "repo" >/dev/null 2>&1; then
-    echo "token does not have the 'repo' scope"
+    >&2 echo "token does not have the 'repo' scope"
     return 1
   fi
 }
@@ -62,19 +62,19 @@ get_and_store_github_key() {
     echo "$existing_token"
     return 0
   fi
-  echo
-  echo "we need a github key to download hotel, and for hotel to use to pull git repos, it will be stored in the system keychain"
-  echo "you can get this from:"
-  echo "    https://github.com/settings/tokens/new?scopes=repo "
-  echo
+  >&2 echo
+  >&2 echo "we need a github key to download hotel, and for hotel to use to pull git repos, it will be stored in the system keychain"
+  >&2 echo "you can get this from:"
+  >&2 echo "    https://github.com/settings/tokens/new?scopes=repo "
+  >&2 echo
   # no token found, ask user
   printf "Github token: "
   read -s -r PASSWORD
   if ! is_github_token_valid "$PASSWORD"; then
-    echo "=> provided token not valid"
+    >&2 echo "=> provided token not valid"
     exit 1
   fi
-  echo "=> provided token okay"
+  >&2 echo "=> provided token okay"
   store_github_token "$PASSWORD"
   echo "$PASSWORD"
 }
@@ -84,14 +84,14 @@ install_launcher() {
   launcher_url="https://raw.githubusercontent.com/cultureamp/devbox-extras/new-bootstrap/scripts/launcher.sh" # FIXME point to main branch before merging
   curl "$launcher_url" >"$TMPDIR/hotel"
   chmod +x "$TMPDIR/hotel"
-  echo "==installing hotel, this will require a sudo password=="
+  >&2 echo "==installing hotel, this will require a sudo password=="
   sudo mv "$TMPDIR/hotel" "/usr/local/bin/"
 }
 
 download_latest_hotel() {
   github_token="$1"
   if [ -z "$github_token" ]; then
-    echo "github_token missing"
+    >&2 echo "github_token missing"
     exit 1
   fi
 
