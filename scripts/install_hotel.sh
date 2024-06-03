@@ -129,6 +129,7 @@ install_hotel() {
   log "=> installing hotel, this will ask for a sudo password"
   INITIAL_DIR="$PWD"
   TMPDIR=$(mktemp -d)
+  cd "$TMPDIR"
   download_latest_hotel "$1"
   mkdir -p "$hotel_bin_path"
   mv hotel "$hotel_bin_path"
