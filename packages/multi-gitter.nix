@@ -6,7 +6,7 @@ let
   installPhase = ''
     runHook preInstall
     mkdir -p $out/bin
-    cp bin/multi-gitter $out/bin/multi-gitter
+    cp multi-gitter $out/bin/multi-gitter
     runHook postInstall
   '';
   dontStrip = true;
@@ -25,7 +25,6 @@ if system == "x86_64-darwin" then
     src = fetchzip {
       url = "https://github.com/lindell/multi-gitter/releases/download/v${version}/multi-gitter_${version}_Darwin_ARM64.tar.gz";
       hash = "sha256-DkqcQrz0PLjb21skaks6BrdLyxEymhmkdH8vFNrGJqQ=";
-      stripRoot = false;
     };
   }
 
@@ -37,7 +36,6 @@ else if system == "aarch64-darwin" then
     src = fetchzip {
       url = "https://github.com/lindell/multi-gitter/releases/download/v${version}/multi-gitter_${version}_Darwin_x86_64.tar.gz";
       hash = "sha256-k+vngTWJZ/ySiDWPVWBZdoGnaKyUMffY2au6WGYClLQ=";
-      stripRoot = false;
     };
   }
 
