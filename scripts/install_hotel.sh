@@ -2,15 +2,18 @@
 
 set -e
 
-# TODO write setup logs/receipt
-
-hotel_bin_path="${XDG_DATA_DIR:-$HOME/.local/share}/hotel/bin/"
+hotel_bin_path="${XDG_DATA_DIR:-$HOME/.local/share}/hotel/bin"
 hotel_tarball_name="hotel_$(uname)_$(uname -m).tar.gz"
+
+receipt_log_dir="$HOME/hotel/receipts"
+receipt_log_file="$receipt_log_dir/hotel-install-$(date -Iseconds).txt"
+mkdir -p "$receipt_log_dir"
 
 # this file does a log of echo-ing strings for use by calling function, logs
 # intended for the user should always go to stderr - this function makes it easier
 log() {
   >&2 echo "$@"
+  echo "$@" >>"$receipt_log_file"
 }
 
 # {{{ secrets
