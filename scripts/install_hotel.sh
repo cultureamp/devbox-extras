@@ -79,8 +79,9 @@ get_and_store_github_key() {
     return 0
   fi
   log ""
-  log "we need a github key to download hotel, and for hotel to use to pull git repos, it will be stored in the system keychain"
-  log "you can get this from:"
+  log "We need a github key to download hotel, and for hotel to use to pull git repos"
+  log "It will be stored in the system keychain"
+  log "You can get this from:"
   log "    https://github.com/settings/tokens/new?scopes=repo "
   log ""
   # no token found, ask user
