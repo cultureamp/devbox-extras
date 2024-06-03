@@ -2,8 +2,16 @@
 
 set -e
 
+# TODO write setup logs/receipt
+
 hotel_bin_path="${XDG_DATA_DIR:-$HOME/.local/share}/hotel/bin/"
 hotel_tarball_name="hotel_$(uname)_$(uname -m).tar.gz"
+
+# this file does a log of echo-ing strings for use by calling function, logs
+# intended for the user should always go to stderr - this function makes it easier
+log() {
+  >&2 echo "$@"
+}
 
 # {{{ secrets
 service_name="com.cultureamp.hotel"
@@ -44,11 +52,11 @@ is_github_token_valid() {
     grep '^x-oauth-scopes: ' |
     sed 's/^x-oauth-scopes: //')
   if [ "$scopes" = "" ]; then
-    >&2 echo "token not valid"
+    log "token not valid"
     return 1
   fi
   if ! echo "$scopes" | grep "repo" >/dev/null 2>&1; then
-    >&2 echo "token does not have the 'repo' scope"
+    log "token does not have the 'repo' scope"
     return 1
   fi
 }
@@ -64,19 +72,19 @@ get_and_store_github_key() {
     echo "$existing_token"
     return 0
   fi
-  >&2 echo
-  >&2 echo "we need a github key to download hotel, and for hotel to use to pull git repos, it will be stored in the system keychain"
-  >&2 echo "you can get this from:"
-  >&2 echo "    https://github.com/settings/tokens/new?scopes=repo "
-  >&2 echo
+  log ""
+  log "we need a github key to download hotel, and for hotel to use to pull git repos, it will be stored in the system keychain"
+  log "you can get this from:"
+  log "    https://github.com/settings/tokens/new?scopes=repo "
+  log ""
   # no token found, ask user
   printf "Github token: "
   /usr/bin/read -s -r PASSWORD # TODO does this work on linux?
   if ! is_github_token_valid "$PASSWORD"; then
-    >&2 echo "=> provided token not valid"
+    log "=> provided token not valid"
     exit 1
   fi
-  >&2 echo "=> provided token okay"
+  log "=> provided token okay"
   store_github_token "$PASSWORD"
   echo "$PASSWORD"
 }
@@ -84,7 +92,7 @@ get_and_store_github_key() {
 download_latest_hotel() {
   github_token="$1"
   if [ -z "$github_token" ]; then
-    >&2 echo "github_token missing"
+    log "github_token missing"
     exit 1
   fi
 
@@ -112,7 +120,7 @@ download_latest_hotel() {
 }
 
 install_hotel() {
-  >&2 echo "==installing hotel, this will ask for a sudo password=="
+  log "==installing hotel, this will ask for a sudo password=="
   INITIAL_DIR="$PWD"
   TMPDIR=$(mktemp -d)
   download_latest_hotel "$1"
