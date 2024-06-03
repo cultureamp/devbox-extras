@@ -41,10 +41,13 @@ retrieve_github_token() {
   if [ "$(uname)" = "Darwin" ]; then
     token_result=$(security find-generic-password -s "$service_name" -a "$account_name" -w 2>/dev/null) || return 1
     echo "$token_result"
+    log "found github token in macOS keyring"
   else
     if [ -f "$hotel_secrets_path/$account_name" ]; then
       cat "$hotel_secrets_path/$account_name"
+      log "found github token in $hotel_secrets_path/$account_name"
     else
+      log "no github token found: $hotel_secrets_path/$account_name does not exist"
       return 1
     fi
   fi
@@ -123,7 +126,7 @@ download_latest_hotel() {
 }
 
 install_hotel() {
-  log "==installing hotel, this will ask for a sudo password=="
+  log "=> installing hotel, this will ask for a sudo password"
   INITIAL_DIR="$PWD"
   TMPDIR=$(mktemp -d)
   download_latest_hotel "$1"
