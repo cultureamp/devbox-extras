@@ -81,7 +81,7 @@ get_and_store_github_key() {
   log "    https://github.com/settings/tokens/new?scopes=repo "
   log ""
   # no token found, ask user
-  printf "Github token: "
+  >&2 printf "Github token: "
   /usr/bin/read -s -r PASSWORD # TODO does this work on linux?
   if ! is_github_token_valid "$PASSWORD"; then
     log "=> provided token not valid"
