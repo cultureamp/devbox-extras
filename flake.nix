@@ -20,6 +20,7 @@
           mongodb-6_0 = pkgs.callPackage ./packages/mongodb-6_0.nix { };
           dynamodb_local = pkgs.callPackage ./packages/dynamodb_local.nix { };
           adr-tools = pkgs.callPackage ./packages/adr-tools.nix { };
+          multi-gitter = pkgs.callPackage ./packages/multi-gitter.nix { };
         };
       });
 }
