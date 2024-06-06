@@ -54,22 +54,12 @@ retrieve_github_token() {
   fi
 }
 
-is_github_token_valid() {
-  return 0
-  # standard tokens use the x-oauth-scopes header to return scopes but
-  # fine-grained tokens don't seem to have a way to query permissions so we
-  # just get current user to verify the token is valid, not that it's scope is
-  # correct
-  curl -L --fail -silent -u "_:$1" "https://api.github.com/user"
-  return $?
-}
-
 get_and_store_github_key() {
   set +e
   existing_token=$(retrieve_github_token)
   find_token_result=$?
   set -e
-  if [ $find_token_result -eq 0 ] && is_github_token_valid "$existing_token"; then
+  if [ $find_token_result -eq 0 ]; then
     # if token exists and is valid we can successfully exit this function
     echo "$existing_token"
     return 0
@@ -89,11 +79,6 @@ get_and_store_github_key() {
     read -s -r -p "Github token: " github_token
   fi
 
-  if ! is_github_token_valid "$github_token"; then
-    log "=> provided token not valid"
-    exit 1
-  fi
-  log "=> provided token okay"
   store_github_token "$github_token"
   echo "$github_token"
 }
@@ -108,25 +93,25 @@ download_latest_hotel() {
   # we can't get the specific release we want without a json parsing tool, so we get all
   # download links and download until we find the one matching the system's arch and os
   releases_json="$(curl --fail -sL -u "_:$github_token" https://api.github.com/repos/cultureamp/hotel/releases/latest)"
-  >&2 echo "DEBUGPRINT[7]: install_hotel.sh:109: releases_json=${releases_json}"
+  get_releases_result="$?"
+  if [ $get_releases_result -ne 0 ]; then
+    echo "github token invalid"
+    exit 1
+  fi
   release_asset_urls=$(echo "$releases_json" |
     grep '"url": ".*/releases/assets/.*"' |
     cut -d\" -f4)
-  >&2 echo "DEBUGPRINT[8]: install_hotel.sh:111: release_asset_urls=${release_asset_urls}"
 
   for url in $release_asset_urls; do
-    >&2 echo "DEBUGPRINT[9]: install_hotel.sh:116: url=${url}"
     # the only way to get a release's file name is to download it and write-out the filename
     downloaded_file=$(curl -sL "$url" \
       -u "_:$github_token" \
       --remote-header-name --remote-name \
       --write-out "%{filename_effective}" \
       --header "Accept: application/octet-stream")
-      >&2 echo "DEBUGPRINT[10]: install_hotel.sh:119: downloaded_file=${downloaded_file}"
 
     if [ "$downloaded_file" = "$hotel_tarball_name" ]; then
       tar -xzf "$downloaded_file"
-      >&2 echo "DEBUGPRINT[11]: install_hotel.sh:127: downloaded_file=${downloaded_file}"
       return
     else
       rm "$downloaded_file"
