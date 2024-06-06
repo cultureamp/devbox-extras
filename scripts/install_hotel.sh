@@ -33,38 +33,10 @@ store_github_token() {
     # also it's difficult to setup a keyring in a linux container (https://unix.stackexchange.com/a/548005)
     mkdir -p "$hotel_secrets_path"
     echo "$new_password" >"$hotel_secrets_path/$account_name"
-    echo "wrote to $hotel_secrets_path/$account_name"
-    ls "$hotel_secrets_path"
-  fi
-}
-
-retrieve_github_token() {
-  if [ "$(uname)" = "Darwin" ]; then
-    token_result=$(security find-generic-password -s "$service_name" -a "$account_name" -w 2>/dev/null) || return 1
-    echo "$token_result"
-    log "found github token in macOS keyring"
-  else
-    if [ -f "$hotel_secrets_path/$account_name" ]; then
-      cat "$hotel_secrets_path/$account_name"
-      log "found github token in $hotel_secrets_path/$account_name"
-    else
-      log "no github token found: $hotel_secrets_path/$account_name does not exist"
-      return 1
-    fi
   fi
 }
 
 get_and_store_github_key() {
-  set +e
-  existing_token=$(retrieve_github_token)
-  find_token_result=$?
-  set -e
-  if [ $find_token_result -eq 0 ]; then
-    # if token exists and is valid we can successfully exit this function
-    echo "$existing_token"
-    return 0
-  fi
-
   if [ -n "$HOTEL_INSTALLER_GITHUB_TOKEN" ]; then
     # github_token can be provided as env var (used in scripts to avoid prompt)
     github_token="$HOTEL_INSTALLER_GITHUB_TOKEN"
