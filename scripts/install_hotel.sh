@@ -79,7 +79,7 @@ get_and_store_github_key() {
     return 0
   fi
 
-  if [ -z "$HOTEL_INSTALLER_GITHUB_TOKEN" ]; then
+  if [ -n "$HOTEL_INSTALLER_GITHUB_TOKEN" ]; then
     # github_token can be provided as env var (used in scripts to avoid prompt)
     github_token="$HOTEL_INSTALLER_GITHUB_TOKEN"
   else
