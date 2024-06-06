@@ -112,6 +112,7 @@ download_latest_hotel() {
 
   # we can't get the specific release we want without a json parsing tool, so we get all
   # download links and download until we find the one matching the system's arch and os
+  >&2 curl -sL -u "_:$github_token" https://api.github.com/repos/cultureamp/hotel/releases/latest
   release_asset_urls=$(curl -sL -u "_:$github_token" https://api.github.com/repos/cultureamp/hotel/releases/latest |
     grep '"url": ".*/releases/assets/.*"' |
     cut -d\" -f4)
