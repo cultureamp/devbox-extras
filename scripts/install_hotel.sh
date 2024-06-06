@@ -53,8 +53,9 @@ retrieve_github_token() {
   fi
 }
 
+
 is_github_token_valid() {
-  return 0
+  return 0 # TEMP
   scopes=$(curl -sLI -u "_:$1" "https://api.github.com/user" |
     grep '^x-oauth-scopes: ' |
     sed 's/^x-oauth-scopes: //')
@@ -139,7 +140,16 @@ install_hotel() {
   TMPDIR=$(mktemp -d)
   cd "$TMPDIR"
   download_latest_hotel "$1"
-  mkdir -p "$hotel_bin_path"
+  mkdir -p "$hotel_bin_path/"
+  echo "###"
+  echo "$hotel_bin_path"
+  echo "###"
+  echo ls -lah "$hotel_bin_path"
+  ls -lah "$hotel_bin_path"
+  echo "###"
+  echo ls -lah
+  ls -lah
+  echo "###"
   mv hotel "$hotel_bin_path"
   cd "$INITIAL_DIR"
   rm -rf "$TMPDIR"
