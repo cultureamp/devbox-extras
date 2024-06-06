@@ -115,8 +115,9 @@ download_latest_hotel() {
 
   # we can't get the specific release we want without a json parsing tool, so we get all
   # download links and download until we find the one matching the system's arch and os
-  >&2 curl -sL -u "_:$github_token" https://api.github.com/repos/cultureamp/hotel/releases/latest
-  release_asset_urls=$(curl -sL -u "_:$github_token" https://api.github.com/repos/cultureamp/hotel/releases/latest |
+  releases_json="$(curl --fail -sL -u "_:$github_token" https://api.github.com/repos/cultureamp/hotel/releases/latest)"
+  >&2 echo "DEBUGPRINT[6]: install_hotel.sh:118: releases_json=${releases_json}"
+  release_asset_urls=$(echo "$releases_json" |
     grep '"url": ".*/releases/assets/.*"' |
     cut -d\" -f4)
   >&2 echo "DEBUGPRINT[1]: install_hotel.sh:116: release_asset_urls=${release_asset_urls}"
@@ -132,7 +133,7 @@ download_latest_hotel() {
     >&2 echo "DEBUGPRINT[3]: install_hotel.sh:123: downloaded_file=${downloaded_file}"
 
     if [ "$downloaded_file" = "$hotel_tarball_name" ]; then
-      >&2 echo "DEBUGPRINT[4]: untaring"
+      >&2 echo "DEBUGPRINT[0]: untaring"
       tar -xzf "$downloaded_file"
       return
     else
