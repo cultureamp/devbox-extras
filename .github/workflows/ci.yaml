@@ -55,7 +55,7 @@ jobs:
       - name: run install script
         shell: bash
         run: |
-          export HOTEL_INSTALLER_GITHUB_TOKEN="${{ secrets.GITHUB_TOKEN }}"
+          export HOTEL_INSTALLER_GITHUB_TOKEN="${{ secrets.HOTEL_ACCESS_TOKEN }}"
           export INSTALLER_URL="https://raw.githubusercontent.com/cultureamp/devbox-extras/$GITHUB_SHA/scripts/install_hotel.sh"
           echo $INSTALLER_URL
           sh -c "$(curl -fsSL "$INSTALLER_URL")"
