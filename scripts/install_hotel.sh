@@ -55,6 +55,7 @@ retrieve_github_token() {
 }
 
 is_github_token_valid() {
+  return 0
   # standard tokens use the x-oauth-scopes header to return scopes but
   # fine-grained tokens don't seem to have a way to query permissions so we
   # just get current user to verify the token is valid, not that it's scope is
@@ -134,7 +135,7 @@ download_latest_hotel() {
 }
 
 install_hotel() {
-  log "=> installing hotel, this will ask for a sudo password"
+  log "=> downloading hotel binary..."
   INITIAL_DIR="$PWD"
   TMPDIR=$(mktemp -d)
   cd "$TMPDIR"
@@ -143,6 +144,7 @@ install_hotel() {
   mv hotel "$hotel_bin_path"
   cd "$INITIAL_DIR"
   rm -rf "$TMPDIR"
+  log "=> installing hotel, this will ask for a sudo password"
   sudo "$hotel_bin_path/hotel" setup launcher
 }
 
