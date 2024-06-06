@@ -33,6 +33,8 @@ store_github_token() {
     # also it's difficult to setup a keyring in a linux container (https://unix.stackexchange.com/a/548005)
     mkdir -p "$hotel_secrets_path"
     echo "$new_password" >"$hotel_secrets_path/$account_name"
+    echo "wrote to $hotel_secrets_path/$account_name"
+    ls "$hotel_secrets_path"
   fi
 }
 
@@ -105,20 +107,25 @@ download_latest_hotel() {
   # we can't get the specific release we want without a json parsing tool, so we get all
   # download links and download until we find the one matching the system's arch and os
   releases_json="$(curl --fail -sL -u "_:$github_token" https://api.github.com/repos/cultureamp/hotel/releases/latest)"
+  >&2 echo "DEBUGPRINT[7]: install_hotel.sh:109: releases_json=${releases_json}"
   release_asset_urls=$(echo "$releases_json" |
     grep '"url": ".*/releases/assets/.*"' |
     cut -d\" -f4)
+  >&2 echo "DEBUGPRINT[8]: install_hotel.sh:111: release_asset_urls=${release_asset_urls}"
 
   for url in $release_asset_urls; do
+    >&2 echo "DEBUGPRINT[9]: install_hotel.sh:116: url=${url}"
     # the only way to get a release's file name is to download it and write-out the filename
     downloaded_file=$(curl -sL "$url" \
       -u "_:$github_token" \
       --remote-header-name --remote-name \
       --write-out "%{filename_effective}" \
       --header "Accept: application/octet-stream")
+      >&2 echo "DEBUGPRINT[10]: install_hotel.sh:119: downloaded_file=${downloaded_file}"
 
     if [ "$downloaded_file" = "$hotel_tarball_name" ]; then
       tar -xzf "$downloaded_file"
+      >&2 echo "DEBUGPRINT[11]: install_hotel.sh:127: downloaded_file=${downloaded_file}"
       return
     else
       rm "$downloaded_file"
