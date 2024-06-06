@@ -18,7 +18,7 @@ log() {
 
 service_name="com.cultureamp.hotel"
 account_name="github"
-hotel_secrets_path="${XDG_DATA_DIR:-$HOME/.local/share}/hotel/secrets/"
+hotel_secrets_path="${XDG_DATA_DIR:-$HOME/.local/share}/hotel/secrets"
 
 store_github_token() {
   new_password="$1"
@@ -133,15 +133,6 @@ install_hotel() {
   cd "$TMPDIR"
   download_latest_hotel "$1"
   mkdir -p "$hotel_bin_path/"
-  echo "###"
-  echo "$hotel_bin_path"
-  echo "###"
-  echo ls -lah "$hotel_bin_path"
-  ls -lah "$hotel_bin_path"
-  echo "###"
-  echo ls -lah
-  ls -lah
-  echo "###"
   mv hotel "$hotel_bin_path"
   cd "$INITIAL_DIR"
   rm -rf "$TMPDIR"
