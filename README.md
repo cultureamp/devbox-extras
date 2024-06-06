@@ -1,9 +1,14 @@
 # Tooling install for local development environments
 
-You can find the install script for the local development environment at [./scripts/bootstrap.sh](./scripts/bootstrap.sh).
-The recommended command to run this install script is:
+The recommended command to setup a Culture Amp macbook for working with LDEs/devbox is:
 
-`curl --proto '=https' --tlsv1.2 -sSf -L https://raw.githubusercontent.com/cultureamp/devbox-extras/main/scripts/bootstrap.sh | sh`
+```bash
+# install hotel cli
+sh -c "$(curl -fsSL "https://raw.githubusercontent.com/cultureamp/devbox-extras/main/scripts/install_hotel.sh")"
+
+# use hotel to setup LDEs
+hotel setup ensure
+```
 
 # devbox-plugins
 
