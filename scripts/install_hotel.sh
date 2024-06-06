@@ -78,14 +78,21 @@ get_and_store_github_key() {
     echo "$existing_token"
     return 0
   fi
-  log ""
-  log "We need a github key to download hotel, and for hotel to use to pull git repos"
-  log "It will be stored in the system keychain"
-  log "You can get this from:"
-  log "    https://github.com/settings/tokens/new?scopes=repo "
-  log ""
-  # no token found, ask user
-  read -s -r -p "Github token: " github_token
+
+  if [ -z "$HOTEL_INSTALLER_GITHUB_TOKEN" ]; then
+    # github_token can be provided as env var (used in scripts to avoid prompt)
+    github_token="$HOTEL_INSTALLER_GITHUB_TOKEN"
+  else
+    log ""
+    log "We need a github key to download hotel, and for hotel to use to pull git repos"
+    log "It will be stored in the system keychain"
+    log "You can get this from:"
+    log "    https://github.com/settings/tokens/new?scopes=repo "
+    log ""
+    # no token found, ask user
+    read -s -r -p "Github token: " github_token
+  fi
+
   if ! is_github_token_valid "$github_token"; then
     log "=> provided token not valid"
     exit 1
