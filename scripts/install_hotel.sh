@@ -54,10 +54,13 @@ retrieve_github_token() {
 }
 
 is_github_token_valid() {
-  return 0 # TEMP
-  scopes=$(curl -sLI -u "_:$1" "https://api.github.com/user" |
-    grep '^x-oauth-scopes: ' |
-    sed 's/^x-oauth-scopes: //')
+  get_user_headers=$(curl -sLI -u "_:$1" "https://api.github.com/user")
+  >&2 echo "DEBUGPRINT[4]: install_hotel.sh:59: get_user_headers=${get_user_headers}"
+  # return 0 # TEMP
+  scopes=$(echo "$get_user_headers" |
+    grep -i '^x-oauth-scopes: ' |
+    sed 's/^x-oauth-scopes: //I')
+  >&2 echo "DEBUGPRINT[5]: install_hotel.sh:62: scopes=${scopes}"
   if [ "$scopes" = "" ]; then
     log "token not valid"
     return 1
