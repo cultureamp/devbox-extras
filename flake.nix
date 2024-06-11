@@ -16,7 +16,8 @@
         formatter = pkgs.nixpkgs-fmt;
 
         packages = {
-          mongodb-4_4 = pkgs.callPackage ./packages/mongodb-4_4.nix { };
+        fusion-auth = pkgs.callPackage ./packages/fusionauth.nix { };
+        mongodb-4_4 = pkgs.callPackage ./packages/mongodb-4_4.nix { };
           mongodb-6_0 = pkgs.callPackage ./packages/mongodb-6_0.nix { };
           dynamodb_local = pkgs.callPackage ./packages/dynamodb_local.nix { };
           adr-tools = pkgs.callPackage ./packages/adr-tools.nix { };
