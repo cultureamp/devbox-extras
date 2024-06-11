@@ -13,7 +13,7 @@
    # This is referencing jre8 in nix store, how do I:
    # - make it a dependency
    # - get the path to the jre8 in the nix store dynamically in the patch
-   patches = [ ./patches/fusionauth.patch];
+   patches = [ ./patches/fusionauth/setenv.patch ./patches/fusionauth/startup.patch ];
 
    installPhase = ''
    mkdir -p $out/bin $out/config $out/fusionauth-app

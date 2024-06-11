@@ -1,0 +1,58 @@
+diff --git a/fusionauth-app/apache-tomcat/bin/setenv.sh b/fusionauth-app/apache-tomcat/bin/setenv.sh
+index 436881c..54a31d9 100755
+--- a/fusionauth-app/apache-tomcat/bin/setenv.sh
++++ b/fusionauth-app/apache-tomcat/bin/setenv.sh
+@@ -7,8 +7,8 @@
+
+ FUSIONAUTH_PLUGIN_DIR=${CATALINA_HOME}/../../plugins
+ FUSIONAUTH_CONFIG_DIR=${CATALINA_HOME}/../../config
+-FUSIONAUTH_JAVA_DIR=${CATALINA_HOME}/../../java
+-FUSIONAUTH_LOG_DIR=${CATALINA_HOME}/../../logs
++FUSIONAUTH_JAVA_DIR=/nix/store/aba2qqq0a1v0mixqddr9mr4d1iswiciz-zulu8.54.0.21-ca-jdk-8.0.292/zulu-8.jdk
++FUSIONAUTH_LOG_DIR=/tmp/fusion-auth/logs
+ CATALINA_OUT=${FUSIONAUTH_LOG_DIR}/fusionauth-app.log
+ CATALINA_OPTS="-Dfusionauth.home.directory=$CATALINA_HOME/.. -Dfusionauth.config.directory=$FUSIONAUTH_CONFIG_DIR -Dfusionauth.log.directory=$FUSIONAUTH_LOG_DIR -Dfusionauth.plugin.directory=$FUSIONAUTH_PLUGIN_DIR"
+ # Ready for Java 10
+@@ -28,40 +28,9 @@ if [ ! -d ${FUSIONAUTH_LOG_DIR} ]; then
+   mkdir -p ${FUSIONAUTH_LOG_DIR}
+ fi
+
+-# Download Java if we are not yet setup, or the version is not the target version.
+-if [ "$(uname -s)" = "Darwin" ]; then
+-  JAVA_PATH=${FUSIONAUTH_JAVA_DIR}/jre1.8.0_171.jre
+-elif [ "$(uname -s)" = "Linux" ]; then
+-  JAVA_PATH=${FUSIONAUTH_JAVA_DIR}/jre1.8.0_171
+-fi
++# JAVA_PATH=${FUSIONAUTH_JAVA_DIR}/zulu-8.jdk
+
+-if [ ! -e ${FUSIONAUTH_JAVA_DIR}/current ] || [ ! -d ${JAVA_PATH} ]; then
+-  if [ "$(uname -s)" = "Darwin" ]; then
+-    if [ -d ~/.savant/cache/com/oracle/jre/1.8.0+u171/ ]; then
+-      cp ~/.savant/cache/com/oracle/jre/1.8.0+u171/jre-macos-1.8.0+u171.tar.gz ${FUSIONAUTH_JAVA_DIR}
+-    else
+-      wget -P ${FUSIONAUTH_JAVA_DIR} https://storage.googleapis.com/inversoft_products_j098230498/java/jre/jre-macos-1.8.0+u171.tar.gz
+-    fi
+-    tar xfz ${FUSIONAUTH_JAVA_DIR}/jre-macos-1.8.0+u171.tar.gz -C ${FUSIONAUTH_JAVA_DIR}
+-    cd ${FUSIONAUTH_JAVA_DIR}
+-    rm -f ./current
+-    ln -s ./jre1.8.0_171.jre current
+-    rm ./jre-macos-1.8.0+u171.tar.gz
+-  elif [ "$(uname -s)" = "Linux" ]; then
+-    wget -P ${FUSIONAUTH_JAVA_DIR} https://storage.googleapis.com/inversoft_products_j098230498/java/jre/jre-linux-1.8.0+u171.tar.gz
+-    tar xfz ${FUSIONAUTH_JAVA_DIR}/jre-linux-1.8.0+u171.tar.gz -C ${FUSIONAUTH_JAVA_DIR}
+-    cd ${FUSIONAUTH_JAVA_DIR}
+-    rm -f ./current
+-    ln -s ./jre1.8.0_171 current
+-    rm ./jre-linux-1.8.0+u171.tar.gz
+-  fi
+-fi
+-
+-if [ "$(uname -s)" = "Darwin" ]; then
+-  JAVA_HOME=${FUSIONAUTH_JAVA_DIR}/current/Home
+-elif [ "$(uname -s)" = "Linux" ]; then
+-  JAVA_HOME=${FUSIONAUTH_JAVA_DIR}/current
+-fi
++JAVA_HOME=${FUSIONAUTH_JAVA_DIR}/contents/Home
+
+ if [ -f ${FUSIONAUTH_CONFIG_DIR}/fusionauth.properties ]; then
+   value=$(cat ${FUSIONAUTH_CONFIG_DIR}/fusionauth.properties | grep "^fusionauth-app.http-port" | awk -F'=' '{ sub(/\r$/,""); print $2}')
