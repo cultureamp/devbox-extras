@@ -16,8 +16,7 @@
    patches = [ ./patches/fusionauth/setenv.patch ./patches/fusionauth/startup.patch ];
 
    installPhase = ''
-   mkdir -p $out/bin $out/config $out/fusionauth-app
-   cp -r $src/* $out
+    cp -r $src $out
    '';
 
    meta = with lib; {
