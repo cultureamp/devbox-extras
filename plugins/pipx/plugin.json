@@ -2,7 +2,7 @@
   "name": "pipx",
   "version": "0.1.0",
   "description": "Installs Pipx and makes it available",
-  "packages": ["pipx@latest"],
+  "packages": ["pipx@1.4"],
   "env": {
     "PIPX_HOME": "{{ .Virtenv }}",
     "PIPX_BIN_DIR": "{{ .Virtenv }}/bin"
