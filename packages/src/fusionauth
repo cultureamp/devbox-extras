@@ -1,7 +1,5 @@
 #!/bin/sh
 
-# TODO: flake places this script in $out/bin/fusionauth
-
 # resolve links - $0 may be a softlink
 PRG="$0"
 
