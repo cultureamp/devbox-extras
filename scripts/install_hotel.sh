@@ -44,8 +44,11 @@ get_and_store_github_key() {
     log ""
     log "We need a github key to download hotel, and for hotel to use to pull git repos"
     log "It will be stored in the system keychain"
-    log "You can get this from:"
+    log ""
+    log "You can generate a token here:"
     log "    https://github.com/settings/tokens/new?scopes=repo "
+    log ""
+    log "The token MUST have CultureAmp SSO configured or this script WILL FAIL"
     log ""
     # no token found, ask user
     read -s -r -p "Github token: " github_token
