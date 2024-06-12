@@ -46,9 +46,9 @@ JAVA_PATH="/nix/store/aba2qqq0a1v0mixqddr9mr4d1iswiciz-zulu8.54.0.21-ca-jdk-8.0.
 JAVA_HOME="$JAVA_PATH"/
 _RUNJAVA="$JAVA_HOME"/bin/java
 _RUNJDB="$JAVA_HOME"/bin/jdb
-if [ ! -z "$CLASSPATH" ] ; then
-  CLASSPATH="$CLASSPATH":
-fi
+# if [ ! -z "$CLASSPATH" ] ; then
+#   CLASSPATH="$CLASSPATH":
+# fi
 
 # How can I replace the below './result' with the nix store path?
 CLASSPATH="./result/fusionauth-app/apache-tomcat/bin/bootstrap.jar"
