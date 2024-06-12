@@ -27,9 +27,9 @@ CATALINA_OPTS="-Dfusionauth.home.directory=$CATALINA_HOME/.. -Dfusionauth.config
 JAVA_OPTS=" -Djava.awt.headless=true"
 JAVA_OPTS=$(echo ${JAVA_OPTS}|tr -d '\r')
 
-if [ ! -d ${CATALINA_HOME}/logs ]; then
-  mkdir -p ${CATALINA_HOME}/logs
-fi
+# if [ ! -d ${CATALINA_HOME}/logs ]; then
+#   mkdir -p ${CATALINA_HOME}/logs
+# fi
 
 if [ ! -d ${FUSIONAUTH_JAVA_DIR} ]; then
   mkdir -p ${FUSIONAUTH_JAVA_DIR}
@@ -49,7 +49,8 @@ _RUNJDB="$JAVA_HOME"/bin/jdb
 if [ ! -z "$CLASSPATH" ] ; then
   CLASSPATH="$CLASSPATH":
 fi
-CLASSPATH="$CLASSPATH""$CATALINA_HOME"/bin/bootstrap.jar
+# CLASSPATH="$CLASSPATH""$CATALINA_HOME"/bin/bootstrap.jar
+CLASSPATH=$CLASSPATH:"$(pwd)/fusionauth-app/apache-tomcat/bin/boostrap.jar"
 # end setclasspath
 
 CATALINA_TMPDIR="$CATALINA_BASE"/temp
@@ -72,6 +73,8 @@ JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.base/java.io=ALL-UNNAMED"
 JDK_JAVA_OPTIONS="$JDK_JAVA_OPTIONS --add-opens=java.rmi/sun.rmi.transport=ALL-UNNAMED"
 export JDK_JAVA_OPTIONS
 
+# TODO solve  Error: Could not find or load main class org.apache.catalina.startup.Bootstrap
+# add nix store output to classpath
 eval $_NOHUP "\"$_RUNJAVA\"" "\"$LOGGING_CONFIG\"" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
   -D$ENDORSED_PROP="\"$JAVA_ENDORSED_DIRS\"" \
   -classpath "\"$CLASSPATH\"" \
