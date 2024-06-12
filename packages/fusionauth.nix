@@ -10,14 +10,12 @@
      stripRoot = false;
    };
 
-   # This is referencing jre8 in nix store, how do I:
-   # - make it a dependency
-   # - get the path to the jre8 in the nix store dynamically in the patch
-   patches = [ ./patches/fusionauth/setenv.patch ./patches/fusionauth/startup.patch ];
-
    installPhase = ''
     cp -r $src $out
-   '';
+    rm -rf $out/bin
+    echo "${builtins.readFile ./src/fusionauth}" > $out/bin/fusionauth
+    chmod +x $out/bin/fusionauth
+    '';
 
    meta = with lib; {
      description = "A script to start the FusionAuth app service";
