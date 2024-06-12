@@ -50,7 +50,7 @@ if [ ! -z "$CLASSPATH" ] ; then
   CLASSPATH="$CLASSPATH":
 fi
 # CLASSPATH="$CLASSPATH""$CATALINA_HOME"/bin/bootstrap.jar
-CLASSPATH=$CLASSPATH:"$(pwd)/fusionauth-app/apache-tomcat/bin/boostrap.jar"
+CLASSPATH=$CLASSPATH:"$(pwd)/../fusionauth-app/apache-tomcat/bin/boostrap.jar"
 # end setclasspath
 
 CATALINA_TMPDIR="$CATALINA_BASE"/temp

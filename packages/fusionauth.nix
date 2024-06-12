@@ -13,9 +13,9 @@
    fusionauthscript = builtins.toFile "fusionauthrunscript" (builtins.readFile ./src/fusionauth);
 
    installPhase = ''
-    mkdir -p $out/config $out/fusionauth-app
-    cp -r $src/config $out/config
-    cp -r $src/fusionauth-app $out/fusionauth-app
+    mkdir -p $out/config $out
+    cp -r $src/config $out
+    cp -r $src/fusionauth-app $out
     mkdir -p $out/bin
     cp ${fusionauthscript} $out/bin/fusionauth
     chmod +x $out/bin/fusionauth
