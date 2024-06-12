@@ -17,7 +17,7 @@ done
 PRGDIR=`dirname "$PRG"`
 
 # TODO: set CATALINA_HOME as directory relative to $out
-CATALINA_HOME=`cd "$PRGDIR/.." >/dev/null; pwd`
+CATALINA_HOME="./result/fusionauth-app/apache-tomcat"
 CATALINA_BASE="$CATALINA_HOME"
 FUSIONAUTH_PLUGIN_DIR=${CATALINA_HOME}/../../plugins
 FUSIONAUTH_CONFIG_DIR=${CATALINA_HOME}/../../config
@@ -27,9 +27,10 @@ CATALINA_OPTS="-Dfusionauth.home.directory=$CATALINA_HOME/.. -Dfusionauth.config
 JAVA_OPTS=" -Djava.awt.headless=true"
 JAVA_OPTS=$(echo ${JAVA_OPTS}|tr -d '\r')
 
-# if [ ! -d ${CATALINA_HOME}/logs ]; then
-#   mkdir -p ${CATALINA_HOME}/logs
-# fi
+CATALINA_TMPDIR=/tmp/catalina
+if [ ! -d ${CATALINA_TMPDIR} ]; then
+  mkdir -p ${CATALINA_TMPDIR}
+fi
 
 if [ ! -d ${FUSIONAUTH_JAVA_DIR} ]; then
   mkdir -p ${FUSIONAUTH_JAVA_DIR}
@@ -51,19 +52,17 @@ _RUNJDB="$JAVA_HOME"/bin/jdb
 # fi
 
 # How can I replace the below './result' with the nix store path?
-CLASSPATH="./result/fusionauth-app/apache-tomcat/bin/bootstrap.jar"
-echo "$CLASSPATH"
+CLASSPATH="$CATALINA_BASE/bin/bootstrap.jar"
+CLASSPATH=$CLASSPATH:$CATALINA_BASE/bin/tomcat-juli.jar
 # end setclasspath
 
-CATALINA_TMPDIR="$CATALINA_BASE"/temp
 # TODO: set below path to relative to $out
-CLASSPATH=$CLASSPATH:$CATALINA_BASE/bin/tomcat-juli.jar
 JSSE_OPTS="-Djdk.tls.ephemeralDHKeySize=2048"
 JAVA_OPTS="$JAVA_OPTS $JSSE_OPTS"
 JAVA_OPTS="$JAVA_OPTS -Djava.protocol.handler.pkgs=org.apache.catalina.webresources"
 # TODO: set below path to relative to $out
-LOGGING_CONFIG="-Djava.util.logging.config.file=$CATALINA_BASE/conf/logging.properties"
-LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
+# LOGGING_CONFIG="-Djava.util.logging.config.file=$CATALINA_BASE/conf/logging.properties"
+# LOGGING_MANAGER="-Djava.util.logging.manager=org.apache.juli.ClassLoaderLogManager"
 
 UMASK="0027"
 umask $UMASK
@@ -77,7 +76,7 @@ export JDK_JAVA_OPTIONS
 
 # TODO solve  Error: Could not find or load main class org.apache.catalina.startup.Bootstrap
 # add nix store output to classpath
-eval $_NOHUP "\"$_RUNJAVA\"" "\"$LOGGING_CONFIG\"" $LOGGING_MANAGER $JAVA_OPTS $CATALINA_OPTS \
+eval $_NOHUP "\"$_RUNJAVA\"" $JAVA_OPTS $CATALINA_OPTS \
   -D$ENDORSED_PROP="\"$JAVA_ENDORSED_DIRS\"" \
   -classpath "\"$CLASSPATH\"" \
   -Dcatalina.base="\"$CATALINA_BASE\"" \
