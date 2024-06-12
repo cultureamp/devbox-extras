@@ -49,8 +49,10 @@ _RUNJDB="$JAVA_HOME"/bin/jdb
 if [ ! -z "$CLASSPATH" ] ; then
   CLASSPATH="$CLASSPATH":
 fi
-# CLASSPATH="$CLASSPATH""$CATALINA_HOME"/bin/bootstrap.jar
-CLASSPATH=$CLASSPATH:"$(pwd)/../fusionauth-app/apache-tomcat/bin/boostrap.jar"
+
+# How can I replace the below './result' with the nix store path?
+CLASSPATH="./result/fusionauth-app/apache-tomcat/bin/bootstrap.jar"
+echo "$CLASSPATH"
 # end setclasspath
 
 CATALINA_TMPDIR="$CATALINA_BASE"/temp
