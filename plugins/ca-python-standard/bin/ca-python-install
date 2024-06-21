@@ -1,0 +1,34 @@
+#!/usr/bin/env bash
+
+set -e
+
+pipx install poetry
+
+poetry_repos="$(poetry config repositories)"
+
+if [[ "$poetry_repos" != "{}" && "${POETRY_CA_PRIVATE_PYTHON:-true}" == "true" ]] ; then
+  # if there are extra poetry repos and we haven't opted out of private package handling
+  # then assume we have private python packages and are using poetry-codeartifact-auth
+  echo "Setting up helpers for installing private python packages and checking config"
+  if [[ -z $POETRY_CA_DEFAULT_AWS_PROFILE ]] ; then
+    cat >&2 <<'EOF'
+#############################################################################
+NOTE: `POETRY_CA_DEFAULT_AWS_PROFILE` environment variable is unset
+Set a value for this in your profile, or if not needed, then opt out of private
+package handling by either removing extra private package repositories from
+pyproject.toml or set `POETRY_CA_PRIVATE_PYTHON` to `"false"` in
+`devbox.json`
+#############################################################################
+EOF
+    exit 1
+  fi
+  poetry self add git+https://github.com/cultureamp/poetry-codeartifact-auth.git#main -E plugin
+else
+  echo "You do not appear to want handling of private Python packages so it will not be set up"
+fi
+
+. ${VENV_DIR}/bin/activate
+poetry install
+echo "Devbox setup has completed poetry install"
+
+pre-commit install --install-hooks || echo "Could not install pre-commit hooks. Is pre-commit present in `pyproject.toml`?" >&2
