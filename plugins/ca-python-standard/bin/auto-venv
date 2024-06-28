@@ -5,6 +5,8 @@ set -e
 if [ "${DEVBOX_PYTHON_AUTO_VENV:-true}" == "true" ]; then
     echo "Activating venv $VENV_DIR by adding to path (ignore below message)";
     export PATH="$VENV_DIR/bin:$PATH"
+    echo "Unsetting PYTHONPATH to avoid clashing with Nix poetry"
+    unset PYTHONPATH
 else
     echo "You have chose to manage virtualenv activation manually"
 fi
