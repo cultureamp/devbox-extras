@@ -40,3 +40,19 @@ fi
 poetry -v install || poetry -v install || exit 1
 echo "Devbox setup has completed poetry install"
 pre-commit install --install-hooks || echo "WARNING: could not install pre-commit hooks" >&2
+
+# hook env vars up to cert files for agreeable netskope x python packages
+if [ -d "$HOME" ]; then
+  curl -o $HOME/Downloads/netskope_bundle.pem https://raw.githubusercontent.com/cultureamp/devbox-extras/main/plugins/ca-python-standard/bin/netskope_bundle.pem
+  export CERT="$HOME/Downloads/netskope_bundle.pem"
+  export SSL_CERT_FILE=$CERT
+  # # this one will fix most of the python cli
+  export REQUESTS_CA_BUNDLE=$CERT
+  # # this one is for python sdk for vertex
+  # #!! but it may still throw a missing selected ALPN property error - for python version > 3.9
+  export GRPC_DEFAULT_SSL_ROOTS_FILE_PATH=$CERT
+  echo "netskope x python package certificate bundle sorted out"
+else
+  echo "netskope x python package certificate bundle skipped (no home dir found as expected when not running on local mac)"
+fi
+  
