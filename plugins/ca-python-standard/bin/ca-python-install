@@ -43,7 +43,7 @@ pre-commit install --install-hooks || echo "WARNING: could not install pre-commi
 
 # hook env vars up to cert files for agreeable netskope x python packages
 if [ -d "$HOME" ]; then
-  curl -o $HOME/Downloads/netskope_bundle.pem https://raw.githubusercontent.com/cultureamp/devbox-extras/main/plugins/ca-python-standard/bin/netskope_bundle.pem
+  curl -o $HOME/Downloads/netskope_bundle.pem https://raw.githubusercontent.com/cultureamp/devbox-extras/main/certs/nscacert_combined.pem
   export CERT="$HOME/Downloads/netskope_bundle.pem"
   export SSL_CERT_FILE=$CERT
   # # this one will fix most of the python cli
