@@ -58,3 +58,11 @@ jobs:
       - name: verify hotel executable is available and working
         shell: bash
         run: hotel --version
+  ensure-combined-cert-up-to-date:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: DeterminateSystems/nix-installer-action@main
+      - run: |
+          nix run .#generate-netskope-combined-cert
+          git diff --exit-code ./certs/
