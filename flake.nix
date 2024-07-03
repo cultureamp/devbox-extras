@@ -11,7 +11,7 @@
       let
         pkgs = import nixpkgs { system = "${system}"; config.allowUnfree = true; };
       in
-      {
+      rec {
         # set formatter binary for `nix fmt` command
         formatter = pkgs.nixpkgs-fmt;
 
@@ -21,6 +21,9 @@
           dynamodb_local = pkgs.callPackage ./packages/dynamodb_local.nix { };
           adr-tools = pkgs.callPackage ./packages/adr-tools.nix { };
           multi-gitter = pkgs.callPackage ./packages/multi-gitter.nix { };
+          generate-netskope-combined-cert = pkgs.callPackage ./packages/generate-netskope-combined-cert.nix { };
         };
+
+        apps.generate-netskope-combined-cert = { type = "app"; program = "${packages.generate-netskope-combined-cert}/bin/generate"; };
       });
 }
