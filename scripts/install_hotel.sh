@@ -15,6 +15,12 @@ log() {
   >&2 echo "$@"
   echo "$@" >>"$receipt_log_file"
 }
+logYellow() {
+  >&2 printf "\033[33m" # yellow
+  >&2 echo "$@"
+  >&2 printf "\033[0m" # reset
+  echo "$@" >>"$receipt_log_file"
+}
 logRed() {
   >&2 printf "\033[31m" # red
   >&2 echo "$@"
@@ -54,7 +60,7 @@ get_and_store_github_key() {
     log "You can generate a token here:"
     log "    https://github.com/settings/tokens/new?scopes=repo "
     log ""
-    logRed "The token MUST have CultureAmp SSO configured or this script WILL FAIL"
+    logYellow "The token MUST have CultureAmp SSO configured or this script WILL FAIL"
     log ""
     # no token found, ask user
     read -s -r -p "Github token: " github_token
