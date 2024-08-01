@@ -10,9 +10,15 @@ receipt_log_file="$receipt_log_dir/hotel-install-$(date -Iseconds).txt"
 mkdir -p "$receipt_log_dir"
 
 # this file does a log of echo-ing strings for use by calling function, logs
-# intended for the user should always go to stderr - this function makes it easier
+# intended for the user should always go to stderr - these functions makes it easier
 log() {
   >&2 echo "$@"
+  echo "$@" >>"$receipt_log_file"
+}
+logRed() {
+  >&2 printf "\033[31m" # red
+  >&2 echo "$@"
+  >&2 printf "\033[0m" # reset
   echo "$@" >>"$receipt_log_file"
 }
 
@@ -48,7 +54,7 @@ get_and_store_github_key() {
     log "You can generate a token here:"
     log "    https://github.com/settings/tokens/new?scopes=repo "
     log ""
-    log "The token MUST have CultureAmp SSO configured or this script WILL FAIL"
+    logRed "The token MUST have CultureAmp SSO configured or this script WILL FAIL"
     log ""
     # no token found, ask user
     read -s -r -p "Github token: " github_token
@@ -65,26 +71,41 @@ download_latest_hotel() {
     exit 1
   fi
 
-  # we can't get the specific release we want without a json parsing tool, so we get all
-  # download links and download until we find the one matching the system's arch and os
-  releases_json="$(curl --fail -sL -u "_:$github_token" https://api.github.com/repos/cultureamp/hotel/releases/latest)"
-  get_releases_result="$?"
-  if [ $get_releases_result -ne 0 ]; then
-    echo "github token invalid"
+  releases_file="$(mktemp)"
+  # set the output flag to write reponse to json and write out flag to write response code to stdout
+  # this allows us to get them separately from one request without having to parse anything
+  response_code="$(
+    curl -sL https://api.github.com/repos/cultureamp/hotel/releases/latest \
+      --user "_:$github_token" \
+      --output "$releases_file" \
+      --write-out "%{http_code}" \
+      --header "Accept: application/json"
+  )"
+  if [ "$response_code" != "200" ]; then
+    log ""
+    logRed "Could not get latest hotel release from github. This is likely because your github token is invalid."
+    log ""
+    log "Ensure you have enabled SSO on the token, and entered it correctly"
     exit 1
   fi
+  releases_json="$(cat "$releases_file")"
+  rm "$releases_file"
+
+  # we can't get the specific release we want without a json parsing tool, so we get all
+  # download links and download until we find the one matching the system's arch and os
   release_asset_urls=$(echo "$releases_json" |
     grep '"url": ".*/releases/assets/.*"' |
     cut -d\" -f4)
 
   for url in $release_asset_urls; do
     # the only way to get a release's file name is to download it and write-out the filename
-    downloaded_file=$(curl -sL "$url" \
-      -u "_:$github_token" \
-      --remote-header-name --remote-name \
-      --write-out "%{filename_effective}" \
-      --header "Accept: application/octet-stream")
-
+    downloaded_file=$(
+      curl -sL "$url" \
+        --user "_:$github_token" \
+        --remote-header-name --remote-name \
+        --write-out "%{filename_effective}" \
+        --header "Accept: application/octet-stream"
+    )
     if [ "$downloaded_file" = "$hotel_tarball_name" ]; then
       tar -xzf "$downloaded_file"
       return
