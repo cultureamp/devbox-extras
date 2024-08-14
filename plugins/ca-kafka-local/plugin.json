@@ -1,0 +1,19 @@
+{
+  "name": "ca-kafka-local",
+  "version": "0.0.1",
+  "description": "Environment variables and tools to interact with `kafka-local` in your service",
+  "readme": "README.md",
+  "env": {
+    "KAFKA_BROKERS": "localhost:14231",
+    "SCHEMA_REGISTRY_URL": "localhost:14228"
+  },
+  "create_files": {
+    "{{.Virtenv}}/bin/kafka-local-readme": "bin/kafka-local-readme",
+    "{{.Virtenv}}/config/process-compose.yaml": "config/process-compose.yaml"
+  },
+  "shell": {
+    "scripts": {
+      "kafka-local-readme": "{{.Virtenv}}/bin/kafka-local-readme"
+    }
+  }
+}

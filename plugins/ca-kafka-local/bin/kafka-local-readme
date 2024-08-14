@@ -1,0 +1,15 @@
+#!/bin/sh
+
+set -e
+
+echo
+echo "== LOCAL KAFKA =="
+echo "To start Kafka Local (https://github.com/cultureamp/kafka-local):"
+echo "  hotel services up kafka-local"
+echo
+echo "Once all Kafka services are up and running, this step will be considered healthy"
+echo
+echo "== Environment variables =="
+echo "KAFKA_BROKERS: ${KAFKA_BROKERS}"
+echo "SCHEMA_REGISTRY_URL: ${SCHEMA_REGISTRY_URL}"
+echo

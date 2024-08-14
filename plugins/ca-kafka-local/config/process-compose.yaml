@@ -1,0 +1,15 @@
+version: "0.5"
+
+processes:
+  kafka_local:
+    # This doesn't actually start Local Kafka, but it prints information about Kafka running, and allows you to do `depends_on: kafka_local`
+    command: "devbox run kafka-local-readme; tail -f /dev/null"
+    readiness_probe:
+      # This ensures kafka-ui is up and running, which means Kafka and Schema Registry are up and healthy.
+      # The ports are static and defined in our `local-ops` repo, and it's safe to assume it won't change.
+      http_get:
+        host: localhost
+        port: 12288
+      failure_threshold: 999
+    availability:
+      restart: always
