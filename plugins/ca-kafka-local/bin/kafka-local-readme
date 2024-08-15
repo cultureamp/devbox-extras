@@ -13,3 +13,6 @@ echo "== Environment variables =="
 echo "KAFKA_BROKERS: ${KAFKA_BROKERS}"
 echo "SCHEMA_REGISTRY_URL: ${SCHEMA_REGISTRY_URL}"
 echo
+echo "== Links =="
+echo "Kafka UI: http://${KAFKA_UI_URL}"
+echo "Schema Registry: http://${SCHEMA_REGISTRY_URL}"
