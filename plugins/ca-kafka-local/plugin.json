@@ -6,6 +6,7 @@
   "env": {
     "KAFKA_BROKERS": "localhost:14231",
     "SCHEMA_REGISTRY_URL": "localhost:14228",
+    "KAFKA_TOPIC_PREFIX": "local",
     "KAFKA_UI_URL": "http://localhost:12288"
   },
   "create_files": {
