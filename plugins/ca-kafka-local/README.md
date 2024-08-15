@@ -37,3 +37,15 @@ You can have another service depend on Kafka in your `process-compose.yaml`:
       depends_on:
         kafka_local:
           condition: process_healthy
+
+## Anti-patterns to avoid: circular dependency on hotel
+
+Please don't start Kafka within your projects `process-compose.yaml` file. For example
+
+    # PLEASE DO NOT DO THIS
+    kafka:
+      command: hotel services up kafka-local
+
+We don't want to set up circular loops where Hotel launches `devbox services up` and then this launches Hotel again.
+
+For now run Hotel commands in a separate terminal. In future we might provide helpers in Hotel that launch services in your project as well as projects you depend on.
