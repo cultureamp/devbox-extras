@@ -6,9 +6,7 @@ Use this plugin to interact with `kafka-local` in your service. You still need t
 
 What it provides:
 
-- Environment variables
-  - `KAFKA_BROKERS` set to `"localhost:14231"`
-  - `SCHEMA_REGISTRY_URL` set to `"localhost:14228"`
+- Environment variables. See [plugin.json](./plugin.json) for which variables are supplied and their values. They match those used in `kafka-local`.
 - Process Compose job
   - Will print information to the terminal about Kafka, once `kafka-local` is up and running.
   - Allows you to add a `depends_on` clause so other services wait for `kafka-local`.
