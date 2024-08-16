@@ -1,0 +1,17 @@
+# See https://github.com/deviceinsight/kafkactl?tab=readme-ov-file#configuration
+contexts:
+  local:
+    brokers:
+      - localhost:14231
+
+    tls:
+      enabled: false
+
+    # Waiting on https://github.com/cultureamp/local-kafka/pull/4
+    sasl:
+      enabled: false
+
+    avro:
+      schemaRegistry: localhost:14228
+
+current-context: local

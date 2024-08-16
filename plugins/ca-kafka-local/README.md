@@ -10,6 +10,8 @@ What it provides:
 - Process Compose job
   - Will print information to the terminal about Kafka, once `kafka-local` is up and running.
   - Allows you to add a `depends_on` clause so other services wait for `kafka-local`.
+- CLI Tools
+  - [kafkactl](https://deviceinsight.github.io/kafkactl/) for basic kafka interactions.
 
 ## Usage
 

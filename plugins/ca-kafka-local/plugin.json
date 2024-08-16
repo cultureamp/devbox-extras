@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "Environment variables and tools to interact with `kafka-local` in your service",
   "readme": "README.md",
+  "packages": ["kafkactl@5"],
   "env": {
     "KAFKA_BROKERS": "localhost:14231",
     "KAFKA_BROKERS_SASL": "localhost:14233",
@@ -11,11 +12,13 @@
     "KAFKA_SASL_PASSWORD": "user-secret",
     "SCHEMA_REGISTRY_URL": "localhost:14228",
     "KAFKA_TOPIC_PREFIX": "local",
-    "KAFKA_UI_URL": "http://localhost:12288"
+    "KAFKA_UI_URL": "http://localhost:12288",
+    "KAFKA_CTL_CONFIG": "{{.Virtenv}}/config/kafkactl/config.yaml"
   },
   "create_files": {
     "{{.Virtenv}}/bin/kafka-local-readme": "bin/kafka-local-readme",
-    "{{.Virtenv}}/config/process-compose.yaml": "config/process-compose.yaml"
+    "{{.Virtenv}}/config/process-compose.yaml": "config/process-compose.yaml",
+    "{{.Virtenv}}/config/kafkactl/config.yaml": "config/kafkactl/config.yaml"
   },
   "shell": {
     "scripts": {
