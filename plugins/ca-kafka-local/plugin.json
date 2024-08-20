@@ -19,11 +19,12 @@
   "create_files": {
     "{{.Virtenv}}/bin/kafka-local-readme": "bin/kafka-local-readme",
     "{{.Virtenv}}/config/process-compose.yaml": "config/process-compose.yaml",
-    "{{.Virtenv}}/config/kafkactl/config.yaml": "config/kafkactl/config.yaml",
+    "{{.Virtenv}}/config/kafkactl/config.yaml.template": "config/kafkactl/config.yaml",
     "{{.Virtenv}}/config/kcat/kcat.conf.template": "config/kcat/kcat.conf"
   },
   "shell": {
     "init_hook": [
+      "envsubst < {{.Virtenv}}/config/kafkactl/config.yaml.template > {{.Virtenv}}/config/kafkactl/config.yaml",
       "envsubst < {{.Virtenv}}/config/kcat/kcat.conf.template > {{.Virtenv}}/config/kcat/kcat.conf"
     ],
     "scripts": {

@@ -2,7 +2,7 @@
 contexts:
   local:
     brokers:
-      - localhost:14231
+      - ${KAFKA_BROKERS}
 
     tls:
       enabled: false
@@ -12,6 +12,6 @@ contexts:
       enabled: false
 
     avro:
-      schemaRegistry: localhost:14228
+      schemaRegistry: ${SCHEMA_REGISTRY_URL}
 
 current-context: local
