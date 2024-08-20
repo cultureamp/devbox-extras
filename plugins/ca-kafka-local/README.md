@@ -10,8 +10,10 @@ What it provides:
 - Process Compose job
   - Will print information to the terminal about Kafka, once `kafka-local` is up and running.
   - Allows you to add a `depends_on` clause so other services wait for `kafka-local`.
-- CLI Tools
-  - [kafkactl](https://deviceinsight.github.io/kafkactl/) for basic kafka interactions.
+- Various Kafka CLI Tools
+  - [kafkactl](https://deviceinsight.github.io/kafkactl/). We add a configuration file for connecting to `kafka-local` out of the box.
+  - [kcat](https://github.com/edenhill/kcat). We add a configuration file for connecting to `kafka-local` out of the box.
+  - [kaf](https://github.com/birdayz/kaf). Note you will need to run `kaf config add-cluster local -b $KAFKA_BROKERS` and then `kaf config select-cluster` to configure connection to `kafka-local`.
 
 ## Usage
 
