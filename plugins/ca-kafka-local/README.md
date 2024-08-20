@@ -10,10 +10,10 @@ What it provides:
 - Process Compose job
   - Will print information to the terminal about Kafka, once `kafka-local` is up and running.
   - Allows you to add a `depends_on` clause so other services wait for `kafka-local`.
-- Various Kafka CLI Tools
-  - [kafkactl](https://deviceinsight.github.io/kafkactl/). We add a configuration file for connecting to `kafka-local` out of the box.
-  - [kcat](https://github.com/edenhill/kcat). We add a configuration file for connecting to `kafka-local` out of the box.
-  - [kaf](https://github.com/birdayz/kaf). Note you will need to run `kaf config add-cluster local -b $KAFKA_BROKERS` and then `kaf config select-cluster` to configure connection to `kafka-local`.
+- Various Kafka CLI Tools (each with configuration to connect to `kafka-local`)
+  - [kafkactl](https://deviceinsight.github.io/kafkactl/)
+  - [kcat](https://github.com/edenhill/kcat)
+  - [kaf](https://github.com/birdayz/kaf)
 
 ## Usage
 
@@ -51,3 +51,17 @@ Please don't start Kafka within your projects `process-compose.yaml` file. For e
 We don't want to set up circular loops where Hotel launches `devbox services up` and then this launches Hotel again.
 
 For now run Hotel commands in a separate terminal. In future we might provide helpers in Hotel that launch services in your project as well as projects you depend on.
+
+## Creating a topic
+
+You can use one of the CLI tools to create topics your service requires.
+
+For example:
+
+    kafkactl create topic local.mytopic.v1
+
+Or
+
+    kaf topic create local.jasontopic.v3
+
+In future we plan to support creating your topics as defined in [kafka-ops](https://github.com/cultureamp/kafka-ops/).
