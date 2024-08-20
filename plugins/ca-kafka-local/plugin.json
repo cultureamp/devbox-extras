@@ -5,6 +5,9 @@
   "readme": "README.md",
   "env": {
     "KAFKA_BROKERS": "localhost:14231",
+    "KAFKA_SASL_PORT": "14233",
+    "KAFKA_SASL_USER": "user",
+    "KAFKA_SASL_PASSWORD": "user-secret",
     "SCHEMA_REGISTRY_URL": "localhost:14228",
     "KAFKA_TOPIC_PREFIX": "local",
     "KAFKA_UI_URL": "http://localhost:12288"
