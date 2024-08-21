@@ -2,14 +2,16 @@
 contexts:
   local:
     brokers:
-      - ${KAFKA_BROKERS}
+      - ${KAFKA_BROKERS_SASL}
 
     tls:
       enabled: false
 
-    # Waiting on https://github.com/cultureamp/local-kafka/pull/4
     sasl:
-      enabled: false
+      enabled: true
+      username: ${KAFKA_SASL_USER}
+      password: ${KAFKA_SASL_PASSWORD}
+      mechanism: scram-sha512
 
     avro:
       schemaRegistry: ${SCHEMA_REGISTRY_URL}
