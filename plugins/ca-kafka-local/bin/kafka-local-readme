@@ -11,6 +11,7 @@ echo "Once all Kafka services are up and running, this step will be considered h
 echo
 echo "== Environment variables =="
 echo "KAFKA_BROKERS: ${KAFKA_BROKERS}"
+echo "KAFKA_BROKERS_SASL: ${KAFKA_BROKERS_SASL}"
 echo "SCHEMA_REGISTRY_URL: ${SCHEMA_REGISTRY_URL}"
 echo "KAFKA_TOPIC_PREFIX: ${KAFKA_TOPIC_PREFIX}"
 echo "KAFKA_SASL_PORT: ${KAFKA_SASL_PORT}"
