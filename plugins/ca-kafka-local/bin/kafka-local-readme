@@ -21,3 +21,8 @@ echo
 echo "== Links =="
 echo "Kafka UI: ${KAFKA_UI_URL}"
 echo "Schema Registry: http://${SCHEMA_REGISTRY_URL}"
+echo
+echo "== Tools =="
+echo "kafkactl - https://deviceinsight.github.io/kafkactl/"
+echo "kcat - https://github.com/edenhill/kcat"
+echo "kaf - https://github.com/birdayz/kaf"

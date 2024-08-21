@@ -1,0 +1,19 @@
+# See https://github.com/deviceinsight/kafkactl?tab=readme-ov-file#configuration
+contexts:
+  local:
+    brokers:
+      - ${KAFKA_BROKERS_SASL}
+
+    tls:
+      enabled: false
+
+    sasl:
+      enabled: true
+      username: ${KAFKA_SASL_USER}
+      password: ${KAFKA_SASL_PASSWORD}
+      mechanism: scram-sha512
+
+    avro:
+      schemaRegistry: ${SCHEMA_REGISTRY_URL}
+
+current-context: local

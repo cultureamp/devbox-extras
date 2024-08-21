@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# The Kaf tool doesn't allow setting the config file path via an environment variable.
+# This script is a workaround to set the config file path via the `--config` argument.
+
+KAF_BINARY="$DEVBOX_PACKAGES_DIR/bin/kaf"
+
+if [[ ! -f "$KAF_BINARY" ]]; then
+    echo "Error: $KAF_BINARY was not found in devbox packages."
+    exit 1
+fi
+
+# Call the kaf binary with the `--config` argument and add all passed arguments
+"$KAF_BINARY" --config "$KAF_CONFIG_PATH" "$@"
