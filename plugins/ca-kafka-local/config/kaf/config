@@ -1,0 +1,10 @@
+current-cluster: local
+clusters:
+  - name: local
+    brokers:
+      - ${KAFKA_BROKERS_SASL}
+    SASL:
+      mechanism: SCRAM-SHA-512
+      username: ${KAFKA_SASL_USER}
+      password: ${KAFKA_SASL_PASSWORD}
+    security-protocol: SASL_PLAINTEXT

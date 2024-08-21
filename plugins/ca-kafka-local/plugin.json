@@ -5,6 +5,7 @@
   "readme": "README.md",
   "packages": ["kafkactl@5", "kcat@1", "envsubst", "kaf"],
   "env": {
+    "PATH": "{{ .Virtenv }}/bin:$PATH",
     "KAFKA_BROKERS": "localhost:14231",
     "KAFKA_BROKERS_SASL": "localhost:14233",
     "KAFKA_SASL_PORT": "14233",
@@ -14,18 +15,22 @@
     "KAFKA_TOPIC_PREFIX": "local",
     "KAFKA_UI_URL": "http://localhost:12288",
     "KAFKA_CTL_CONFIG": "{{.Virtenv}}/config/kafkactl/config.yaml",
-    "KCAT_CONFIG": "{{.Virtenv}}/config/kcat/kcat.conf"
+    "KCAT_CONFIG": "{{.Virtenv}}/config/kcat/kcat.conf",
+    "KAF_CONFIG_PATH": "{{.Virtenv}}/config/kaf/config"
   },
   "create_files": {
     "{{.Virtenv}}/bin/kafka-local-readme": "bin/kafka-local-readme",
+    "{{.Virtenv}}/bin/kaf": "bin/kaf",
     "{{.Virtenv}}/config/process-compose.yaml": "config/process-compose.yaml",
     "{{.Virtenv}}/config/kafkactl/config.yaml.template": "config/kafkactl/config.yaml",
-    "{{.Virtenv}}/config/kcat/kcat.conf.template": "config/kcat/kcat.conf"
+    "{{.Virtenv}}/config/kcat/kcat.conf.template": "config/kcat/kcat.conf",
+    "{{.Virtenv}}/config/kaf/config.template": "config/kaf/config"
   },
   "shell": {
     "init_hook": [
       "envsubst < {{.Virtenv}}/config/kafkactl/config.yaml.template > {{.Virtenv}}/config/kafkactl/config.yaml",
-      "envsubst < {{.Virtenv}}/config/kcat/kcat.conf.template > {{.Virtenv}}/config/kcat/kcat.conf"
+      "envsubst < {{.Virtenv}}/config/kcat/kcat.conf.template > {{.Virtenv}}/config/kcat/kcat.conf",
+      "envsubst < {{.Virtenv}}/config/kaf/config.template > {{.Virtenv}}/config/kaf/config"
     ],
     "scripts": {
       "kafka-local-readme": "{{.Virtenv}}/bin/kafka-local-readme"
