@@ -3,7 +3,8 @@
   "version": "0.0.1",
   "description": "Plugin for running Debezium Server locally",
   "packages": [
-    "nodejs@22.4.1"
+    "nodejs@22.4.1",
+    "pnpm@9.7.0"
   ],
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true",
@@ -15,7 +16,6 @@
     "init_hook": [
       "export PATH=$VENV_DIR/bin:$PATH",
       "export DEVBOX_DIR=$VENV_DIR",
-      "export BOOTSTRAP_SERVERS=${KAFKA_BROKERS}",
       "export DB_HOSTNAME=localhost",
       "export DB_PORT=5432",
       "export DB_AUTH_USERNAME=postgres",
@@ -24,6 +24,8 @@
       "export DB_PASSWORD=mydbzpassword",
       "export DB_NAME=postgres",
       "export DB_SCHEMA=public",
+      "export BOOTSTRAP_SERVERS=${KAFKA_BROKERS}",
+      "export SCHEMA_REGISTRY_URL=${SCHEMA_REGISTRY_URL}",
       "export FARM=local",
       "export INTERNAL_TOPIC_PREFIX=my_test_prefix",
       "export SLOT_NAME=my_test_slot",
@@ -39,7 +41,8 @@
         "psql -v debezium_user=${DB_USERNAME} \\",
         "-v debezium_password=${DB_PASSWORD} \\",
         "-v schema_name=${DB_SCHEMA} \\",
-        "-v table_name=${OUTBOX_TABLE} \\",
+        "-v outbox_table_name=${OUTBOX_TABLE} \\",
+        "-v heartbeat_table_name=${HEARTBEAT_TABLE} \\",
         "-h ${DB_HOSTNAME} \\",
         "-p ${DB_PORT} \\",
         "-U ${DB_AUTH_USERNAME} \\",
