@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "description": "Plugin for running Debezium Server locally",
   "packages": [
-    "github:cultureamp/devbox-extras#debezium-server",
+    "github:cultureamp/devbox-extras/56ac056b403906fdf16ccfcc2e2733440eca9afd#debezium-server",
     "jre_minimal@latest",
     "apacheKafka@latest",
     "nodejs@22.4.1"
