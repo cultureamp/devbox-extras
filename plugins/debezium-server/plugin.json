@@ -3,10 +3,7 @@
   "version": "0.0.1",
   "description": "Plugin for running Debezium Server locally",
   "packages": [
-    "jre_minimal@latest",
-    "apacheKafka@latest",
-    "nodejs@22.4.1",
-    "github:NixOS/nixpkgs#postgresql_16"
+    "nodejs@22.4.1"
   ],
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true",
@@ -53,9 +50,7 @@
         "createdb -h ${DB_HOSTNAME} -p ${DB_PORT} -U ${DB_AUTH_USERNAME} ${DB_NAME}"
       ],
       "create_heartbeat_topic": [
-        "kafka-topics.sh --bootstrap-server ${BOOTSTRAP_SERVERS} \\",
-        "--topic _${FARM}.${INTERNAL_TOPIC_PREFIX}.debezium-heartbeat-table \\",
-        "--create --if-not-exists --partitions 1 --replication-factor 1"
+        "kaf topic create _${FARM}.${INTERNAL_TOPIC_PREFIX}.debezium-heartbeat-table -p 1 -r 1 || true"
       ],
       "populate": [
         "SCHEMA_PATH=com.cultureamp.test.user.v1-value.avsc \\",
