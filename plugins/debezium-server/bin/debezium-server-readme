@@ -1,0 +1,27 @@
+#!/bin/sh
+
+set -e
+
+echo
+echo "== DEBEZIUM SERVER =="
+echo "To start Debezium Server (https://github.com/cultureamp/debezium-server):"
+echo "  devbox services up"
+echo
+echo "You will need to first ensure both postgres and kafka-local (https://github.com/cultureamp/kafka-local) are running"
+echo
+echo "== Environment variables =="
+echo "DB_HOSTNAME: ${DB_HOSTNAME}"
+echo "DB_PORT: ${DB_PORT}"
+echo "DB_AUTH_USERNAME: ${DB_AUTH_USERNAME}"
+echo "DB_AUTH_PASSWORD: ${DB_AUTH_PASSWORD}"
+echo "DB_USERNAME: ${DB_USERNAME}"
+echo "DB_PASSWORD: ${DB_PASSWORD}"
+echo "DB_NAME: ${DB_NAME}"
+echo "DB_SCHEMA: ${DB_SCHEMA}"
+echo "FARM: ${FARM}"
+echo "INTERNAL_TOPIC_PREFIX: ${INTERNAL_TOPIC_PREFIX}"
+echo "SLOT_NAME: ${SLOT_NAME}"
+echo "OFFSET_TOPIC: ${OFFSET_TOPIC}"
+echo "PUBLICATION_NAME: ${PUBLICATION_NAME}"
+echo "OUTBOX_TABLE: ${OUTBOX_TABLE}"
+echo "HEARTBEAT_TABLE: ${HEARTBEAT_TABLE}"

@@ -1,0 +1,80 @@
+{
+  "name": "debezium-server",
+  "version": "0.0.1",
+  "description": "Plugin for running Debezium Server locally",
+  "packages": [
+    "github:cultureamp/devbox-extras#debezium-server",
+    "jre_minimal@latest",
+    "apacheKafka@latest",
+    "nodejs@22.4.1"
+  ],
+  "include": ["path:./postgresql-bin"],
+  "env": {
+    "DEVBOX_COREPACK_ENABLED": "true",
+    "CONNECTOR_CONF_PATH": "{{.Virtenv}}",
+    "DEBEZIUM_OPTS": "",
+    "JAVA_OPTS": ""
+  },
+  "shell": {
+    "init_hook": [
+      "export PATH=$VENV_DIR/bin:$PATH",
+      "export DEVBOX_DIR=$VENV_DIR",
+      "export BOOTSTRAP_SERVERS=${KAFKA_BROKERS}",
+      "export DB_HOSTNAME=localhost",
+      "export DB_PORT=5432",
+      "export DB_AUTH_USERNAME=postgres",
+      "export DB_AUTH_PASSWORD=postgres",
+      "export DB_USERNAME=dbz_user",
+      "export DB_PASSWORD=mydbzpassword",
+      "export DB_NAME=postgres",
+      "export DB_SCHEMA=public",
+      "export FARM=local",
+      "export INTERNAL_TOPIC_PREFIX=my_test_prefix",
+      "export SLOT_NAME=my_test_slot",
+      "export OFFSET_TOPIC=my_test_offset_topic",
+      "export PUBLICATION_NAME=dbz_publication",
+      "export OUTBOX_TABLE=outbox_table",
+      "export HEARTBEAT_TABLE=debezium_heartbeat",
+      "export TARGET_TOPIC=my_target_topic",
+      "pnpm install -C .devbox/virtenv/debezium-server"
+    ],
+    "scripts": {
+      "init_outbox": [
+        "psql -v debezium_user=${DB_USERNAME} \\",
+        "-v debezium_password=${DB_PASSWORD} \\",
+        "-v schema_name=${DB_SCHEMA} \\",
+        "-v table_name=${OUTBOX_TABLE} \\",
+        "-h ${DB_HOSTNAME} \\",
+        "-p ${DB_PORT} \\",
+        "-U ${DB_AUTH_USERNAME} \\",
+        "${DB_NAME} < {{.Virtenv}}/init_outbox.sql"
+      ],
+      "create_db": [
+        "dropdb -h ${DB_HOSTNAME} -p ${DB_PORT} -U ${DB_AUTH_USERNAME} --if-exists ${DB_NAME}",
+        "createdb -h ${DB_HOSTNAME} -p ${DB_PORT} -U ${DB_AUTH_USERNAME} ${DB_NAME}"
+      ],
+      "create_heartbeat_topic": [
+        "kafka-topics.sh --bootstrap-server ${BOOTSTRAP_SERVERS} \\",
+        "--topic _${FARM}.${INTERNAL_TOPIC_PREFIX}.debezium-heartbeat-table \\",
+        "--create --if-not-exists --partitions 1 --replication-factor 1"
+      ],
+      "populate": [
+        "SCHEMA_PATH=com.cultureamp.test.user.v1-value.avsc \\",
+        "SAMPLE_DATA_PATH=sample-data.json \\",
+        "pnpm run -C .devbox/virtenv/debezium-server populate"
+      ],
+      "debezium-server-readme": "{{.Virtenv}}/bin/debezium-server-readme"
+    }
+  },
+  "create_files": {
+    "{{.Virtenv}}/process-compose.yaml": "config/process-compose.yaml",
+    "{{.Virtenv}}/application.properties": "config/debezium-server/application.properties",
+    "{{.Virtenv}}/init_outbox.sql": "config/debezium-server/init_outbox.sql",
+    "{{.Virtenv}}/bin/debezium-server-readme": "bin/debezium-server-readme",
+    "{{.Virtenv}}/package.json": "config/populate/package.json",
+    "{{.Virtenv}}/tsconfig.json": "config/populate/tsconfig.json",
+    "{{.Virtenv}}/sample-data.json": "config/populate/sample-data.json",
+    "{{.Virtenv}}/populate.ts": "bin/populate.ts",
+    "{{.Virtenv}}/com.cultureamp.test.user.v1-value.avsc": "config/populate/com.cultureamp.test.user.v1-value.avsc"
+  }
+}

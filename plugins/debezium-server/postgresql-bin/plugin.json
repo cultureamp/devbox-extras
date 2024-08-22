@@ -1,0 +1,7 @@
+{
+  "name": "postgresql-bin",
+  "version": "0.0.1",
+  "description": "Basic wrapper plugin to include postgresql 16 without running a service",
+  "packages": ["github:NixOS/nixpkgs#postgresql_16"],
+  "env": {}
+}

@@ -1,0 +1,27 @@
+version: "0.5"
+
+processes:
+  readme:
+    command: "devbox run debezium-server-readme; tail -f /dev/null"
+    availability:
+      restart: always
+
+  init_topic:
+    command: devbox run create_heartbeat_topic
+    depends_on:
+      kafka_local:
+        condition: process_healthy
+
+  init_outbox:
+    command: devbox run init_outbox
+
+  debezium_server:
+    working_dir: {{.Virtenv}}
+    command: run_debezium
+    depends_on:
+      init_outbox:
+        condition: process_completed_successfully
+      init_topic:
+        condition: process_completed_successfully
+    availability:
+      restart: on_failure

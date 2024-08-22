@@ -1,0 +1,19 @@
+{
+  "type": "record",
+  "name": "Event",
+  "namespace": "com.cultureamp.test.user.v1",
+  "fields": [
+    {
+      "name": "first_name",
+      "type": {
+        "type": "string"
+      }
+    },
+    {
+      "name": "last_name",
+      "type": {
+        "type": "string"
+      }
+    }
+  ]
+}
