@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# Check if topic name and schema file are provided
+if [ -z "$1" ] || [ -z "$2" ]
+then
+  echo "Usage: kafka-local-register-schema <topic-name> <schema-file>"
+  exit 1
+fi
+
+# Set the topic name and schema file
+TOPIC_NAME=$1
+SCHEMA_FILE=$2
+
+# Check if schema file exists
+if [ ! -f "$SCHEMA_FILE" ]
+then
+  echo "Schema file $SCHEMA_FILE does not exist."
+  exit 1
+fi
+
+# Read the Avro schema file
+SCHEMA="$(<$SCHEMA_FILE)"
+
+# Replace newlines and double quotes in the schema
+SCHEMA=${SCHEMA//$'\n'/\\n}
+SCHEMA=${SCHEMA//\"/\\\"}
+
+# Register the schema with the Confluent Schema Registry
+curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" \
+  --data "{\"schema\": \"${SCHEMA}\"}" \
+  http://$SCHEMA_REGISTRY_URL/subjects/${TOPIC_NAME}/versions
