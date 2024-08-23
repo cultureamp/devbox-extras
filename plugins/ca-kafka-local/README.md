@@ -14,13 +14,15 @@ What it provides:
   - [kafkactl](https://deviceinsight.github.io/kafkactl/)
   - [kcat](https://github.com/edenhill/kcat)
   - [kaf](https://github.com/birdayz/kaf)
+- Helper scripts
+  - `kafka-local-register-schema [topic-name] [path/to/schema.avsc]`
 
 ## Usage
 
 To start Kafka
 
 - Use [Hotel CLI](https://github.com/cultureamp/hotel)
-- Run `hotel services up kafka-local`
+- Run `hotel services up kafka`
 - In your repo run `devbox services up`
 
 Include the plugin in your `devbox.json`:
@@ -46,13 +48,15 @@ Please don't start Kafka within your projects `process-compose.yaml` file. For e
 
     # PLEASE DO NOT DO THIS
     kafka:
-      command: hotel services up kafka-local
+      command: hotel services up kafka
 
 We don't want to set up circular loops where Hotel launches `devbox services up` and then this launches Hotel again.
 
 For now run Hotel commands in a separate terminal. In future we might provide helpers in Hotel that launch services in your project as well as projects you depend on.
 
 ## Creating a topic
+
+First ensure `kafka-local` is running with `hotel services up kafka`.
 
 You can use one of the CLI tools to create topics your service requires.
 
@@ -65,3 +69,11 @@ Or
     kaf topic create local.jasontopic.v3
 
 In future we plan to support creating your topics as defined in [kafka-ops](https://github.com/cultureamp/kafka-ops/).
+
+## Registering a schema
+
+First ensure `kafka-local` is running with `hotel services up kafka`.
+
+Then you can use the helper script to register a schema for a topic.
+
+    kafka-local-register-schema <topic-name> <schema-file>
