@@ -34,7 +34,7 @@
       "export OUTBOX_TABLE=outbox_table",
       "export HEARTBEAT_TABLE=debezium_heartbeat",
       "export TARGET_TOPIC=my_target_topic",
-      "pnpm install -C .devbox/virtenv/debezium-server"
+      "pnpm install -C {{.Virtenv}}"
     ],
     "scripts": {
       "init_outbox": [
