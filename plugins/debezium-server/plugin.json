@@ -59,7 +59,7 @@
       "populate": [
         "SCHEMA_PATH=com.cultureamp.test.user.v1-value.avsc \\",
         "SAMPLE_DATA_PATH=sample-data.json \\",
-        "pnpm run -C .devbox/virtenv/debezium-server populate"
+        "pnpm run -C {{.Virtenv}} populate"
       ],
       "debezium-server-readme": "{{.Virtenv}}/bin/debezium-server-readme"
     }
