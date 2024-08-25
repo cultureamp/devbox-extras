@@ -20,6 +20,7 @@
   },
   "create_files": {
     "{{.Virtenv}}/bin/kafka-local-readme": "bin/kafka-local-readme",
+    "{{.Virtenv}}/bin/kafka-local-register-schema": "bin/kafka-local-register-schema",
     "{{.Virtenv}}/bin/kaf": "bin/kaf",
     "{{.Virtenv}}/config/process-compose.yaml": "config/process-compose.yaml",
     "{{.Virtenv}}/config/kafkactl/config.yaml.template": "config/kafkactl/config.yaml",

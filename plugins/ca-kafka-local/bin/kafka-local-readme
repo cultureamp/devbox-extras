@@ -5,7 +5,7 @@ set -e
 echo
 echo "== LOCAL KAFKA =="
 echo "To start Kafka Local (https://github.com/cultureamp/kafka-local):"
-echo "  hotel services up kafka-local"
+echo "  hotel services up kafka"
 echo
 echo "Once all Kafka services are up and running, this step will be considered healthy"
 echo
