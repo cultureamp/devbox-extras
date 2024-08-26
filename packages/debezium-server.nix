@@ -4,7 +4,6 @@
 {
   stdenv,
   fetchzip,
-  makeWrapper,
   jdk,
 }: let
   pname = "debezium-server";
@@ -19,18 +18,23 @@ in
       hash = "sha256-y7elU/9zBjGSpBFwAXHvhZvLb0QvvBazwDNP9yBQdJw=";
     };
 
-    nativeBuildInputs = [makeWrapper];
-
     installPhase = ''
       runHook preInstall
       cp -R . $out
-      RUNNER=$(ls $out/debezium-server-*runner.jar)
-      PATH_SEP=":"
+      mkdir -p $out/bin
+      cat >$out/bin/run_debezium <<EOF
+      #!$SHELL
+      RUNNER=\$(ls $out/debezium-server-*-runner.jar)
       LIB_PATH="$out/lib/*"
-      makeWrapper ${jdk}/bin/java \
-        $out/bin/run_debezium --add-flags "\
-        \''$DEBEZIUM_OPTS \''$JAVA_OPTS -cp \
-        $RUNNER$PATH_SEP\"\''${CONNECTOR_CONF_PATH:-conf}\"$PATH_SEP$LIB_PATH io.debezium.server.Main"
+
+      source $out/jmx/enable_jmx.sh
+
+      exec "${jdk}/bin/java" \
+        $DEBEZIUM_OPTS $JAVA_OPTS \
+        -cp \$RUNNER:"\''${CONNECTOR_CONF_PATH:-conf}":"\$LIB_PATH" io.debezium.server.Main "\$@"
+      EOF
+
+      chmod +x $out/bin/run_debezium
       runHook postInstall
     '';
   }
