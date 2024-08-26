@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -e
 
 if ! command -v psql >/dev/null 2>&1; then
@@ -6,7 +6,7 @@ if ! command -v psql >/dev/null 2>&1; then
     exit 1
 fi
 
-major_version=$(psql -V | egrep -o '[0-9]{1,}\.[0-9]{1,}'| cut -d. -f1)
+major_version=$(postgres --version | egrep -o '[0-9]{1,}\.[0-9]{1,}'| cut -d. -f1)
 if (( major_version < 12 )); then
     echo "postgresql version 12 or later is required for debezium-server"
     exit 1
