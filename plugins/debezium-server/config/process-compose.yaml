@@ -14,9 +14,15 @@ processes:
 
   init_outbox:
     command: devbox run init_outbox
+    depends_on:
+      postgres-invariant-checks:
+        condition: process_completed_successfully
+
+  postgres-invariant-checks:
+    command: devbox run postgres-version-check
 
   debezium_server:
-    working_dir: {{.Virtenv}}
+    working_dir: { { .Virtenv } }
     command: run_debezium
     depends_on:
       init_outbox:
