@@ -61,7 +61,8 @@
         "SAMPLE_DATA_PATH=sample-data.json \\",
         "pnpm run -C {{.Virtenv}} populate"
       ],
-      "debezium-server-readme": "{{.Virtenv}}/bin/debezium-server-readme"
+      "debezium-server-readme": "{{.Virtenv}}/bin/debezium-server-readme",
+      "postgres-version-check": "{{.Virtenv}}/bin/postgres-version-check"
     }
   },
   "create_files": {

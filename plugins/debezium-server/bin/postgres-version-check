@@ -1,0 +1,13 @@
+#!/bin/bash
+set -e
+
+if ! command -v psql >/dev/null 2>&1; then
+    echo "postgresql was not detected on the path, it is required for this debezium-server plugin"
+    exit 1
+fi
+
+major_version=$(postgres --version | egrep -o '[0-9]{1,}\.[0-9]{1,}'| cut -d. -f1)
+if (( major_version < 12 )); then
+    echo "postgresql version 12 or later is required for debezium-server"
+    exit 1
+fi
