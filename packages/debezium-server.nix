@@ -24,7 +24,7 @@ in
       mkdir -p $out/bin
       cat >$out/bin/run_debezium <<EOF
       #!$SHELL
-      RUNNER=\$(ls $out/debezium-server-*-runner.jar)
+      RUNNER="$out/debezium-server-dist-${version}-runner.jar"
       LIB_PATH="$out/lib/*"
 
       source $out/jmx/enable_jmx.sh
