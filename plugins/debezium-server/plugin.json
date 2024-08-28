@@ -70,6 +70,7 @@
     "{{.Virtenv}}/application.properties": "config/debezium-server/application.properties",
     "{{.Virtenv}}/init_outbox.sql": "config/debezium-server/init_outbox.sql",
     "{{.Virtenv}}/bin/debezium-server-readme": "bin/debezium-server-readme",
+    "{{.Virtenv}}/bin/postgres-version-check": "bin/postgres-version-check",
     "{{.Virtenv}}/package.json": "config/populate/package.json",
     "{{.Virtenv}}/tsconfig.json": "config/populate/tsconfig.json",
     "{{.Virtenv}}/sample-data.json": "config/populate/sample-data.json",
