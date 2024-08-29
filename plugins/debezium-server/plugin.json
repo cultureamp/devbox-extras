@@ -61,6 +61,16 @@
         "SAMPLE_DATA_PATH=sample-data.json \\",
         "pnpm run -C {{.Virtenv}} populate"
       ],
+      "reset_offset": [
+        "devbox services stop debezium_server && \\",
+        "PID=$(ps aux | grep '[i]o.debezium.server.Main' | awk '{print $2}' | head -n 1) && \\",
+        "[ -n \"$PID\" ] && timeout=0; while ps -p $PID > /dev/null && [ $timeout -lt 10 ]; do echo 'Waiting for debezium server to stop..'; sleep 1; ((timeout++)); done && \\",
+        "echo \"Tombstoning connector offset\"",
+        "echo \"[\\\"kafka\\\",{\\\"server\\\":\\\"${FARM}.${INTERNAL_TOPIC_PREFIX}\\\"}]|\" | \\",
+        "kcat -P -Z -b ${KAFKA_BROKERS_SASL} -X sasl.mechanism=PLAIN -X sasl.username=${KAFKA_SASL_USER} -X sasl.password=${KAFKA_SASL_PASSWORD} -t ${OFFSET_TOPIC} -K \\| -p 0 && \\",
+        "echo \"Restarting debezium server\" && \\",
+        "devbox services start debezium_server"
+      ],
       "debezium-server-readme": "{{.Virtenv}}/bin/debezium-server-readme",
       "postgres-version-check": "{{.Virtenv}}/bin/postgres-version-check"
     }
