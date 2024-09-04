@@ -17,6 +17,16 @@ processes:
     depends_on:
       postgres_invariant_checks:
         condition: process_completed_successfully
+      postgres_wait:
+        condition: process_healthy
+
+  postgres_wait:
+    command: "echo 'Waiting on postgresql...'; tail -f /dev/null"
+    readiness_probe:
+      period_seconds: 5
+      failure_threshold: 1000
+      exec:
+        command: pg_isready -U postgres
 
   postgres_invariant_checks:
     command: devbox run postgres-version-check
