@@ -6,7 +6,7 @@ require 'json'
 require 'uri'
 require 'fileutils'
 
-CLIENT_ID="Iv23liPv59QtSVurh6Fk"
+CLIENT_ID = 'Iv23liPv59QtSVurh6Fk'
 
 def parse_response(response)
   case response
@@ -67,9 +67,8 @@ def poll_for_token(device_code, interval)
         exit 1
       end
     else
-      return [access_token, refresh_token]
+      return [access_token, refresh_token] unless error
     end
-    break
   end
 end
 # rubocop:enable Metrics/MethodLength
@@ -96,7 +95,10 @@ def main
     puts 'currently this script only supports MacOS'
     exit 1
   end
-  verification_uri, user_code, device_code, interval = request_device_code.values_at('verification_uri', 'user_code', 'device_code', 'interval')
+  verification_uri, user_code, device_code, interval = request_device_code.values_at('verification_uri',
+                                                                                     'user_code',
+                                                                                     'device_code',
+                                                                                     'interval')
 
   puts "Please visit: #{verification_uri} and enter the following code: #{user_code}"
 
