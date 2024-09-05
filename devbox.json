@@ -11,7 +11,8 @@
     "statix",
     "shellcheck",
     "shfmt",
-    "nodePackages.prettier"
+    "nodePackages.prettier",
+    "rubocop@latest"
   ],
   "shell": {
     "scripts": {
@@ -21,13 +22,15 @@
         "shellcheck **/*.{sh,bats} &",
         "shfmt --diff **/*.{sh,bats} &",
         "prettier . --check &",
+        "rubocop &",
         "wait"
       ],
       "lint:fix": [
         "nixpkgs-fmt .",
         "statix fix --ignore .devbox",
         "shfmt --write **/*.{sh,bats}",
-        "prettier . --write"
+        "prettier . --write",
+        "rubocop --autocorrect"
       ],
       "test": [
         "devbox run test-bash",
