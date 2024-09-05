@@ -6,7 +6,7 @@ require 'json'
 require 'uri'
 require 'fileutils'
 
-CLIENT_ID = ENV['GITHUB_APP_CLIENT_ID']
+CLIENT_ID="Iv23liPv59QtSVurh6Fk"
 
 def parse_response(response)
   case response
@@ -96,12 +96,7 @@ def main
     puts 'currently this script only supports MacOS'
     exit 1
   end
-  if CLIENT_ID.nil?
-    puts 'Please set the GITHUB_APP_CLIENT_ID environment variable.'
-    exit 1
-  end
-  verification_uri, user_code, device_code, interval = request_device_code.values_at('verification_uri', 'user_code',
-                                                                                     'device_code', 'interval')
+  verification_uri, user_code, device_code, interval = request_device_code.values_at('verification_uri', 'user_code', 'device_code', 'interval')
 
   puts "Please visit: #{verification_uri} and enter the following code: #{user_code}"
 
