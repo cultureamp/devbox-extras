@@ -10,6 +10,13 @@ ruby -e "$(curl -fsSL https://github.com/cultureamp/devbox-extras/blob/main/scri
 hotel setup ensure
 ```
 
+Should this authentication flow not work, you can manually authenticate with the following script:
+The PAT token should have read access to the `repository` scope and be enabled with SSO for Culture Amp.
+
+```bash
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/cultureamp/devbox-extras/main/scripts/install_hotel.sh) {insert_pat_token_here}"
+```
+
 # devbox-plugins
 
 Devbox is something we're trialing internally, we need some plugins. So putting them here for now, all in one place. Plugins are documented in their respective folders.
