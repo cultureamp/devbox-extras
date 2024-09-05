@@ -11,7 +11,7 @@ hotel setup ensure
 ```
 
 Should this authentication flow not work, you can manually authenticate with the following script:
-The PAT token should have read access to the `repository` scope and be enabled with SSO for Culture Amp.
+The github token should have read access to the `repository` scope and be enabled with SSO for Culture Amp.
 
 ```bash
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/cultureamp/devbox-extras/main/scripts/install_hotel.sh) {insert_pat_token_here}"
