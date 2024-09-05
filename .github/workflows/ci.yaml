@@ -51,8 +51,7 @@ jobs:
       - name: run install script
         shell: bash
         run: |
-          security add-generic-password -a github.app -s com.cultureamp.hotel -w "${{ secrets.HOTEL_ACCESS_TOKEN }}" -U
-          ./scripts/install_hotel.sh
+           ./scripts/install_hotel.sh "${{ secrets.HOTEL_ACCESS_TOKEN }}" 
       - name: verify hotel executable is available and working
         shell: bash
         run: hotel --version

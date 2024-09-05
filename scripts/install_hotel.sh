@@ -23,11 +23,11 @@ logRed() {
 }
 
 download_latest_hotel() {
-    if [ -z "$HOTEL_INSTALL_GITHUB_TOKEN" ]; then
-        github_token=$HOTEL_INSTALL_GITHUB_TOKEN
-    else
-        github_token="$(security find-generic-password -s "com.cultureamp.hotel" -a github.app -w)"
-    fi
+  if [ -z "$1" ]; then
+      github_token="$1"
+  else
+      github_token="$(security find-generic-password -s "com.cultureamp.hotel" -a github.app -w)"
+  fi
 
 	if [ -z "$github_token" ]; then
 		log ""
