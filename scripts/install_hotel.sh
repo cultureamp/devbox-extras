@@ -23,7 +23,12 @@ logRed() {
 }
 
 download_latest_hotel() {
-	github_token="$(security find-generic-password -s "com.cultureamp.hotel" -a github.app -w)"
+	if [[ "$(uname)" == "Darwin" ]]; then
+		github_token="$(security find-generic-password -s "com.cultureamp.hotel" -a github.app -w)"
+    else
+		github_token="$GITHUB_TOKEN"
+    fi
+
 	if [ -z "$github_token" ]; then
 		log ""
 		logRed "Github token not found. Please ensure it is correctly set."
