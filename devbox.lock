@@ -21,6 +21,54 @@
       "resolved": "github:NixOS/nixpkgs/75a52265bda7fd25e06e3a67dee3f0354e73243c#nodePackages.prettier",
       "source": "nixpkg"
     },
+    "rubocop@latest": {
+      "last_modified": "2024-08-31T19:22:30Z",
+      "resolved": "github:NixOS/nixpkgs/282e35e0762d64800d78e33ff225704baf9e5216#rubocop",
+      "source": "devbox-search",
+      "version": "1.65.1",
+      "systems": {
+        "aarch64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/f7mjcpgy4kac87ygnwrc8zss4ps67x1w-ruby3.3-rubocop-1.65.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/f7mjcpgy4kac87ygnwrc8zss4ps67x1w-ruby3.3-rubocop-1.65.1"
+        },
+        "aarch64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/ls69blqq10hqadgn99v02qhdzfs99jkk-ruby3.3-rubocop-1.65.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/ls69blqq10hqadgn99v02qhdzfs99jkk-ruby3.3-rubocop-1.65.1"
+        },
+        "x86_64-darwin": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/xri9m3wj2zq4bwsszc9bkcn38664nl66-ruby3.3-rubocop-1.65.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/xri9m3wj2zq4bwsszc9bkcn38664nl66-ruby3.3-rubocop-1.65.1"
+        },
+        "x86_64-linux": {
+          "outputs": [
+            {
+              "name": "out",
+              "path": "/nix/store/358ycw2rdmyr26rxsxsszhsyfmxps29b-ruby3.3-rubocop-1.65.1",
+              "default": true
+            }
+          ],
+          "store_path": "/nix/store/358ycw2rdmyr26rxsxsszhsyfmxps29b-ruby3.3-rubocop-1.65.1"
+        }
+      }
+    },
     "shellcheck": {
       "resolved": "github:NixOS/nixpkgs/75a52265bda7fd25e06e3a67dee3f0354e73243c#shellcheck",
       "source": "nixpkg"
