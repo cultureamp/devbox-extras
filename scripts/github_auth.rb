@@ -51,21 +51,15 @@ def poll_for_token(device_code, interval)
     if error
       case error
       when 'authorization_pending'
-        # The user has not yet entered the code.
-        # Wait, then poll again.
         sleep interval
         next
       when 'slow_down'
-        # The app polled too fast.
-        # Wait for the interval plus 5 seconds, then poll again.
         sleep interval + 5
         next
       when 'expired_token'
-        # The `device_code` expired, and the process needs to restart.
         puts 'The device code has expired. Please run `login` again.'
         exit 1
       when 'access_denied'
-        # The user cancelled the process. Stop polling.
         puts 'Login cancelled by user.'
         exit 1
       else
@@ -73,7 +67,7 @@ def poll_for_token(device_code, interval)
         exit 1
       end
     else
-      set_tokens(access_token, refresh_token)
+      return [access_token, refresh_token]
     end
     break
   end
@@ -89,7 +83,7 @@ def set_tokens(access_token, refresh_token)
 end
 
 def add_keychain_item(service_name, account_name, password)
-  `security add-generic-password -a #{account_name} -s #{service_name} -w #{password} -U`
+  `security add-generic-password -a #{account_name} -s #{service_name} -w "#{password}" -U`
 rescue StandardError => e
   puts "An error occurred while setting a token in the keychain: #{e.message}"
   exit 1
@@ -111,9 +105,11 @@ def main
 
   puts "Please visit: #{verification_uri} and enter the following code: #{user_code}"
 
-  poll_for_token(device_code, interval)
+  access_token, refresh_token = poll_for_token(device_code, interval)
 
-  puts 'Successfully authenticated!'
+  set_tokens(access_token, refresh_token)
+
+  `./scripts/install_hotel.sh`
 end
 # rubocop:enable Metrics/MethodLength
 
