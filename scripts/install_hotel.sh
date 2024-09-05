@@ -23,10 +23,10 @@ logRed() {
 }
 
 download_latest_hotel() {
-	if [[ "$(uname)" == "Darwin" ]]; then
-		github_token="$(security find-generic-password -s "com.cultureamp.hotel" -a github.app -w)"
+    if [ -z "$HOTEL_INSTALL_GITHUB_TOKEN" ]; then
+        github_token=$HOTEL_INSTALL_GITHUB_TOKEN
     else
-		github_token="$GITHUB_TOKEN"
+        github_token="$(security find-generic-password -s "com.cultureamp.hotel" -a github.app -w)"
     fi
 
 	if [ -z "$github_token" ]; then
