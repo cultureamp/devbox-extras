@@ -23,12 +23,6 @@ logRed() {
 }
 
 download_latest_hotel() {
-  if [ -n "$1" ]; then
-      github_token="$1"
-  else
-      github_token="$(security find-generic-password -s "com.cultureamp.hotel" -a github.app -w)"
-  fi
-
 	if [ -z "$github_token" ]; then
 		log ""
 		logRed "Github token not found. Please ensure it is correctly set."
@@ -85,7 +79,7 @@ install_hotel() {
 	INITIAL_DIR="$PWD"
 	TMPDIR=$(mktemp -d)
 	cd "$TMPDIR"
-	download_latest_hotel "$1"
+	download_latest_hotel 
 	mkdir -p "$hotel_bin_path/"
 	mv hotel "$hotel_bin_path"
 	cd "$INITIAL_DIR"
@@ -95,7 +89,13 @@ install_hotel() {
 }
 
 main() {
-	install_hotel
+  if [ -n "$1" ]; then
+      github_token="$1"
+  else
+      github_token="$(security find-generic-password -s "com.cultureamp.hotel" -a github.app -w)"
+  fi
+
+	install_hotel 
 }
 
-main
+main "$@"
