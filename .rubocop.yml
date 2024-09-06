@@ -1,0 +1,4 @@
+# https://docs.rubocop.org/rubocop/configuration
+AllCops:
+  Exclude:
+    - ".devbox/**/*"
