@@ -4,7 +4,7 @@ The recommended command to setup a Culture Amp macbook for working with LDEs/dev
 
 ```bash
 # install hotel cli
-ruby -e "$(curl -fsSL https://github.com/cultureamp/devbox-extras/blob/main/scripts/github_auth.rb)"
+ruby -e "$(curl -fsSL https://raw.githubusercontent.com/cultureamp/devbox-extras/main/scripts/github_auth.rb)"
 
 # use hotel to setup LDEs
 hotel setup ensure
