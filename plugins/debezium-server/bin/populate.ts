@@ -44,7 +44,7 @@ const registerSchema = async () => {
     type: SchemaType.AVRO,
     schema,
   });
-  console.log(`Auto-registered schema with id ${id}`);
+  console.log(`Auto-registered schema ${schemaPath} with id ${id}`);
 
   return id;
 };
