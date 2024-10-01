@@ -20,7 +20,7 @@ echo "KAFKA_SASL_PASSWORD: ${KAFKA_SASL_PASSWORD}"
 echo
 echo "== Links =="
 echo "Kafka UI: ${KAFKA_UI_URL}"
-echo "Schema Registry: http://${SCHEMA_REGISTRY_URL}"
+echo "Schema Registry: ${SCHEMA_REGISTRY_URL}"
 echo
 echo "== Tools =="
 echo "kafkactl - https://deviceinsight.github.io/kafkactl/"
