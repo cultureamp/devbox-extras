@@ -79,11 +79,16 @@ install_hotel() {
 	INITIAL_DIR="$PWD"
 	TMPDIR=$(mktemp -d)
 	cd "$TMPDIR"
-	download_latest_hotel 
+	download_latest_hotel
 	mkdir -p "$hotel_bin_path/"
 	mv hotel "$hotel_bin_path"
 	cd "$INITIAL_DIR"
 	rm -rf "$TMPDIR"
+	if [ -n "$github_token" ]; then
+		mkdir -p ~/.config/hotel
+		touch ~/.config/hotel/config.yaml
+		echo "github.token: $github_token" >> ~/.config/hotel/config.yaml
+	fi
 	log "=> installing hotel, this will ask for a sudo password"
 	sudo "$hotel_bin_path/hotel" setup launcher
 }
@@ -95,7 +100,7 @@ main() {
       github_token="$(security find-generic-password -s "com.cultureamp.hotel" -a github.app -w)"
   fi
 
-	install_hotel 
+	install_hotel
 }
 
 main "$@"
