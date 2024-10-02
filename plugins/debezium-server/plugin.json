@@ -35,6 +35,8 @@
       "export OUTBOX_TABLE=outbox_table",
       "export HEARTBEAT_TABLE=debezium_heartbeat",
       "export TARGET_TOPIC=my_target_topic",
+      "export SCHEMA_PATH=com.cultureamp.test.user.v1-value.avsc",
+      "export SAMPLE_DATA_PATH=sample-data.json",
       "pnpm install -C {{.Virtenv}}"
     ],
     "scripts": {
@@ -57,8 +59,6 @@
         "kaf topic create _${FARM}.${INTERNAL_TOPIC_PREFIX}.debezium-heartbeat-table -p 1 -r 1 || true"
       ],
       "populate": [
-        "SCHEMA_PATH=com.cultureamp.test.user.v1-value.avsc \\",
-        "SAMPLE_DATA_PATH=sample-data.json \\",
         "pnpm run -C {{.Virtenv}} populate"
       ],
       "reset_offset": [
