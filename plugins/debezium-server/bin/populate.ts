@@ -5,7 +5,7 @@ import { v4 as uuid } from "uuid";
 
 // Schema and sample data configuration
 const registry = new SchemaRegistry({
-  host: `http://${process.env.SCHEMA_REGISTRY_URL}`,
+  host: process.env.SCHEMA_REGISTRY_URL,
 });
 const schemaPath = process.env.SCHEMA_PATH;
 const sampleDataPath = process.env.SAMPLE_DATA_PATH;
