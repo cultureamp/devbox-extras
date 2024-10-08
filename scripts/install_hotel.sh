@@ -84,7 +84,7 @@ install_hotel() {
 	mv hotel "$hotel_bin_path"
 	cd "$INITIAL_DIR"
 	rm -rf "$TMPDIR"
-	if [ -n "$github_token" ]; then
+	if [ "$using_pat" = "true" ]; then
 		mkdir -p ~/.config/hotel
 		touch ~/.config/hotel/config.yaml
 		echo "github.token: $github_token" >> ~/.config/hotel/config.yaml
@@ -96,6 +96,7 @@ install_hotel() {
 main() {
   if [ -n "$1" ]; then
       github_token="$1"
+      using_pat="true"
   else
       github_token="$(security find-generic-password -s "com.cultureamp.hotel" -a github.app -w)"
   fi
