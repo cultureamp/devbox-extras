@@ -16,7 +16,7 @@ const targetTopic = process.env.TARGET_TOPIC;
 
 // Postgres source configuration
 const dbSchema = process.env.DB_SCHEMA;
-const dbHost = process.env.DB_HOST;
+const dbHost = process.env.DB_HOSTNAME;
 const dbPort = parseInt(process.env.DB_PORT);
 const dbName = process.env.DB_NAME;
 const dbUsername = process.env.DB_USERNAME;
