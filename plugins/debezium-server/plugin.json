@@ -18,7 +18,7 @@
       "export PATH=$VENV_DIR/bin:$PATH",
       "export DEVBOX_DIR=$VENV_DIR",
       "export DB_HOSTNAME=localhost",
-      "export DB_PORT=5432",
+      "export DB_PORT=${PGPORT:-5432}",
       "export DB_AUTH_USERNAME=postgres",
       "export DB_AUTH_PASSWORD=postgres",
       "export DB_USERNAME=dbz_user",
