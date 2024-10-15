@@ -28,4 +28,4 @@ SCHEMA=${SCHEMA//\"/\\\"}
 # Register the schema with the Confluent Schema Registry
 curl -X POST -H "Content-Type: application/vnd.schemaregistry.v1+json" \
   --data "{\"schema\": \"${SCHEMA}\"}" \
-  $SCHEMA_REGISTRY_URL/subjects/${TOPIC_NAME}/versions
+  $SCHEMA_REGISTRY_URL/subjects/${TOPIC_NAME}-value/versions
