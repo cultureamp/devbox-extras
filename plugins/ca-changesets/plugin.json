@@ -4,9 +4,9 @@
   "description": "Culture Amp plugin for the npm package @changesets/cli",
   "readme": "README.md",
   // TODO: will this clobber the project's node version?
-  "packages": ["nodejs", "jq", "semver-tool"],
+  "packages": ["nodejs"],
   "create_files": {
-    "{{.Virtenv}}/bin/ca-changeset": "bin/ca-changeset-wrapper"
+    "{{.Virtenv}}/bin/changeset": "bin/ca-changeset-wrapper"
   },
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true",
