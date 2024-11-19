@@ -10,4 +10,4 @@ To include changesets in your project, add the following to the top level of you
 ]
 ```
 
-All usage should follow the [changesets documentation](https://changesets-docs.vercel.app/) with the exception of the `yarn` command, which is not required, and instead you can call `changeset` directly.
+All usage should follow the [changesets documentation](https://changesets-docs.vercel.app/) with the exception of usage of the `yarn` command, which is not required and instead you can call the `changeset` binary directly.
