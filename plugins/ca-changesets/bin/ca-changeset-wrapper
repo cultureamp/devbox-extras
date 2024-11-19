@@ -1,4 +1,4 @@
 #!/usr/bin/env bash
 
 set -e
-pnpm dlx @changesets/cli "$@"
+npx --yes @changesets/cli "$@"

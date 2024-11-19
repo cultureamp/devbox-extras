@@ -8,7 +8,6 @@
     "{{.Virtenv}}/bin/changeset": "bin/ca-changeset-wrapper"
   },
   "env": {
-    "DEVBOX_COREPACK_ENABLED": "true",
     "PATH": "{{ .Virtenv }}/bin:$PATH"
   }
 }
