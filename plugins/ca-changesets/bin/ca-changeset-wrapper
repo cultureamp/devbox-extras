@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+set -e
+
+if [ ! -d "$DEVBOX_WD/.changesets" ]; then
+    pnpm dlx @changesets/cli init
+    # TODO: ensure package.json exists with version
+    cat $DEVBOX_WD/package.json | jq '.version' | semver
+fi
+
+pnpm dlx @changesets/cli "$@"

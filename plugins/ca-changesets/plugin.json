@@ -1,0 +1,15 @@
+{
+  "name": "ca-changesets",
+  "version": "0.0.1",
+  "description": "Culture Amp plugin for the npm package @changesets/cli",
+  "readme": "README.md",
+  // TODO: will this clobber the project's node version?
+  "packages": ["nodejs", "jq", "semver-tool"],
+  "create_files": {
+    "{{.Virtenv}}/bin/ca-changeset": "bin/ca-changeset-wrapper"
+  },
+  "env": {
+    "DEVBOX_COREPACK_ENABLED": "true",
+    "PATH": "{{ .Virtenv }}/bin:$PATH"
+  }
+}
