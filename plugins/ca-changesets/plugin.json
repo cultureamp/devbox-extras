@@ -1,9 +1,8 @@
 {
   "name": "ca-changesets",
   "version": "0.0.1",
-  "description": "Culture Amp plugin for the npm package @changesets/cli",
+  "description": "Culture Amp plugin providing the binary included in the npm package @changesets/cli",
   "readme": "README.md",
-  // TODO: will this clobber the project's node version?
   "packages": ["nodejs"],
   "create_files": {
     "{{.Virtenv}}/bin/changeset": "bin/ca-changeset-wrapper"
