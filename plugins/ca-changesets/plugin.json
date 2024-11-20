@@ -8,6 +8,6 @@
     "{{.Virtenv}}/bin/changeset": "bin/ca-changeset-wrapper"
   },
   "env": {
-    "PATH": "{{ .Virtenv }}/bin:$PATH"
+    "PATH": "{{ .Virtenv }}/bin/:$PATH"
   }
 }
