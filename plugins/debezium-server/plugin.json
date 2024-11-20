@@ -1,6 +1,6 @@
 {
   "name": "debezium-server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Plugin for running Debezium Server locally",
   "packages": [
     "nodejs@22.4.1",
