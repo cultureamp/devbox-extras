@@ -7,7 +7,7 @@
   "create_files": {
     "{{.Virtenv}}/bin/changeset": "bin/ca-changeset-wrapper"
   },
-  "env": {
-    "PATH": "{{ .Virtenv }}/bin/:$PATH"
+  "shell": {
+    "init_hook": ["PATH={{ .Virtenv }}/bin:$PATH"]
   }
 }
