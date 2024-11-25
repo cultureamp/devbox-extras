@@ -90,7 +90,7 @@ install_hotel() {
 		echo "github.token: $github_token" >> ~/.config/hotel/config.yaml
 	fi
 	log "=> installing hotel, this will ask for a sudo password"
-	sudo "$hotel_bin_path/hotel" setup launcher
+	"$hotel_bin_path/hotel" setup launcher
 }
 
 main() {
