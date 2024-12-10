@@ -11,7 +11,7 @@ let
   '';
   dontStrip = true;
   meta = with lib; {
-    description = "A tool to manage multiple git repositories";
+    description = "Fancy stream processing made operationally mundane";
     license = licenses.mit;
     platforms = platforms.darwin;
   };
