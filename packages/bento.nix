@@ -24,7 +24,7 @@ if system == "x86_64-darwin" then
 
     src = fetchzip {
       url = "https://github.com/warpstreamlabs/bento/releases/download/v${version}/bento_${version}_darwin_amd64.tar.gz";
-      hash = "sha256-Db1u1MmPRLLcH8q4sGqr29UqJqNJf7XTNAoxU023K60=";
+      hash = "sha256-R+SC8u2Nje6tDCb5jzxQ+o/wHe9NFYDTBr05tuU+DUY=";
       stripRoot = false;
     };
   }
