@@ -21,6 +21,7 @@
           dynamodb_local = pkgs.callPackage ./packages/dynamodb_local.nix { };
           adr-tools = pkgs.callPackage ./packages/adr-tools.nix { };
           multi-gitter = pkgs.callPackage ./packages/multi-gitter.nix { };
+          bento = pkgs.callPackage ./packages/bento.nix { };
           debezium-server = pkgs.callPackage ./packages/debezium-server.nix { };
           generate-netskope-combined-cert = pkgs.callPackage ./packages/generate-netskope-combined-cert.nix { };
         };

@@ -87,19 +87,19 @@ install_hotel() {
 	if [ "$using_pat" = "true" ]; then
 		mkdir -p ~/.config/hotel
 		touch ~/.config/hotel/config.yaml
-		echo "github.token: $github_token" >> ~/.config/hotel/config.yaml
+		echo "github.token: $github_token" >>~/.config/hotel/config.yaml
 	fi
 	log "=> installing hotel, this will ask for a sudo password"
 	"$hotel_bin_path/hotel" setup launcher
 }
 
 main() {
-  if [ -n "$1" ]; then
-      github_token="$1"
-      using_pat="true"
-  else
-      github_token="$(security find-generic-password -s "com.cultureamp.hotel" -a github.app -w)"
-  fi
+	if [ -n "$1" ]; then
+		github_token="$1"
+		using_pat="true"
+	else
+		github_token="$(security find-generic-password -s "com.cultureamp.hotel" -a github.app -w)"
+	fi
 
 	install_hotel
 }
