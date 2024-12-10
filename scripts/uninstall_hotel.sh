@@ -12,33 +12,33 @@ service_name="com.cultureamp.hotel"
 account_name="github"
 
 main() {
-  if security find-generic-password -s "$service_name" -a "$account_name" >/dev/null 2>&1; then
-    echo "==> removing saved github token"
-    security delete-generic-password -s "$service_name" -a "$account_name" >/dev/null 2>&1 # remove if exists so write doesn't fail
-  else
-    echo "==> no saved github token (doing nothing)"
-  fi
+	if security find-generic-password -s "$service_name" -a "$account_name" >/dev/null 2>&1; then
+		echo "==> removing saved github token"
+		security delete-generic-password -s "$service_name" -a "$account_name" >/dev/null 2>&1 # remove if exists so write doesn't fail
+	else
+		echo "==> no saved github token (doing nothing)"
+	fi
 
-  if [ -d "$hotel_state_dir" ]; then
-    echo "==> removing $hotel_state_dir"
-    rm -rf "$hotel_state_dir"
-  else
-    echo "==> $hotel_state_dir does not exist (doing nothing)"
-  fi
+	if [ -d "$hotel_state_dir" ]; then
+		echo "==> removing $hotel_state_dir"
+		rm -rf "$hotel_state_dir"
+	else
+		echo "==> $hotel_state_dir does not exist (doing nothing)"
+	fi
 
-  if [ -d "$hotel_everything_dir" ]; then
-    echo "==> removing $hotel_everything_dir"
-    rm -rf "$hotel_everything_dir"
-  else
-    echo "==> $hotel_everything_dir does not exist (doing nothing)"
-  fi
+	if [ -d "$hotel_everything_dir" ]; then
+		echo "==> removing $hotel_everything_dir"
+		rm -rf "$hotel_everything_dir"
+	else
+		echo "==> $hotel_everything_dir does not exist (doing nothing)"
+	fi
 
-  if [ -f "$launcher_path" ]; then
-    echo "==> removing launcher script (requires sudo)"
-    sudo rm "$launcher_path"
-  else
-    echo "==> no launcher script to remove (doing nothing)"
-  fi
+	if [ -f "$launcher_path" ]; then
+		echo "==> removing launcher script (requires sudo)"
+		sudo rm "$launcher_path"
+	else
+		echo "==> no launcher script to remove (doing nothing)"
+	fi
 }
 
 main
