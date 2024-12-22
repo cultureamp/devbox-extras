@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+
+set -e
+pnpx @cultureamp/data-standards-cli data-standards-validate "$@"

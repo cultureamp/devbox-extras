@@ -1,0 +1,19 @@
+{
+  "name": "ca-data-standards",
+  "version": "0.0.1",
+  "description": "Plugin for validating Avro schemas against data standards locally",
+  "packages": [
+    "nodejs@20.18.0"
+  ],
+  "env": {
+    "DEVBOX_COREPACK_ENABLED": "true"
+  },
+  "create_files": {
+    "{{.Virtenv}}/bin/data-standards-validate": "bin/data-standards-validate"
+  },
+  "shell": {
+    "init_hook": [
+      "PATH={{ .Virtenv }}/bin:$PATH"
+    ]
+  }
+}
