@@ -3,8 +3,7 @@
   "version": "0.0.1",
   "description": "Plugin for validating Avro schemas against data standards locally",
   "packages": [
-    "nodejs@20.18.0",
-    "pnpm@9.12.3"
+    "nodejs@20.18.0"
   ],
   "env": {
     "DEVBOX_COREPACK_ENABLED": "true"
