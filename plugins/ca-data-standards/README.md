@@ -1,4 +1,4 @@
-ca-data-standards is a devbox plugin that performs Culture Amp data standards validation logic against Avro schemas. It uses [data-standards-cli](https://github.com/cultureamp/data-standards?tab=readme-ov-file#data-standards-cli) under the hood.
+ca-data-standards is a devbox plugin that performs Culture Amp data standards validation logic against Avro schemas. It uses [data-standards-cli](https://github.com/cultureamp/data-standards/blob/main/packages/cli/README.md#cli-pacakge) under the hood.
 
 To include ca-data-standards in your project, add the following to the top level of your `devbox.json`:
 
@@ -8,4 +8,4 @@ To include ca-data-standards in your project, add the following to the top level
 ]
 ```
 You can then use `data-standards-validate` command in your devbox shell.
-See [CLI options](https://github.com/cultureamp/data-standards?tab=readme-ov-file#cli-options) for more info.
+See [CLI options](https://github.com/cultureamp/data-standards/blob/main/packages/cli/README.md#cli-options) for more info.
