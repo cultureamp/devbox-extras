@@ -6,9 +6,6 @@
     "awscli2",
     "poetry@latest"
   ],
-  "include": [
-    "github:cultureamp/devbox-extras?dir=plugins/pipx"
-  ],
   "env": {},
   "create_files": {
     "{{.Virtenv}}/bin/ca-python-install": "bin/ca-python-install",
