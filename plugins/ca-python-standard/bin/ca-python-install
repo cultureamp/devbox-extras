@@ -28,7 +28,7 @@ EOF
       echo "AWS environment credentials not found"
     fi
   fi
-  poetry add git+https://github.com/cultureamp/poetry-codeartifact-auth.git#main -E plugin
+  .venv/bin/pip install git+https://github.com/cultureamp/poetry-codeartifact-auth.git#main
 else
   echo "You do not appear to want handling of private Python packages so it will not be set up"
 fi

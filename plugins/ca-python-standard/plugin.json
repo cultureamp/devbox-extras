@@ -4,8 +4,7 @@
   "description": "Installs Poetry and CA poetry helpers, activates virtualenv, and installs pre-commit hooks",
   "packages": [
     "awscli2",
-    "poetry@latest",
-    "python@latest"
+    "poetry@latest"
   ],
   "include": [
     "github:cultureamp/devbox-extras?dir=plugins/pipx"
