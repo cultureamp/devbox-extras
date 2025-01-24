@@ -3,14 +3,17 @@ set -e
 
 poetry_repos="$(poetry config repositories)"
 
-if [[ "$poetry_repos" != "{}" && "${POETRY_CA_PRIVATE_PYTHON:-true}" == "true" ]] ; then
-  # if there are extra poetry repos and we haven't opted out of private package handling
-  # then assume we have private python packages and are using poetry-codeartifact-auth
-  echo "Setting up helpers for installing private python packages and checking config"
-  auth_method="${POETRY_CA_AUTH_METHOD:-sso}"
-  if [[ "${auth_method}" == "sso" || "${auth_method}" == "vault" ]] ; then
-    if [[ -z "$POETRY_CA_DEFAULT_AWS_PROFILE" ]] ; then
-      cat >&2 <<'EOF'
+# we will always assume engineers using this plugin want access to private packages
+# and are usng poetry-codeartifact-auth
+echo "Setting up helpers for installing private python packages and checking config"
+
+echo "Adding Culture Amp private package source"
+poetry source add ca-codeartifact-default https://cultureamp-python-ci-226140413739.d.codeartifact.us-west-2.amazonaws.com/pypi/cultureamp-private-python-repo/simple --priority=supplemental
+
+auth_method="${POETRY_CA_AUTH_METHOD:-sso}"
+if [[ "${auth_method}" == "sso" || "${auth_method}" == "vault" ]] ; then
+  if [[ -z "$POETRY_CA_DEFAULT_AWS_PROFILE" ]] ; then
+    cat >&2 <<'EOF'
 #############################################################################
 NOTE: `POETRY_CA_DEFAULT_AWS_PROFILE` environment variable is unset
 Set a value for this in your profile, or if not needed, then opt out of private
@@ -19,23 +22,24 @@ pyproject.toml or set `POETRY_CA_PRIVATE_PYTHON` to `"false"` in
 `devbox.json`
 #############################################################################
 EOF
-      exit 1
-    fi
+    exit 1
   fi
-
-  if [[ "${auth_method}" == "environment" ]] ; then
-    if [[ -z "$AWS_ACCESS_KEY_ID" ]] ; then
-      echo "AWS environment credentials not found"
-    fi
-  fi
-  .venv/bin/pip install setuptools --quiet
-  .venv/bin/pip install git+https://github.com/cultureamp/poetry-codeartifact-auth.git --quiet
-  poetry-ca-auth refresh
-else
-  echo "You do not appear to want handling of private Python packages so it will not be set up"
 fi
+
+if [[ "${auth_method}" == "environment" ]] ; then
+  if [[ -z "$AWS_ACCESS_KEY_ID" ]] ; then
+    echo "AWS environment credentials not found"
+  fi
+fi
+
+echo "Setting up poetry-codeartifact-auth"
+.venv/bin/pip install setuptools --quiet --disable-pip-version-check
+.venv/bin/pip install git+https://github.com/cultureamp/poetry-codeartifact-auth.git --quiet --disable-pip-version-check
+poetry-ca-auth refresh
+
 
 ## running twice seems to get around auth issues on headless systems
 poetry -v install || poetry -v install || exit 1
 echo "Devbox setup has completed poetry install"
+echo "If a package does not appear to have installed, try reloading your window"
 pre-commit install --install-hooks || echo "WARNING: could not install pre-commit hooks" >&2
