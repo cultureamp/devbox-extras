@@ -1,21 +1,14 @@
 # CA Python Devbox Plugin
 
-* Installs `pipx` (via `pipx` [plugin](https://github.com/cultureamp/devbox-extras/tree/main/plugins/pipx))
 * Installs [`poetry`](https://python-poetry.org) to manage package installation
-* Decides whether you need private python packages
-  * This is determined by the presence of extra repos in `pyproject.toml`
-  * It can be overridden by setting the environment variable `POETRY_CA_PRIVATE_PYTHON` to the string `false`, probably in the `env` section of your `devbox.json`)
-* If you need private python packages
-  * Installs `poetry-codeartifact-auth` as a poetry plugin
-  * Checks that you have an appropriate environment variable set to point to an AWS role which can access CodeArtifact
+* Installs `poetry-codeartifact-auth` as a poetry plugin
+* Checks that you have an appropriate environment variable set to point to an AWS role which can access CodeArtifact, or you are using granted
 * Installs [`pre-commit`](https://pre-commit.com) hooks, if the `pre-commit` package is present in `pyproject.toml` (or `pre-commit` is installed externally). 
-* Automatically activates virtual env in `$VENV_DIR` unless `$DEVBOX_PYTHON_AUTO_VENV` environment variable is `false`
-  * Culture Amp convention is to set `VENV_DIR` to `"$PWD/.venv` in your `devbox.json` but this is only a loose convention and subject to change
 
 
 ## Usage
 
-This plugin is designed to work for common cases with minimal extra configuration needed. See notes above about environment variables you may wish to set in some cases, eg `POETRY_CA_PRIVATE_PYTHON`.
+This plugin is designed to work for common cases with minimal extra configuration needed. See notes above about environment variables you may wish to set in some cases, eg `POETRY_CA_AUTH_METHOD`.
 
 The main thing to know is **the package installation step doesn't run by default** (you don't want to always run in an init hook as it's expensive). The package installation can be run using the auto-created `python-install` script using
 
