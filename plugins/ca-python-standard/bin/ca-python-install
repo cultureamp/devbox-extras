@@ -10,32 +10,33 @@ echo "Setting up helpers for installing private python packages and checking con
 echo "Adding Culture Amp private package source"
 poetry source add ca-codeartifact-default https://cultureamp-python-ci-226140413739.d.codeartifact.us-west-2.amazonaws.com/pypi/cultureamp-private-python-repo/simple --priority=supplemental
 
-auth_method="${POETRY_CA_AUTH_METHOD:-sso}"
-if [[ "${auth_method}" == "sso" || "${auth_method}" == "vault" ]] ; then
-  if [[ -z "$POETRY_CA_DEFAULT_AWS_PROFILE" ]] ; then
-    cat >&2 <<'EOF'
-#############################################################################
-NOTE: `POETRY_CA_DEFAULT_AWS_PROFILE` environment variable is unset
-Set a value for this in your profile, or if not needed, then opt out of private
-package handling by either removing extra private package repositories from
-pyproject.toml or set `POETRY_CA_PRIVATE_PYTHON` to `"false"` in
-`devbox.json`
-#############################################################################
-EOF
-    exit 1
-  fi
-fi
-
+auth_method="${POETRY_CA_AUTH_METHOD:-environment}"
 if [[ "${auth_method}" == "environment" ]] ; then
   if [[ -z "$AWS_ACCESS_KEY_ID" ]] ; then
     echo "AWS environment credentials not found"
   fi
 fi
 
+if [[ "${auth_method}" == "sso" || "${auth_method}" == "vault" ]] ; then
+  if [[ -z "$POETRY_CA_DEFAULT_AWS_PROFILE" ]] ; then
+    cat >&2 <<'EOF'
+#############################################################################
+NOTE: `POETRY_CA_DEFAULT_AWS_PROFILE` environment variable is unset
+If using granted, set `POETRY_CA_AUTH_METHOD` to `environment`
+If using sso or vault, set a value for `POETRY_CA_DEFAULT_AWS_PROFILE` and try again
+#############################################################################
+EOF
+    exit 1
+  fi
+fi
+
 echo "Setting up poetry-codeartifact-auth"
 .venv/bin/pip install setuptools --quiet --disable-pip-version-check
 .venv/bin/pip install git+https://github.com/cultureamp/poetry-codeartifact-auth.git --quiet --disable-pip-version-check
-poetry-ca-auth refresh
+
+if [[ "${auth_method}" == "sso" ]] ; then
+  poetry-ca-auth refresh
+fi
 
 
 ## running twice seems to get around auth issues on headless systems
