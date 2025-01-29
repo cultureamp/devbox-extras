@@ -9,7 +9,8 @@
   "env": {},
   "create_files": {
     "{{.Virtenv}}/bin/ca-python-install": "bin/ca-python-install",
-    "{{.Virtenv}}/bin/auto-venv": "bin/auto-venv"
+    "{{.Virtenv}}/bin/auto-venv": "bin/auto-venv",
+    "{{.Virtenv}}/bin/codeartifact-role-config": "bin/codeartifact-role-config"
   },
   "shell": {
     "scripts": {

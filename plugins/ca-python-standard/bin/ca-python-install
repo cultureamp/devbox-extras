@@ -10,34 +10,13 @@ echo "Setting up helpers for installing private python packages and checking con
 echo "Adding Culture Amp private package source"
 poetry source add ca-codeartifact-default https://cultureamp-python-ci-226140413739.d.codeartifact.us-west-2.amazonaws.com/pypi/cultureamp-private-python-repo/simple --priority=supplemental
 
-auth_method="${POETRY_CA_AUTH_METHOD:-environment}"
-if [[ "${auth_method}" == "environment" ]] ; then
-  if [[ -z "$AWS_ACCESS_KEY_ID" ]] ; then
-    echo "AWS environment credentials not found"
-  fi
-fi
-
-if [[ "${auth_method}" == "sso" || "${auth_method}" == "vault" ]] ; then
-  if [[ -z "$POETRY_CA_DEFAULT_AWS_PROFILE" ]] ; then
-    cat >&2 <<'EOF'
-#############################################################################
-NOTE: `POETRY_CA_DEFAULT_AWS_PROFILE` environment variable is unset
-If using granted, set `POETRY_CA_AUTH_METHOD` to `environment`
-If using sso or vault, set a value for `POETRY_CA_DEFAULT_AWS_PROFILE` and try again
-#############################################################################
-EOF
-    exit 1
-  fi
-fi
+export AWS_CONFIG_FILE=.devbox/virtenv/ca-python-standard/bin/codeartifact-role-config
+export POETRY_CA_DEFAULT_AWS_PROFILE=CodeArtifactRole
 
 echo "Setting up poetry-codeartifact-auth"
 .venv/bin/pip install setuptools --quiet --disable-pip-version-check
 .venv/bin/pip install git+https://github.com/cultureamp/poetry-codeartifact-auth.git --quiet --disable-pip-version-check
-
-if [[ "${auth_method}" == "sso" ]] ; then
-  poetry-ca-auth refresh
-fi
-
+poetry-ca-auth refresh
 
 ## running twice seems to get around auth issues on headless systems
 poetry -v install || poetry -v install || exit 1
