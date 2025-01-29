@@ -4,7 +4,8 @@
   "description": "Installs Poetry and CA poetry helpers, activates virtualenv, and installs pre-commit hooks",
   "packages": [
     "awscli2",
-    "poetry@latest"
+    "poetry@latest",
+    "granted@latest"
   ],
   "env": {},
   "create_files": {

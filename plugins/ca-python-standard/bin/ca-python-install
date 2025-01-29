@@ -10,13 +10,16 @@ echo "Setting up helpers for installing private python packages and checking con
 echo "Adding Culture Amp private package source"
 poetry source add ca-codeartifact-default https://cultureamp-python-ci-226140413739.d.codeartifact.us-west-2.amazonaws.com/pypi/cultureamp-private-python-repo/simple --priority=supplemental
 
-export AWS_CONFIG_FILE=.devbox/virtenv/ca-python-standard/bin/codeartifact-role-config
-export POETRY_CA_DEFAULT_AWS_PROFILE=CodeArtifactRole
+# set up environment for granted
+export GRANTED_ALIAS_CONFIGURED="true"
+unset AWS_ACCESS_KEY_ID
+unset AWS_SECRET_ACCESS_KEY
+# use environment granted to assume role in bin/codeartifact-role-config
+.devbox/nix/profile/default/bin/assume --aws-config-file .devbox/virtenv/ca-python-standard/bin/codeartifact-role-config CodeArtifactRole -pt --no-prompt
 
 echo "Setting up poetry-codeartifact-auth"
 .venv/bin/pip install setuptools --quiet --disable-pip-version-check
 .venv/bin/pip install git+https://github.com/cultureamp/poetry-codeartifact-auth.git --quiet --disable-pip-version-check
-poetry-ca-auth refresh
 
 ## running twice seems to get around auth issues on headless systems
 poetry -v install || poetry -v install || exit 1
