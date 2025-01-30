@@ -2,13 +2,13 @@
 
 * Installs [`poetry`](https://python-poetry.org) to manage package installation
 * Installs `poetry-codeartifact-auth` as a poetry plugin
-* Checks that you have an appropriate environment variable set to point to an AWS role which can access CodeArtifact, or you are using granted
+* Uses a pre-configured AWS role for authentication
 * Installs [`pre-commit`](https://pre-commit.com) hooks, if the `pre-commit` package is present in `pyproject.toml` (or `pre-commit` is installed externally). 
 
 
 ## Usage
 
-This plugin is designed to work for common cases with minimal extra configuration needed. See notes above about environment variables you may wish to set in some cases, eg `POETRY_CA_AUTH_METHOD`.
+This plugin is designed to work for common cases with minimal extra configuration needed.
 
 The main thing to know is **the package installation step doesn't run by default** (you don't want to always run in an init hook as it's expensive). The package installation can be run using the auto-created `python-install` script using
 
