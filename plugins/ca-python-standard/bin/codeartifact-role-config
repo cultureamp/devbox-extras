@@ -1,8 +1,0 @@
-[profile CodeArtifactRole]
-granted_sso_start_url      = https://cultureamp.awsapps.com/start
-granted_sso_region         = us-west-2
-granted_sso_account_id     = 226140413739
-granted_sso_role_name      = CiUserRole
-common_fate_generated_from = aws-sso
-credential_process         = granted credential-process --profile CodeArtifactRole
-

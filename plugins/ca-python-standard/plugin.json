@@ -3,15 +3,14 @@
   "version": "0.1.0",
   "description": "Installs Poetry and CA poetry helpers, activates virtualenv, and installs pre-commit hooks",
   "packages": [
-    "awscli2",
+    "awscli2@latest",
     "poetry@latest",
     "granted@latest"
   ],
   "env": {},
   "create_files": {
     "{{.Virtenv}}/bin/ca-python-install": "bin/ca-python-install",
-    "{{.Virtenv}}/bin/auto-venv": "bin/auto-venv",
-    "{{.Virtenv}}/bin/codeartifact-role-config": "bin/codeartifact-role-config"
+    "{{.Virtenv}}/bin/auto-venv": "bin/auto-venv"
   },
   "shell": {
     "scripts": {

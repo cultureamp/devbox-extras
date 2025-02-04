@@ -14,12 +14,15 @@ echo "Setting up poetry-codeartifact-auth"
 .venv/bin/pip install setuptools --quiet --disable-pip-version-check
 .venv/bin/pip install git+https://github.com/cultureamp/poetry-codeartifact-auth.git --quiet --disable-pip-version-check
 
-# set up environment for granted
-export GRANTED_ALIAS_CONFIGURED="true"
+# set up environment for poetry-ca-auth
 export POETRY_CA_AUTH_METHOD="environment"
-# use granted to assume role in bin/codeartifact-role-config
-assume --aws-config-file .devbox/virtenv/ca-python-standard/bin/codeartifact-role-config CodeArtifactRole -pt --no-prompt --env
-# use credentials stored in .env
+# set up granted environment
+export GRANTED_ALIAS_CONFIGURED="true"
+url=https://github.com/cultureamp/delivery-eng-experiments.git
+# add profile registry from plugin
+granted registry add -n delivery-eng-experiments -u $url -p 009-2-devbox-python-poetry/granted-registry
+
+assume CodeArtifactRole -pt --no-prompt --env
 source .env
 export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
 export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
