@@ -1,8 +1,6 @@
 #!/usr/bin/env bash
 set -e
 
-poetry_repos="$(poetry config repositories)"
-
 # we will always assume engineers using this plugin want access to private packages
 # and are usng poetry-codeartifact-auth
 echo "Setting up helpers for installing private python packages and checking config"
@@ -16,13 +14,15 @@ echo "Setting up poetry-codeartifact-auth"
 
 # set up environment for poetry-ca-auth
 export POETRY_CA_AUTH_METHOD="environment"
-# set up granted environment
+# granted environment
 export GRANTED_ALIAS_CONFIGURED="true"
+granted browser set
+# add profile registry
 url=https://github.com/cultureamp/delivery-eng-experiments.git
-# add profile registry from plugin
 granted registry add -n delivery-eng-experiments -u $url -p 009-2-devbox-python-poetry/granted-registry
 
 assume CodeArtifactRole -pt --no-prompt --env
+# use .env to store variables for auth usage
 source .env
 export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
 export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
