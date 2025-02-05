@@ -18,8 +18,8 @@ export POETRY_CA_AUTH_METHOD="environment"
 export GRANTED_ALIAS_CONFIGURED="true"
 granted browser set
 # add profile registry
-url=https://github.com/cultureamp/delivery-eng-experiments.git
-granted registry add -n delivery-eng-experiments -u $url -p 009-2-devbox-python-poetry/granted-registry
+url=https://github.com/cultureamp/local-ops
+granted registry add -n local-ops -u $url -p granted-registry
 
 assume CodeArtifactRole -pt --no-prompt --env
 # use .env to store variables for auth usage
