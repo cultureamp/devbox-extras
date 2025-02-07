@@ -21,14 +21,7 @@ granted browser set
 url=https://github.com/cultureamp/local-ops
 granted registry add -n local-ops -u $url -p granted-registry
 
-assume CodeArtifactRole -pt --no-prompt --env
-# use .env to store variables for auth usage
-source .env
-export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
-export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
-export AWS_SESSION_TOKEN=${AWS_SESSION_TOKEN}
-
-poetry-ca-auth refresh
+assume CodeArtifactRole -pt --no-prompt --exec 'poetry-ca-auth refresh'
 
 ## running twice seems to get around auth issues on headless systems
 poetry -v install || poetry -v install || exit 1
