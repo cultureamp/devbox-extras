@@ -56,6 +56,8 @@ download_latest_hotel() {
 		grep '"url": ".*/releases/assets/.*"' |
 		cut -d\" -f4)
 
+	latest_release_found=0
+
 	for url in $release_asset_urls; do
 		# the only way to get a release's file name is to download it and write-out the filename
 		downloaded_file=$(
@@ -67,11 +69,19 @@ download_latest_hotel() {
 		)
 		if [ "$downloaded_file" = "$hotel_tarball_name" ]; then
 			tar -xzf "$downloaded_file"
+			latest_release_found=1
 			return
 		else
 			rm "$downloaded_file"
 		fi
 	done
+	if [ "$latest_release_found" = "0" ]; then
+        log ""
+        logRed "the installer has failed to download the latest version of hotel"
+        logRed "please see this page for instructions to manually install hotel: https://cultureamp.atlassian.net/wiki/spaces/DE/pages/4741201953/Manually+installing+hotel"
+        log ""
+        exit 1
+    fi
 }
 
 install_hotel() {
