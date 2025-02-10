@@ -14,11 +14,20 @@ echo "Setting up poetry-codeartifact-auth"
 
 # set up environment for poetry-ca-auth
 export POETRY_CA_AUTH_METHOD="environment"
+gh_connect_method="$(gh config get git_protocol)"
+
 # granted environment
+# if gh connection method is https, use https url (default method is https)
+url=https://github.com/cultureamp/local-ops
+# if gh connection method is ssh, use ssh url
+if [[ "$gh_connect_method" == "ssh" ]] ; then
+    url=git@github.com:cultureamp/local-ops.git
+fi
+
 export GRANTED_ALIAS_CONFIGURED="true"
 granted browser set
+
 # add profile registry
-url=https://github.com/cultureamp/local-ops
 granted registry add -n local-ops -u $url -p granted-registry
 
 assume CodeArtifactRole -pt --no-prompt --exec 'poetry-ca-auth refresh'
