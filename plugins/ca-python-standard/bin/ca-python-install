@@ -28,7 +28,7 @@ if [[ "$poetry_repos" != "{}" && "${POETRY_CA_PRIVATE_PYTHON:-true}" == "true" ]
     elif [[ "$remote_url" == git@* ]]; then
         url=git@github.com:cultureamp/local-ops.git
     else
-        echo "unknown git connection method"
+        echo "failed to setup poetry-ca-auth: cannot determine git connection method for granted registry"
         exit 1
     fi
 
