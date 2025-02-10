@@ -5,7 +5,8 @@
   "packages": [
     "awscli2@latest",
     "poetry@latest",
-    "granted@latest"
+    "granted@latest",
+    "gh@latest"
   ],
   "env": {},
   "create_files": {
