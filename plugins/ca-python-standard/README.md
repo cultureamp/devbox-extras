@@ -11,7 +11,7 @@
 This plugin is designed to work for common cases with minimal extra configuration needed.
 
 * Because the plugin assumes use of CodeArtifact, it will add `ca-codeartifact-default` as a package source to `pyproject.toml`. This means you may need to run `poetry lock` after the first `devbox run setup` cycle, and then run setup again.
-* Sometimes the Okta authentication flow interrupts AWS authentication. In this case running the command twice should solve the issue.
+* Sometimes the Okta authentication flow interrupts AWS authentication. In this case running the "python-install" step again should open a browser window to the expected AWS confirmation page.
 
 If you do not want any private package setup, set your `devbox.json` to contain the following:
 
