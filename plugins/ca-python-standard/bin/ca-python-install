@@ -1,36 +1,38 @@
 #!/usr/bin/env bash
 set -e
 
-# we will always assume engineers using this plugin want access to private packages
-# and are usng poetry-codeartifact-auth
-echo "Setting up helpers for installing private python packages and checking config"
+poetry_repos="$(poetry config repositories)"
 
-echo "Adding Culture Amp private package source"
-poetry source add ca-codeartifact-default https://cultureamp-python-ci-226140413739.d.codeartifact.us-west-2.amazonaws.com/pypi/cultureamp-private-python-repo/simple --priority=supplemental
+if [[ "$poetry_repos" != "{}" && "${POETRY_CA_PRIVATE_PYTHON:-true}" == "true" ]] ; then
+    echo "Setting up helpers for installing private python packages and checking config"
 
-echo "Setting up poetry-codeartifact-auth"
-.venv/bin/pip install setuptools --quiet --disable-pip-version-check
-.venv/bin/pip install git+https://github.com/cultureamp/poetry-codeartifact-auth.git --quiet --disable-pip-version-check
+    echo "Adding Culture Amp private package source"
+    poetry source add ca-codeartifact-default https://cultureamp-python-ci-226140413739.d.codeartifact.us-west-2.amazonaws.com/pypi/cultureamp-private-python-repo/simple --priority=supplemental
 
-# set up environment for poetry-ca-auth
-export POETRY_CA_AUTH_METHOD="environment"
-gh_connect_method="$(gh config get git_protocol)"
+    echo "Setting up poetry-codeartifact-auth"
+    .venv/bin/pip install setuptools --quiet --disable-pip-version-check
+    .venv/bin/pip install git+https://github.com/cultureamp/poetry-codeartifact-auth.git --quiet --disable-pip-version-check
 
-# granted environment
-# if gh connection method is https, use https url (default method is https)
-url=https://github.com/cultureamp/local-ops
-# if gh connection method is ssh, use ssh url
-if [[ "$gh_connect_method" == "ssh" ]] ; then
-    url=git@github.com:cultureamp/local-ops.git
+    # set up environment for poetry-ca-auth
+    export POETRY_CA_AUTH_METHOD="environment"
+    gh_connect_method="$(gh config get git_protocol)"
+
+    # set up granted environment
+    export GRANTED_ALIAS_CONFIGURED="true"
+    granted browser set
+
+    # if gh connection method is https, use https url (default method is https)
+    url=https://github.com/cultureamp/local-ops
+    # if gh connection method is ssh, use ssh url
+    if [[ "$gh_connect_method" == "ssh" ]] ; then
+        url=git@github.com:cultureamp/local-ops.git
+    fi
+
+    # add profile registry
+    granted registry add -n local-ops -u $url -p granted-registry
+
+    assume CodeArtifactRole -pt --no-prompt --exec 'poetry-ca-auth refresh'
 fi
-
-export GRANTED_ALIAS_CONFIGURED="true"
-granted browser set
-
-# add profile registry
-granted registry add -n local-ops -u $url -p granted-registry
-
-assume CodeArtifactRole -pt --no-prompt --exec 'poetry-ca-auth refresh'
 
 ## running twice seems to get around auth issues on headless systems
 poetry -v install || poetry -v install || exit 1
