@@ -19,7 +19,7 @@ if [[ "$poetry_repos" != "{}" && "${POETRY_CA_PRIVATE_PYTHON:-true}" == "true" ]
 
     # set up granted environment
     export GRANTED_ALIAS_CONFIGURED="true"
-    granted browser set-sso
+    granted browser set
 
     # if remote_url uses https, use https link to registry
     # if remote_url uses git@link, use ssh link to registry
