@@ -10,12 +10,17 @@
   "env": {},
   "create_files": {
     "{{.Virtenv}}/bin/ca-python-install": "bin/ca-python-install",
-    "{{.Virtenv}}/bin/auto-venv": "bin/auto-venv"
+    "{{.Virtenv}}/bin/auto-venv": "bin/auto-venv",
+    "{{.Virtenv}}/bin/preconditions.sh": "bin/preconditions.sh",
+    ".devbox_scripts/granted-set-browser.sh": "bin/granted-set-browser.sh"
   },
   "shell": {
     "scripts": {
       "python-install": "{{.Virtenv}}/bin/ca-python-install"
     },
-    "init_hook": ". {{.Virtenv}}/bin/auto-venv"
+    "init_hook": [
+      ". {{.Virtenv}}/bin/auto-venv",
+      ". {{.Virtenv}}/bin/preconditions.sh || exit 1"
+    ]
   }
 }

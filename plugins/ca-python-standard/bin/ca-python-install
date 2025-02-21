@@ -19,7 +19,6 @@ if [[ "$poetry_repos" != "{}" && "${POETRY_CA_PRIVATE_PYTHON:-true}" == "true" ]
 
     # set up granted environment
     export GRANTED_ALIAS_CONFIGURED="true"
-    granted browser set
 
     # if remote_url uses https, use https link to registry
     # if remote_url uses git@link, use ssh link to registry
@@ -33,9 +32,9 @@ if [[ "$poetry_repos" != "{}" && "${POETRY_CA_PRIVATE_PYTHON:-true}" == "true" ]
     fi
 
     # add profile registry
-    granted registry add -n local-ops -u $url -p granted-registry
+    .devbox/nix/profile/default/bin/granted registry add -n local-ops -u $url -p granted-registry
 
-    assume CodeArtifactRole -pt --no-prompt --exec 'poetry-ca-auth refresh'
+    .devbox/nix/profile/default/bin/assume CodeArtifactRole -pt --no-prompt --exec 'poetry-ca-auth refresh'
 fi
 
 ## running twice seems to get around auth issues on headless systems
