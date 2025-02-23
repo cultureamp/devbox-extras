@@ -40,5 +40,4 @@ fi
 ## running twice seems to get around auth issues on headless systems
 poetry -v install || poetry -v install || exit 1
 echo "Devbox setup has completed poetry install"
-echo "If a package does not appear to have installed, try reloading your window"
 pre-commit install --install-hooks || echo "WARNING: could not install pre-commit hooks" >&2
