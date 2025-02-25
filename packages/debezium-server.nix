@@ -3,7 +3,7 @@
 
 { stdenv
 , fetchzip
-, jdk
+, jdk21
 ,
 }:
 let
@@ -30,7 +30,7 @@ stdenv.mkDerivation {
 
     source $out/jmx/enable_jmx.sh
 
-    exec "${jdk}/bin/java" \
+    exec "${jdk21}/bin/java" \
       $DEBEZIUM_OPTS $JAVA_OPTS \
       -cp \$RUNNER:"\''${CONNECTOR_CONF_PATH:-conf}":"\$LIB_PATH" io.debezium.server.Main "\$@"
     EOF
