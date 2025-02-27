@@ -6,6 +6,6 @@ fi
 
 if .devbox/nix/profile/default/bin/granted browser 2>&1 | grep -q "Granted is using \."; then
   >&2 echo 'ERROR: granted does not have a default browser set'
-  >&2 echo 'run `. .devbox_scripts/granted-set-browser.sh` to continue`'
+  >&2 echo 'run `__IGNORE_PRECONDITIONS=1 devbox run granted-set-browser` to continue`'
   exit 1
 fi
