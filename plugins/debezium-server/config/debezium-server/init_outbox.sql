@@ -65,22 +65,12 @@ DECLARE
     schema_name text := current_setting('vars.schema_name');
     heartbeat_table_name text := current_setting('vars.heartbeat_table_name');
 BEGIN
-    -- Create the sequence if it doesn't exist
-    EXECUTE FORMAT('
-    CREATE SEQUENCE IF NOT EXISTS %s.%s_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;', schema_name, heartbeat_table_name);
-
     -- Create table if it does not exist
     EXECUTE FORMAT('
     CREATE TABLE IF NOT EXISTS %s.%s (
-    id bigint NOT NULL DEFAULT nextval(''%s.%s_id_seq''::regclass),
-    ts timestamp without time zone NOT NULL,
-    CONSTRAINT %s_id_key UNIQUE (id)
-    );', schema_name, heartbeat_table_name, schema_name, heartbeat_table_name, heartbeat_table_name);
+    id SERIAL PRIMARY KEY,
+    heartbeat_recorded TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );', schema_name, heartbeat_table_name);
 
     EXECUTE FORMAT('ALTER TABLE %s.%s OWNER TO dbz_replication_role;', schema_name, heartbeat_table_name);
 END $$;
