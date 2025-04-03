@@ -8,4 +8,6 @@ if [ -f "/usr/bin/python3" ]; then
   # unset DEVELOPER_DIR before running as this is often set by nix packages and will
   # change the path to somewhere in /nix
   env -u DEVELOPER_DIR /usr/bin/python3 '-c' "$PYTHON_PRINT_OWN_PATH"
+else
+  >&2 echo "WARNING: /usr/bin/python3 is not a file, ensure xcode-tools is installed"
 fi
