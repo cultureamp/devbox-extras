@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# inspired by node-gyp
+# https://github.com/nodejs/node-gyp/blob/ee1d6fd8d83c9dd3eae7df7ec533bb6b39e1a812/lib/find-python.js#L41-L45
+PYTHON_PRINT_OWN_PATH='import sys; sys.stdout.buffer.write(sys.executable.encode("utf-8"));'
+
+if [ -f "/usr/bin/python3" ]; then
+  # unset DEVELOPER_DIR before running as this is often set by nix packages and will
+  # change the path to somewhere in /nix
+  env -u DEVELOPER_DIR /usr/bin/python3 '-c' "$PYTHON_PRINT_OWN_PATH"
+else
+  >&2 echo "WARNING: /usr/bin/python3 is not a file, ensure xcode-tools is installed"
+fi
