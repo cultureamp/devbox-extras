@@ -1,0 +1,16 @@
+{
+  "name": "ca-common",
+  "version": "0.1.0",
+  "description": "set common and uncontroversial environment variables and provide useful scripts",
+  "readme": "README.md",
+  "create_files": {
+    "{{.Virtenv}}/lib/init_hook": "lib/init_hook",
+    "{{.Virtenv}}/bin/ca-get-xcode-python": "bin/ca-get-xcode-python"
+  },
+  "shell": {
+    "init_hook": [
+      "export PLUGIN_VIRTENV={{ .Virtenv }}",
+      ". {{ .Virtenv }}/lib/init_hook"
+    ]
+  }
+}

@@ -1,0 +1,11 @@
+#!/bin/sh
+# shebang added for syntax highlighing but is not used at runtime
+#
+# !!!this is not a shell script!!!
+# it's an init_hook that's run directly in the users' shell
+# it must be parsable by bash, zsh, and fish
+
+[ -z "$FISH_VERSION" ] && eval "PATH=$PLUGIN_VIRTENV/bin:$PATH"
+[ -n "$FISH_VERSION" ] && eval "set PATH $PLUGIN_VIRTENV/bin:$PATH"
+
+[ "$(uname)" = Darwin ] && export npm_config_python=$(ca-get-xcode-python)
