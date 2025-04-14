@@ -9,7 +9,7 @@ properties:
 
   is_strict:
     type: boolean
-    description: "Enable strict configuration validation to catch typos and errors"
+    description: "Enable strict configuration validation to catch typos and errors (default: false)"
 
   shell:
     type: object
@@ -18,7 +18,7 @@ properties:
     properties:
       shell_command:
         type: string
-        description: "The shell command to use (e.g., bash, python3)"
+        description: "The shell command to use (e.g., bash, python3) (default: bash on Linux/macOS, cmd on Windows)"
       shell_argument:
         type: string
         description: "The shell argument to use (e.g., -c, -m)"
@@ -36,7 +36,7 @@ properties:
 
   log_location:
     type: string
-    description: "Path to the unified log file"
+    description: "Path to the unified log file (default: none)"
 
   log_length:
     type: integer
@@ -66,35 +66,35 @@ properties:
             description: "Determines if the rotated log files should be compressed"
       fields_order:
         type: array
-        description: "Order of logging fields"
+        description: 'Order of logging fields (default: ["time", "level", "message"])'
         items:
           type: string
       disable_json:
         type: boolean
-        description: "Output as plain text"
+        description: "Output as plain text (default: false)"
       timestamp_format:
         type: string
-        description: "Timestamp format"
+        description: "Timestamp format (default: HH:MM AM/PM for plain text, 2006-01-02T15:04:05Z07:00 for JSON)"
       no_metadata:
         type: boolean
-        description: "Don't log process name and replica number"
+        description: "Don't log process name and replica number (default: false)"
       add_timestamp:
         type: boolean
-        description: "Add timestamp to the logger"
+        description: "Add timestamp to the logger (default: false)"
       no_color:
         type: boolean
-        description: "Disable ANSI colors in the logger"
+        description: "Disable ANSI colors in the logger (default: false)"
       flush_each_line:
         type: boolean
-        description: "Disable buffering and flush each line to the log file"
+        description: "Disable buffering and flush each line to the log file (default: false)"
 
   is_tui_disabled:
     type: boolean
-    description: "Disable the Terminal User Interface"
+    description: "Disable the Terminal User Interface (default: false)"
 
   disable_env_expansion:
     type: boolean
-    description: "Globally disable automatic environment variable expansion"
+    description: "Globally disable automatic environment variable expansion (default: false)"
 
   vars:
     type: object
@@ -143,31 +143,31 @@ definitions:
         additionalProperties: true
       is_daemon:
         type: boolean
-        description: "Flag for background/detached processes"
+        description: "Flag for background/detached processes (default: false)"
       is_foreground:
         type: boolean
-        description: "Flag for foreground processes requiring full tty access"
+        description: "Flag for foreground processes requiring full tty access (default: false)"
       is_tty:
         type: boolean
-        description: "Simulate a TTY for a process"
+        description: "Simulate a TTY for a process (default: false)"
       is_elevated:
         type: boolean
-        description: "Run process with elevated privileges (sudo/runas)"
+        description: "Run process with elevated privileges (sudo/runas) (default: false)"
       disabled:
         type: boolean
-        description: "Disable process execution"
+        description: "Disable process execution (default: false)"
       disable_ansi_colors:
         type: boolean
-        description: "Disable ANSI colors in the process logs"
+        description: "Disable ANSI colors in the process logs (default: false)"
       replicas:
         type: integer
-        description: "Number of replicas to run"
+        description: "Number of replicas to run (default: 1)"
       launch_timeout_seconds:
         type: integer
-        description: "Time to wait for background processes to launch"
+        description: "Time to wait for background processes to launch (default: 5)"
       log_location:
         type: string
-        description: "Path to the process log file"
+        description: "Path to the process log file (default: none)"
       ready_log_line:
         type: string
         description: "Log line to wait for when using process_log_ready condition"
@@ -175,7 +175,7 @@ definitions:
         $ref: "#/properties/log_configuration"
       namespace:
         type: string
-        description: "Namespace for the process"
+        description: "Namespace for the process (default: default)"
       depends_on:
         type: object
         description: "Process dependencies"
@@ -193,6 +193,7 @@ definitions:
                   "process_started",
                   "process_log_ready",
                 ]
+              description: "Condition for dependency"
       availability:
         type: object
         additionalProperties: false
@@ -200,20 +201,20 @@ definitions:
         properties:
           restart:
             type: string
-            description: "Process restart policy"
+            description: "Process restart policy (default: no)"
             enum: ["no", "always", "on_failure", "exit_on_failure"]
           backoff_seconds:
             type: integer
-            description: "Time to wait between restarts"
+            description: "Time to wait between restarts (default: 1)"
           max_restarts:
             type: integer
-            description: "Maximum number of restarts (0 = unlimited)"
+            description: "Maximum number of restarts, 0 = unlimited (default: 0)"
           exit_on_end:
             type: boolean
-            description: "Terminate Process Compose once this process ends"
+            description: "Terminate Process Compose once this process ends (default: false)"
           exit_on_skipped:
             type: boolean
-            description: "Terminate Process Compose once this process is skipped"
+            description: "Terminate Process Compose once this process is skipped (default: false)"
       shutdown:
         type: object
         additionalProperties: false
@@ -224,13 +225,13 @@ definitions:
             description: "Command to execute for graceful shutdown"
           timeout_seconds:
             type: integer
-            description: "Timeout for graceful shutdown before sending SIGKILL"
+            description: "Timeout for graceful shutdown before sending SIGKILL (default: 10)"
           signal:
             type: integer
-            description: "Signal number to send to the process (1-31)"
+            description: "Signal number to send to the process, 1-31 (default: 15 if shutdown.command is not defined)"
           parent_only:
             type: boolean
-            description: "Only signal the parent process instead of the whole process group"
+            description: "Only signal the parent process instead of the whole process group (default: no)"
       readiness_probe:
         $ref: "#/definitions/probe"
       liveness_probe:
@@ -251,7 +252,7 @@ definitions:
             description: "Command to execute"
           working_dir:
             type: string
-            description: "Working directory for the command"
+            description: "Working directory for the command (default: process working directory)"
       http_get:
         type: object
         additionalProperties: false
@@ -262,29 +263,29 @@ definitions:
             description: "Host name to connect to"
           scheme:
             type: string
-            description: "Scheme to use (HTTP or HTTPS)"
+            description: "Scheme to use (HTTP or HTTPS) (default: HTTP)"
             enum: ["http", "https"]
           path:
             type: string
-            description: "Path to access on the HTTP server"
+            description: "Path to access on the HTTP server (default: /)"
           port:
             type: [integer, string]
             description: "Port to access the process"
       initial_delay_seconds:
         type: integer
-        description: "Seconds after the process has started before probes are initiated"
+        description: "Seconds after the process has started before probes are initiated (default: 0)"
       period_seconds:
         type: integer
-        description: "How often to perform the probe in seconds"
+        description: "How often to perform the probe in seconds (default: 10)"
       timeout_seconds:
         type: integer
-        description: "Number of seconds after which the probe times out"
+        description: "Number of seconds after which the probe times out (default: 1)"
       success_threshold:
         type: integer
-        description: "Minimum consecutive successes for the probe to be considered successful"
+        description: "Minimum consecutive successes for the probe to be considered successful (default: 1)"
       failure_threshold:
         type: integer
-        description: "When a probe fails, retry this many times before giving up"
+        description: "When a probe fails, retry this many times before giving up (default: 3)"
     oneOf:
       - required: ["exec"]
       - required: ["http_get"]
