@@ -1,3 +1,6 @@
+# this schema was created following the process-compose documentation at: https://f1bonacc1.github.io/process-compose/
+# and the json schema documentation can be found at: https://json-schema.org/understanding-json-schema/reference
+
 title: Process Compose Schema
 type: object
 additionalProperties: false
