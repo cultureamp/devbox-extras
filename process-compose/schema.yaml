@@ -1,5 +1,7 @@
 title: Process Compose Schema
 type: object
+additionalProperties: false
+
 properties:
   version:
     type: string
@@ -11,6 +13,7 @@ properties:
 
   shell:
     type: object
+    additionalProperties: false
     description: "Shell configuration for executing commands"
     properties:
       shell_command:
@@ -41,10 +44,12 @@ properties:
 
   log_configuration:
     type: object
+    additionalProperties: false
     description: "Logger configuration"
     properties:
       rotation:
         type: object
+        additionalProperties: false
         description: "Log rotation settings"
         properties:
           max_size_mb:
@@ -115,6 +120,7 @@ properties:
 definitions:
   process:
     type: object
+    additionalProperties: false
     description: "Process definition"
     properties:
       command:
@@ -175,6 +181,7 @@ definitions:
         description: "Process dependencies"
         additionalProperties:
           type: object
+          additionalProperties: false
           properties:
             condition:
               type: string
@@ -188,6 +195,7 @@ definitions:
                 ]
       availability:
         type: object
+        additionalProperties: false
         description: "Process restart policy"
         properties:
           restart:
@@ -208,6 +216,7 @@ definitions:
             description: "Terminate Process Compose once this process is skipped"
       shutdown:
         type: object
+        additionalProperties: false
         description: "Process termination configuration"
         properties:
           command:
@@ -229,10 +238,12 @@ definitions:
 
   probe:
     type: object
+    additionalProperties: false
     description: "Health probe configuration"
     properties:
       exec:
         type: object
+        additionalProperties: false
         description: "Execute a command to check health"
         properties:
           command:
@@ -243,6 +254,7 @@ definitions:
             description: "Working directory for the command"
       http_get:
         type: object
+        additionalProperties: false
         description: "Make an HTTP request to check health"
         properties:
           host:
