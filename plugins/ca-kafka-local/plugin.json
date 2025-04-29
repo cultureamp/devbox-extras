@@ -1,6 +1,6 @@
 {
   "name": "ca-kafka-local",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Environment variables and tools to interact with `kafka-local` in your service",
   "readme": "README.md",
   "packages": ["kafkactl@5", "kcat@1", "envsubst", "kaf"],
