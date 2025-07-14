@@ -13,7 +13,7 @@ contexts:
       password: ${KAFKA_SASL_PASSWORD}
       mechanism: scram-sha512
 
-    avro:
-      schemaRegistry: ${SCHEMA_REGISTRY_URL}
+    schemaRegistry:
+      url: ${SCHEMA_REGISTRY_URL}
 
 current-context: local

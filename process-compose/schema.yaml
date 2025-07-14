@@ -1,0 +1,294 @@
+# this schema was created following the process-compose documentation at: https://f1bonacc1.github.io/process-compose/
+# and the json schema documentation can be found at: https://json-schema.org/understanding-json-schema/reference
+
+title: Process Compose Schema
+type: object
+additionalProperties: false
+
+properties:
+  version:
+    type: string
+    description: "Version of the process-compose schema"
+
+  is_strict:
+    type: boolean
+    description: "Enable strict configuration validation to catch typos and errors (default: false)"
+
+  shell:
+    type: object
+    additionalProperties: false
+    description: "Shell configuration for executing commands"
+    properties:
+      shell_command:
+        type: string
+        description: "The shell command to use (e.g., bash, python3) (default: bash on Linux/macOS, cmd on Windows)"
+      shell_argument:
+        type: string
+        description: "The shell argument to use (e.g., -c, -m)"
+
+  environment:
+    type: array
+    description: "Global environment variables in KEY=VALUE format"
+    items:
+      type: string
+
+  log_level:
+    type: string
+    description: "Process compose console log level"
+    enum: ["trace", "debug", "info", "warn", "error", "fatal", "panic"]
+
+  log_location:
+    type: string
+    description: "Path to the unified log file (default: none)"
+
+  log_length:
+    type: integer
+    description: "UI log buffer size (default: 1000)"
+
+  log_configuration:
+    type: object
+    additionalProperties: false
+    description: "Logger configuration"
+    properties:
+      rotation:
+        type: object
+        additionalProperties: false
+        description: "Log rotation settings"
+        properties:
+          max_size_mb:
+            type: integer
+            description: "The max size in MB of the logfile before it's rolled"
+          max_age_days:
+            type: integer
+            description: "The max age in days to keep a logfile"
+          max_backups:
+            type: integer
+            description: "The max number of rolled files to keep"
+          compress:
+            type: boolean
+            description: "Determines if the rotated log files should be compressed"
+      fields_order:
+        type: array
+        description: 'Order of logging fields (default: ["time", "level", "message"])'
+        items:
+          type: string
+      disable_json:
+        type: boolean
+        description: "Output as plain text (default: false)"
+      timestamp_format:
+        type: string
+        description: "Timestamp format (default: HH:MM AM/PM for plain text, 2006-01-02T15:04:05Z07:00 for JSON)"
+      no_metadata:
+        type: boolean
+        description: "Don't log process name and replica number (default: false)"
+      add_timestamp:
+        type: boolean
+        description: "Add timestamp to the logger (default: false)"
+      no_color:
+        type: boolean
+        description: "Disable ANSI colors in the logger (default: false)"
+      flush_each_line:
+        type: boolean
+        description: "Disable buffering and flush each line to the log file (default: false)"
+
+  is_tui_disabled:
+    type: boolean
+    description: "Disable the Terminal User Interface (default: false)"
+
+  disable_env_expansion:
+    type: boolean
+    description: "Globally disable automatic environment variable expansion (default: false)"
+
+  vars:
+    type: object
+    description: "Global variables for template rendering"
+    additionalProperties: true
+
+  env_cmds:
+    type: object
+    description: "Commands to execute to populate environment variables"
+    additionalProperties:
+      type: string
+
+  extends:
+    type: string
+    description: "Path to another process-compose file to extend"
+
+  processes:
+    type: object
+    description: "Definition of processes to run"
+    additionalProperties:
+      $ref: "#/definitions/process"
+
+definitions:
+  process:
+    type: object
+    additionalProperties: false
+    description: "Process definition"
+    properties:
+      command:
+        type: string
+        description: "The command to execute"
+      working_dir:
+        type: string
+        description: "The working directory for the command"
+      description:
+        type: string
+        description: "Process description shown in the Process Info Dialog"
+      environment:
+        type: array
+        description: "Process-specific environment variables in KEY=VALUE format"
+        items:
+          type: string
+      vars:
+        type: object
+        description: "Process-specific variables for template rendering"
+        additionalProperties: true
+      is_daemon:
+        type: boolean
+        description: "Flag for background/detached processes (default: false)"
+      is_foreground:
+        type: boolean
+        description: "Flag for foreground processes requiring full tty access (default: false)"
+      is_tty:
+        type: boolean
+        description: "Simulate a TTY for a process (default: false)"
+      is_elevated:
+        type: boolean
+        description: "Run process with elevated privileges (sudo/runas) (default: false)"
+      disabled:
+        type: boolean
+        description: "Disable process execution (default: false)"
+      disable_ansi_colors:
+        type: boolean
+        description: "Disable ANSI colors in the process logs (default: false)"
+      replicas:
+        type: integer
+        description: "Number of replicas to run (default: 1)"
+      launch_timeout_seconds:
+        type: integer
+        description: "Time to wait for background processes to launch (default: 5)"
+      log_location:
+        type: string
+        description: "Path to the process log file (default: none)"
+      ready_log_line:
+        type: string
+        description: "Log line to wait for when using process_log_ready condition"
+      log_configuration:
+        $ref: "#/properties/log_configuration"
+      namespace:
+        type: string
+        description: "Namespace for the process (default: default)"
+      depends_on:
+        type: object
+        description: "Process dependencies"
+        additionalProperties:
+          type: object
+          additionalProperties: false
+          properties:
+            condition:
+              type: string
+              enum:
+                [
+                  "process_completed",
+                  "process_completed_successfully",
+                  "process_healthy",
+                  "process_started",
+                  "process_log_ready",
+                ]
+              description: "Condition for dependency"
+      availability:
+        type: object
+        additionalProperties: false
+        description: "Process restart policy"
+        properties:
+          restart:
+            type: string
+            description: "Process restart policy (default: no)"
+            enum: ["no", "always", "on_failure", "exit_on_failure"]
+          backoff_seconds:
+            type: integer
+            description: "Time to wait between restarts (default: 1)"
+          max_restarts:
+            type: integer
+            description: "Maximum number of restarts, 0 = unlimited (default: 0)"
+          exit_on_end:
+            type: boolean
+            description: "Terminate Process Compose once this process ends (default: false)"
+          exit_on_skipped:
+            type: boolean
+            description: "Terminate Process Compose once this process is skipped (default: false)"
+      shutdown:
+        type: object
+        additionalProperties: false
+        description: "Process termination configuration"
+        properties:
+          command:
+            type: string
+            description: "Command to execute for graceful shutdown"
+          timeout_seconds:
+            type: integer
+            description: "Timeout for graceful shutdown before sending SIGKILL (default: 10)"
+          signal:
+            type: integer
+            description: "Signal number to send to the process, 1-31 (default: 15 if shutdown.command is not defined)"
+          parent_only:
+            type: boolean
+            description: "Only signal the parent process instead of the whole process group (default: no)"
+      readiness_probe:
+        $ref: "#/definitions/probe"
+      liveness_probe:
+        $ref: "#/definitions/probe"
+
+  probe:
+    type: object
+    additionalProperties: false
+    description: "Health probe configuration"
+    properties:
+      exec:
+        type: object
+        additionalProperties: false
+        description: "Execute a command to check health"
+        properties:
+          command:
+            type: string
+            description: "Command to execute"
+          working_dir:
+            type: string
+            description: "Working directory for the command (default: process working directory)"
+      http_get:
+        type: object
+        additionalProperties: false
+        description: "Make an HTTP request to check health"
+        properties:
+          host:
+            type: string
+            description: "Host name to connect to"
+          scheme:
+            type: string
+            description: "Scheme to use (HTTP or HTTPS) (default: HTTP)"
+            enum: ["http", "https"]
+          path:
+            type: string
+            description: "Path to access on the HTTP server (default: /)"
+          port:
+            type: [integer, string]
+            description: "Port to access the process"
+      initial_delay_seconds:
+        type: integer
+        description: "Seconds after the process has started before probes are initiated (default: 0)"
+      period_seconds:
+        type: integer
+        description: "How often to perform the probe in seconds (default: 10)"
+      timeout_seconds:
+        type: integer
+        description: "Number of seconds after which the probe times out (default: 1)"
+      success_threshold:
+        type: integer
+        description: "Minimum consecutive successes for the probe to be considered successful (default: 1)"
+      failure_threshold:
+        type: integer
+        description: "When a probe fails, retry this many times before giving up (default: 3)"
+    oneOf:
+      - required: ["exec"]
+      - required: ["http_get"]
