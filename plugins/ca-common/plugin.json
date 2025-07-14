@@ -4,13 +4,13 @@
   "description": "set common and uncontroversial environment variables and provide useful scripts",
   "readme": "README.md",
   "create_files": {
-    "{{.Virtenv}}/lib/init_hook": "lib/init_hook",
     "{{.Virtenv}}/bin/ca-get-xcode-python": "bin/ca-get-xcode-python"
   },
   "shell": {
     "init_hook": [
-      "export PLUGIN_VIRTENV={{ .Virtenv }}",
-      ". {{ .Virtenv }}/lib/init_hook"
+      "[ -z \"$FISH_VERSION\" ] && eval 'PATH={{ .Virtenv }}/bin:$PATH'",
+      "[ -n \"$FISH_VERSION\" ] && eval 'set PATH {{ .Virtenv }}/bin $PATH'",
+      "[ \"$(uname)\" = Darwin ] && export npm_config_python=\"$(ca-get-xcode-python)\""
     ]
   }
 }
