@@ -1,0 +1,16 @@
+{
+  "name": "ca-common",
+  "version": "0.1.0",
+  "description": "set common and uncontroversial environment variables and provide useful scripts",
+  "readme": "README.md",
+  "create_files": {
+    "{{.Virtenv}}/bin/ca-get-xcode-python": "bin/ca-get-xcode-python"
+  },
+  "shell": {
+    "init_hook": [
+      "[ -z \"$FISH_VERSION\" ] && eval 'PATH={{ .Virtenv }}/bin:$PATH'",
+      "[ -n \"$FISH_VERSION\" ] && eval 'set PATH {{ .Virtenv }}/bin $PATH'",
+      "[ \"$(uname)\" = Darwin ] && export npm_config_python=\"$(ca-get-xcode-python)\""
+    ]
+  }
+}
