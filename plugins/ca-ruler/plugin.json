@@ -1,0 +1,12 @@
+{
+  "name": "ca-ruler",
+  "version": "0.0.1",
+  "description": "Culture Amp plugin providing the binary included in the npm package @intellectronica/ruler",
+  "packages": ["nodejs"],
+  "create_files": {
+    "{{.Virtenv}}/bin/ruler": "bin/ca-ruler-wrapper"
+  },
+  "shell": {
+    "init_hook": ["PATH={{ .Virtenv }}/bin:$PATH"]
+  }
+}
