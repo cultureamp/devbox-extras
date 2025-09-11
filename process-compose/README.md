@@ -5,7 +5,7 @@ This schema allows for validation of the `process-compose.yaml` file that devbox
 To make use of this file you can include the schema in your file by adding the following line to the top of your `process-compose.yaml` file:
 
 ```yaml
-# yaml-language-server: $schema: https://raw.githubusercontent.com/cultureamp/devbox-extras/main/process-compose/schema.yaml
+# yaml-language-server: $schema=https://raw.githubusercontent.com/cultureamp/devbox-extras/main/process-compose/schema.yaml
 ```
 
 This requires the yaml-language-server to be installed. You can install this LSP for VSCode [here](https://marketplace.visualstudio.com/items/?itemName=redhat.vscode-yaml)
