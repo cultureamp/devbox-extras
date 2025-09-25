@@ -1,7 +1,7 @@
 version: "0.5"
 
 processes:
-  readme:
+  README_DEBEZIUM:
     command: "devbox run debezium-server-readme; tail -f /dev/null"
     availability:
       restart: always
