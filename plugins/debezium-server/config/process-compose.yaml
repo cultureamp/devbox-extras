@@ -6,38 +6,43 @@ processes:
     availability:
       restart: always
 
-  init_topic:
-    command: devbox run create_heartbeat_topic
+  debezium-server-install-deps:
+    command: devbox run debezium-server-install-deps
+
+  debezium-server-init-topic:
+    command: devbox run debezium-server-create-heartbeat-topic
     depends_on:
       kafka_local:
         condition: process_healthy
 
-  init_outbox:
-    command: devbox run init_outbox
+  debezium-server-init-outbox:
+    command: devbox run debezium-server-init-outbox
     depends_on:
-      postgres_invariant_checks:
+      debezium-server-postgres-invariant-checks:
         condition: process_completed_successfully
-      postgres_wait:
+      debezium-server-postgres-wait:
         condition: process_healthy
 
-  postgres_wait:
-    command: "echo 'Waiting on postgresql...'; tail -f /dev/null"
+  debezium-server-postgres-wait:
+    command: "echo 'Waiting on postgresql at ${_DEBEZIUM_SERVER_DB_HOSTNAME}:${_DEBEZIUM_SERVER_DB_PORT}...'; tail -f /dev/null"
     readiness_probe:
       period_seconds: 5
       failure_threshold: 1000
       exec:
-        command: pg_isready -h ${DB_HOSTNAME} -U postgres -p ${DB_PORT}
+        command: pg_isready -h ${_DEBEZIUM_SERVER_DB_HOSTNAME} -U postgres -p ${_DEBEZIUM_SERVER_DB_PORT}
 
-  postgres_invariant_checks:
-    command: devbox run postgres-version-check
+  debezium-server-postgres-invariant-checks:
+    command: devbox run debezium-server-postgres-version-check
 
-  debezium_server:
+  debezium-server:
     working_dir: {{.Virtenv}}
     command: run_debezium
     depends_on:
-      init_outbox:
+      debezium-server-install-deps:
         condition: process_completed_successfully
-      init_topic:
+      debezium-server-init-outbox:
+        condition: process_completed_successfully
+      debezium-server-init-topic:
         condition: process_completed_successfully
     availability:
       restart: on_failure
