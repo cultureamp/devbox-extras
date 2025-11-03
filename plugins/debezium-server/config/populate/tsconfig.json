@@ -1,12 +1,11 @@
 {
-    "compilerOptions": {
-      "declaration": true,
-      "noImplicitReturns": true,
-      "inlineSourceMap": true,
-      "inlineSources": true,
-      "experimentalDecorators": true,
-      "noEmit": true,
-      "esModuleInterop": true
-    }
+  "compilerOptions": {
+    "declaration": true,
+    "noImplicitReturns": true,
+    "inlineSourceMap": true,
+    "inlineSources": true,
+    "experimentalDecorators": true,
+    "noEmit": true,
+    "esModuleInterop": true
   }
-  
+}

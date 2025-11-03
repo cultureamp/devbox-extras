@@ -10,8 +10,8 @@ What it provides:
 - Process compose job
   - Debezium Server instance pre-configured with the outbox event router
   - readme detailing environment variables and basic usage
-  - init_outbox service that assumes an existing Postgresql setup and configures the required outbox table, publication and heartbeat table for Debezium to use.
-  - init_topic service that attempts to auto-create the heartbeat topic, which is required by Debezium Server.  Normally auto topic creation would suffice, but debezium server will error if the heartbeat topic does not exist.'
+  - `debezium-server-init-outbox` service that assumes an existing Postgresql setup and configures the required outbox table, publication and heartbeat table for Debezium to use.
+  - `debezium-server-init-topic` service that attempts to auto-create the heartbeat topic, which is required by Debezium Server.  Normally auto topic creation would suffice, but debezium server will error if the heartbeat topic does not exist.'
 - Various CLI tools
     - Kafka CLI tools are included for creating the heartbeat topic
     - psql is provided and used for setting up Postgresql
@@ -26,7 +26,11 @@ Include the plugin in your `devbox.json`:
       "$schema": "https://raw.githubusercontent.com/jetify-com/devbox/main/.schema/devbox.schema.json",
       "include": [
         "github:cultureamp/devbox-extras?dir=plugins/debezium-server"
-      ]
+      ],
+      env: {
+        "_DEBEZIUM_SERVER_DB_PORT": "12345" // Adjust to your Postgresql port
+        "_DEBEZIUM_SERVER_DB_NAME": "my_app" // Adjust to your Postgresql database name
+      }
     }
 
 You will need to add the `ca-kafka-local` plugin and follow the plugin [README.md](../ca-kafka-local/README.md).
