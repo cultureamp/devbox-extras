@@ -1,17 +1,23 @@
 # CA Python Devbox Plugin
 
-* Installs `pipx` (via `pipx` [plugin](https://github.com/cultureamp/devbox-extras/tree/main/plugins/pipx))
-* Installs [`poetry`](https://python-poetry.org) to manage package installation
-* Decides whether you need private python packages
-  * This is determined by the presence of extra repos in `pyproject.toml`
-  * It can be overridden by setting the environment variable `POETRY_CA_PRIVATE_PYTHON` to the string `false`, probably in the `env` section of your `devbox.json`)
-* If you need private python packages
-  * Installs `poetry-codeartifact-auth` as a poetry plugin
-  * Checks that you have an appropriate environment variable set to point to an AWS role which can access CodeArtifact
-* Installs [`pre-commit`](https://pre-commit.com) hooks, if the `pre-commit` package is present in `pyproject.toml` (or `pre-commit` is installed externally). 
-* Automatically activates virtual env in `$VENV_DIR` unless `$DEVBOX_PYTHON_AUTO_VENV` environment variable is `false`
-  * Culture Amp convention is to set `VENV_DIR` to `"$PWD/.venv` in your `devbox.json` but this is only a loose convention and subject to change
+> [!WARNING] 
+> **DEPRECATED:** This plugin is deprecated and will be removed in future.
+>
+> Please use [ca-py-proxy](https://github.com/cultureamp/ca-py-proxy) instead and remove this plugin from your config.
+>
+> Examples of using the ca-py-proxy can be found in the python templates, [python-library-tml](https://github.com/cultureamp/python-library-tmpl) and [python-fargate-tmpl](https://github.com/cultureamp/python-fargate-tmpl).
 
+- Installs `pipx` (via `pipx` [plugin](https://github.com/cultureamp/devbox-extras/tree/main/plugins/pipx))
+- Installs [`poetry`](https://python-poetry.org) to manage package installation
+- Decides whether you need private python packages
+  - This is determined by the presence of extra repos in `pyproject.toml`
+  - It can be overridden by setting the environment variable `POETRY_CA_PRIVATE_PYTHON` to the string `false`, probably in the `env` section of your `devbox.json`)
+- If you need private python packages
+  - Installs `poetry-codeartifact-auth` as a poetry plugin
+  - Checks that you have an appropriate environment variable set to point to an AWS role which can access CodeArtifact
+- Installs [`pre-commit`](https://pre-commit.com) hooks, if the `pre-commit` package is present in `pyproject.toml` (or `pre-commit` is installed externally).
+- Automatically activates virtual env in `$VENV_DIR` unless `$DEVBOX_PYTHON_AUTO_VENV` environment variable is `false`
+  - Culture Amp convention is to set `VENV_DIR` to `"$PWD/.venv` in your `devbox.json` but this is only a loose convention and subject to change
 
 ## Usage
 
