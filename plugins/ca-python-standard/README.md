@@ -1,8 +1,10 @@
 # CA Python Devbox Plugin
 
-> [!WARNING]
-> **DEPRECATED:** This plugin is deprecated and will be removed in future. 
+> [!WARNING] 
+> **DEPRECATED:** This plugin is deprecated and will be removed in future.
+>
 > Please use [ca-py-proxy](https://github.com/cultureamp/ca-py-proxy) instead and remove this plugin from your config.
+>
 > Examples of using the ca-py-proxy can be found in the python templates, [python-library-tml](https://github.com/cultureamp/python-library-tmpl) and [python-fargate-tmpl](https://github.com/cultureamp/python-fargate-tmpl).
 
 - Installs `pipx` (via `pipx` [plugin](https://github.com/cultureamp/devbox-extras/tree/main/plugins/pipx))
