@@ -106,7 +106,8 @@ def main
 
   set_tokens(access_token, refresh_token)
 
-  `sh -c "$(curl -fsSL https://raw.githubusercontent.com/cultureamp/devbox-extras/main/scripts/install_hotel.sh)"`
+  `export NIX_CONFIG="access-tokens = github.com=#{access_token}" &&
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/cultureamp/devbox-extras/main/scripts/install_hotel.sh)"`
 end
 # rubocop:enable Metrics/MethodLength
 
