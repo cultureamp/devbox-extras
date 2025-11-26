@@ -89,7 +89,7 @@ BEGIN
     END IF;
 
     -- Set publication owner if not already set
-	ALTER PUBLICATION dbz_publication OWNER TO dbz_replication_role;
+    ALTER PUBLICATION dbz_publication OWNER TO dbz_replication_role;
 END $$;
 
 -- Allow UUID extension for inserting into the outbox table
