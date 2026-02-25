@@ -1,0 +1,5 @@
+version: "0.5"
+
+processes:
+  README:
+    command: "devbox run readme; tail -f /dev/null"

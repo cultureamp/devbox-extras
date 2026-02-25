@@ -4,7 +4,8 @@
   "description": "set common and uncontroversial environment variables and provide useful scripts",
   "readme": "README.md",
   "create_files": {
-    "{{.Virtenv}}/bin/ca-get-xcode-python": "bin/ca-get-xcode-python"
+    "{{.Virtenv}}/bin/ca-get-xcode-python": "bin/ca-get-xcode-python",
+    "{{.Virtenv}}/bin/run-with-services-up": "bin/run-with-services-up"
   },
   "shell": {
     "init_hook": [
