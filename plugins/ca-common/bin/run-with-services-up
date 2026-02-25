@@ -1,0 +1,171 @@
+#!/usr/bin/env bash
+
+usage() {
+  cat << EOF
+Usage: $0 [--timeout=SECONDS] [--service=SERVICE_NAME] [--process-compose-file=PATH] [--help] <command> [args...]
+
+Options:
+  --timeout=SECONDS           Timeout for services to start (default: 600 seconds)
+  --service=SERVICE_NAME      Specify which service to start (passes through to devbox services up)
+  --process-compose-file=PATH Path to process compose file (passes through to devbox services up) (if a relative path to the project's devbox.json file)
+  --help                      Show this help message
+
+Examples:
+  $0 ./smoke-test.sh
+  $0 --timeout=1200 --service=install-gems bundle exec rspec
+  $0 --process-compose-file=./custom-compose.yml bundle exec rspec
+  $0 --process-compose-file=/absolute/path/to/compose.yml bundle exec rspec
+EOF
+}
+
+list_process_statuses() {
+  jq -r '
+    [.data[] |
+      { (.name):
+          (if (.status == "Restarting") then
+              "Restarting"
+            elif (.status == "Disabled") then
+              "Disabled"
+            elif (.exit_code != 0) then
+              "Error"
+            elif (.status == "Completed" and .exit_code == 0) then
+              "Completed"
+            elif (.has_ready_probe == false and .is_running == true) then
+              "Running"
+            elif (.has_ready_probe == true and .is_ready == "Ready") then
+              "Ready"
+            else
+              "Waiting"
+            end)
+      }
+    ] | add
+  '
+}
+
+main() {
+  echo ""
+
+  # Ensure we're in a devbox shell
+  if [[ -z "$DEVBOX_PROJECT_ROOT" ]]; then
+    echo "Error: This script must be run inside a devbox shell."
+    exit 1
+  fi
+
+  ## Ensure that process-compose is not already running.
+  if devbox services ls 2>&1 | grep -q "Services running in process-compose:"; then
+    echo "Devbox is already running. Please stop it before using run-with-services-up."
+    exit 1
+  fi
+
+  # Always stop services on exit to ensure a clean state for subsequent runs.
+  trap 'devbox services stop' EXIT
+
+  # Start services and get process-compose port from the output.
+  local devbox_args=(devbox services up --background)
+  [ -n "$process_compose_file_flag" ] && devbox_args+=("$process_compose_file_flag")
+  [ -n "$service_name" ] && devbox_args+=("$service_name")
+  output=$("${devbox_args[@]}" 2>&1)
+
+  # Get the process-compose port from the output.
+  local pcport_output
+  pcport_output=$(echo "$output" | grep -oE "running on port [0-9]+" | grep -oE "[0-9]+")
+  export PCPORT="$pcport_output"
+  if [ -n "$PCPORT" ]; then
+      echo "Process-compose is running on port: $PCPORT"
+  else
+      echo "Could not extract port number from output:"
+      echo "$output"
+      exit 1
+  fi
+  # TODO: Replace above when `services pcport` feature is shipped.
+  # https://github.com/jetify-com/devbox/pull/2784
+  # PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
+  
+  echo ""
+
+  # Wait for key services to start
+  local start_time
+  start_time=$(date +%s)
+  while true; do
+    statuses=$(curl -s "http://localhost:$PCPORT/processes" | list_process_statuses)
+
+    # Print an update
+    devbox services ls
+    echo ""
+
+    # Exit if any process has an error.
+    echo "$statuses" | grep -q "Error" && { echo -e "Error: A process failed.\n"; exit 1; }
+    
+    # Proceed if all processes are ready.
+    echo "$statuses" | grep -q "Waiting" || break
+
+    # Check if timeout exceeded
+    local elapsed=$(($(date +%s) - start_time))
+    (( elapsed >= timeout_seconds )) && { echo "Timeout waiting for services to start after ${timeout_seconds}s"; exit 1; }
+
+    sleep 3
+  done
+      
+  # Check if process-compose is still running before executing the command
+  # Wait a moment for process-compose to shut down if all processes have finished
+  sleep 2
+  if ! curl -s "http://localhost:$PCPORT/live" > /dev/null 2>&1; then
+    echo "Error: process-compose is no longer running on port $PCPORT"
+    exit 1
+  fi
+
+  echo ""
+  echo "Running command: $*"
+  echo ""
+
+  # Handle both quoted and unquoted command arguments
+  # If there's only one argument, try to execute it as a shell command
+  # Otherwise, execute all arguments directly
+  if [ $# -eq 1 ]; then
+    # Single argument - could be a quoted command like "bundle exec rspec"
+    # Execute it in a shell to handle word splitting properly
+    bash -c "${1}" || { echo "Command failed: ${1}"; exit 1; }
+  else
+    # Multiple arguments - execute directly
+    "${@}" || { echo "Command failed: $*"; exit 1; }
+  fi
+  echo ""
+
+}
+
+# Parse optional flags
+timeout_seconds=600 # default to 10 minutes
+service_name=""
+process_compose_file_flag=""
+while [[ $# -gt 0 ]]; do
+  case $1 in
+    --timeout=*)
+      value="${1#*=}"
+      if ! [[ "$value" =~ ^[0-9]+$ ]] || [ "$value" -le 0 ]; then
+        echo "Invalid --timeout value '$value'. It must be a positive integer number of seconds." >&2
+        exit 1
+      fi
+      timeout_seconds="$value"
+      shift 1
+      ;;
+    --service=*)
+      service_name="${1#*=}"
+      shift 1
+      ;;
+    --process-compose-file=*)
+      value="${1#*=}"
+      # Convert to absolute path to avoid issues with relative paths
+      process_compose_file_flag="--process-compose-file=$value"
+      shift 1
+      ;;
+    --help|-h)
+      usage
+      exit 0
+      ;;
+    *)
+      break
+      ;;
+  esac
+done
+
+main "${@}"
