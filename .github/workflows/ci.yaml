@@ -14,7 +14,7 @@ jobs:
       matrix:
         # See: https://docs.github.com/en/actions/using-github-hosted-runners/about-github-hosted-runners/about-github-hosted-runners#standard-github-hosted-runners-for-public-repositories
         # for the mapping of architecture to the runner type.
-        runs-on: [macos-13, macos-latest, ubuntu-latest]
+        runs-on: [macos-14, macos-latest, ubuntu-latest]
     runs-on: ${{ matrix.runs-on }}
     steps:
       - uses: actions/checkout@v6
