@@ -1,0 +1,7 @@
+version: "0.5"
+
+# All processes finish and nothing is left running and there's an error.
+
+processes:
+  README:
+    command: "sleep 1 && exit 0"

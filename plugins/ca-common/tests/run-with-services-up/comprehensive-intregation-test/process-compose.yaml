@@ -1,0 +1,31 @@
+version: "0.5"
+
+# A process compose file testing as many healthy scenarios as possible
+processes:
+  README:
+    command: "devbox run readme; tail -f /dev/null"
+
+  parent_server:
+    command: sleep 2 && python3 -m http.server 5055
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:5055
+    depends_on:
+      child_server:
+        condition: process_healthy
+
+  child_server:
+    command: sleep 2 && python3 -m http.server 5065
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:5065
+    depends_on:
+      setup_task:
+        condition: process_completed_successfully
+
+  setup_task:
+    command: echo "Running setup task..."; sleep 2; echo "Setup complete!"
+
+  disabled_process:
+    command: echo "This process is disabled" && exit 1
+    disabled: true
