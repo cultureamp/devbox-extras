@@ -74,9 +74,7 @@ main() {
   local devbox_command=(devbox services up --background)
   [ -n "$process_compose_file_flag" ] && devbox_command+=("$process_compose_file_flag")
   [ -n "$service_name" ] && devbox_command+=("$service_name")
-  "${devbox_command[@]}"
-
-  # Get the process-compose port.
+  output=$("${devbox_command[@]}" 2>&1)
 
   # Get the process-compose port from the output.
   local pcport_output
@@ -89,9 +87,9 @@ main() {
       echo "$output"
       exit 1
   fi
-
-  # TODO: Try switching to this instead of the above
-  #local PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
+  # TODO: Replace above when `services pcport` feature is shipped.
+  # https://github.com/jetify-com/devbox/pull/2784
+  # PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
 
   echo ""
 
