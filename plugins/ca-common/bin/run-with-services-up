@@ -18,30 +18,6 @@ Examples:
 EOF
 }
 
-list_process_statuses() {
-  jq -r '
-    [.data[] |
-      { (.name):
-          (if (.status == "Restarting") then
-              "Restarting"
-            elif (.status == "Disabled") then
-              "Disabled"
-            elif (.exit_code != 0) then
-              "Error"
-            elif (.status == "Completed" and .exit_code == 0) then
-              "Completed"
-            elif (.has_ready_probe == false and .is_running == true) then
-              "Running"
-            elif (.has_ready_probe == true and .is_ready == "Ready") then
-              "Ready"
-            else
-              "Waiting"
-            end)
-      }
-    ] | add
-  '
-}
-
 main() {
   # Parse optional flags
   local timeout_seconds=600 # default to 10 minutes
@@ -94,24 +70,24 @@ main() {
   # Always stop services on exit to ensure a clean state for subsequent runs.
   trap 'devbox services stop' EXIT
 
-  # Start services and get process-compose port from the output.
+  # Start services with "devbox services up".
   local devbox_command=(devbox services up --background)
   [ -n "$process_compose_file_flag" ] && devbox_command+=("$process_compose_file_flag")
   [ -n "$service_name" ] && devbox_command+=("$service_name")
-   "${devbox_command[@]}"
+  "${devbox_command[@]}"
 
-  # Get the process-compose port from the output.
-  PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
+  # Get the process-compose port.
+  local PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
 
   echo ""
 
-  # Wait for key services to start
+  # Wait for key services to start.
   local start_time
   start_time=$(date +%s)
   while true; do
     statuses=$(curl -s "http://localhost:$PCPORT/processes" | list_process_statuses)
 
-    # Print an update
+    # Print an update.
     devbox services ls
     echo ""
 
@@ -128,8 +104,8 @@ main() {
     sleep 3
   done
 
-  # Check if process-compose is still running before executing the command
-  # Wait a moment for process-compose to shut down if all processes have finished
+  # Check if process-compose is still running before executing the command.
+  # Wait a moment for process-compose to shut down if all processes have finished.
   sleep 2
   if ! curl -s "http://localhost:$PCPORT/live" > /dev/null 2>&1; then
     echo "Error: process-compose is no longer running on port $PCPORT"
@@ -140,12 +116,12 @@ main() {
   echo "Running command: $*"
   echo ""
 
-  # Handle both quoted and unquoted command arguments
-  # If there's only one argument, try to execute it as a shell command
-  # Otherwise, execute all arguments directly
+  # Handle both quoted and unquoted command arguments.
+  # If there's only one argument, try to execute it as a shell command.
+  # Otherwise, execute all arguments directly.
   if [ $# -eq 1 ]; then
-    # Single argument - could be a quoted command like "bundle exec rspec"
-    # Execute it in a shell to handle word splitting properly
+    # Single argument - could be a quoted command like "bundle exec rspec".
+    # Execute it in a shell to handle word splitting properly.
     bash -c "${1}" || { echo "Command failed: ${1}"; exit 1; }
   else
     # Multiple arguments - execute directly
@@ -153,6 +129,30 @@ main() {
   fi
   echo ""
 
+}
+
+list_process_statuses() {
+  jq -r '
+    [.data[] |
+      { (.name):
+          (if (.status == "Restarting") then
+              "Restarting"
+            elif (.status == "Disabled") then
+              "Disabled"
+            elif (.exit_code != 0) then
+              "Error"
+            elif (.status == "Completed" and .exit_code == 0) then
+              "Completed"
+            elif (.has_ready_probe == false and .is_running == true) then
+              "Running"
+            elif (.has_ready_probe == true and .is_ready == "Ready") then
+              "Ready"
+            else
+              "Waiting"
+            end)
+      }
+    ] | add
+  '
 }
 
 main "${@}"
