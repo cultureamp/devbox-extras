@@ -7,7 +7,7 @@ Usage: $0 [--timeout=SECONDS] [--service=SERVICE_NAME] [--process-compose-file=P
 Options:
   --timeout=SECONDS           Timeout for services to start (default: 600 seconds)
   --service=SERVICE_NAME      Specify which service to start (passes through to devbox services up)
-  --process-compose-file=PATH Path to process compose file (passes through to devbox services up) (if a relative path to the project's devbox.json file)
+  --process-compose-file=PATH Path to process compose file (passes through to devbox services up) (if a relative path is given then it's relative to the project's devbox.json file)
   --help                      Show this help message
 
 Examples:
