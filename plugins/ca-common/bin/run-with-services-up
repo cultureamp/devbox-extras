@@ -51,7 +51,7 @@ main() {
     exit 1
   fi
 
-  ## Ensure that process-compose is not already running.
+  # Ensure that process-compose is not already running.
   if devbox services ls 2>&1 | grep -q "Services running in process-compose:"; then
     echo "Devbox is already running. Please stop it before using run-with-services-up."
     exit 1
