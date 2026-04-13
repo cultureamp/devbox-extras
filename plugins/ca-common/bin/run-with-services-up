@@ -64,7 +64,6 @@ main() {
   local devbox_args=(devbox services up --background)
   [ -n "$process_compose_file_flag" ] && devbox_args+=("$process_compose_file_flag")
   [ -n "$service_name" ] && devbox_args+=("$service_name")
-  output=$("${devbox_args[@]}" 2>&1)
 
   # Get the process-compose port from the output.
   PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
