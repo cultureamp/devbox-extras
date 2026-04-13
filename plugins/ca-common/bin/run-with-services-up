@@ -77,7 +77,21 @@ main() {
   "${devbox_command[@]}"
 
   # Get the process-compose port.
-  local PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
+
+  # Get the process-compose port from the output.
+  local pcport_output
+  pcport_output=$(echo "$output" | grep -oE "running on port [0-9]+" | grep -oE "[0-9]+")
+  export PCPORT="$pcport_output"
+  if [ -n "$PCPORT" ]; then
+      echo "Process-compose is running on port: $PCPORT"
+  else
+      echo "Could not extract port number from output:"
+      echo "$output"
+      exit 1
+  fi
+
+  # TODO: Try switching to this instead of the above
+  #local PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
 
   echo ""
 
