@@ -87,9 +87,11 @@ main() {
       echo "$output"
       exit 1
   fi
-  # TODO: Replace above when `services pcport` feature is shipped.
-  # https://github.com/jetify-com/devbox/pull/2784
-  # PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
+
+  # TODO: Replace above with `services pcport` when the following issue with pcport is resolved:
+  #  Error: process-compose is not running or it's config is missing. To start it, run `devbox services up`
+  #  source: failed to find projectDir /var/folders/cp/kp1z7bk902qd09vnskdwr11r0000gp/T/tmp.cJGGFVeVuP in config.Instances
+  #PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
 
   echo ""
 
