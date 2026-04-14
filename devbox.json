@@ -33,9 +33,7 @@
         "rubocop --autocorrect"
       ],
       "test": [
-        "devbox run test-bash",
-        "devbox run test-zsh",
-        "devbox run test-fish"
+        "bats --print-output-on-failure --show-output-of-passing-tests --recursive ${1:-.}"
       ]
     }
   }

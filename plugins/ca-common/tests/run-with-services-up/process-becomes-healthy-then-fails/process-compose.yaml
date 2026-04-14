@@ -1,0 +1,11 @@
+version: "0.5"
+
+processes:
+  README:
+    command: "devbox run readme; tail -f /dev/null"
+
+  failing_after_healthy:
+    command: bash -c "sleep 2 && python3 -m http.server 5055 & sleep 8 && echo 'Killing server after being healthy' && pkill -f 'http.server 5055' && exit 1"
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:5055

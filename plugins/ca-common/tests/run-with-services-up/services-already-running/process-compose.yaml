@@ -1,0 +1,11 @@
+version: "0.5"
+
+processes:
+  simple_server:
+    command: sleep 2 && python3 -m http.server 5055
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:5055
+
+  README:
+    command: "devbox run readme; tail -f /dev/null"

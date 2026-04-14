@@ -1,0 +1,14 @@
+version: "0.5"
+
+# This file serves two purposes:
+#
+# 1. To follow the convention of having a `devbox services up` command
+#    that will ensure the project is fully set up and ready to go.
+#
+# 2. To work around a bug that affects the plugins/ca-common/tests.
+#    Certain devbox commands will fail even if a process-compose.yaml file is provided via the 
+#    --process-compose-file flag unless this file is present.
+
+processes:
+  README:
+    command: "Project all set up. You can close this window; tail -f /dev/null"

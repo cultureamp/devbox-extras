@@ -1,0 +1,17 @@
+version: "0.5"
+
+processes:
+  README:
+    command: "devbox run readme; tail -f /dev/null"
+
+  failing_server:
+    command: sleep 2 && python3 -m http.server 5066
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:5055
+    depends_on:
+      setup_task:
+        condition: process_completed_successfully
+
+  setup_task:
+    command: echo "Running setup task..."; sleep 2; echo "Setup complete!"

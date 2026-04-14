@@ -1,0 +1,24 @@
+version: "0.5"
+
+
+processes:
+
+  good_process:
+    command: sleep 2 && python3 -m http.server 5055
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:5055
+
+  bad_process:
+    command: echo "This process will fail" && exit 1
+
+
+  unhealthy_process:
+    command: sleep 2 && python3 -m http.server 5065
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:5065
+
+  README:
+    command: "devbox run readme; tail -f /dev/null"
+ 
