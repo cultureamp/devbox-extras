@@ -101,6 +101,12 @@ main() {
   while true; do
     statuses=$(curl -s "http://localhost:$PCPORT/processes" | list_process_statuses)
 
+    # If statuses is empty, the API isn't ready yet — keep waiting.
+    if [[ -z "$statuses" ]]; then
+      echo "Waiting for process-compose API to return process data..."
+      continue
+    fi
+
     # Print an update.
     devbox services ls
     echo ""
@@ -110,7 +116,7 @@ main() {
 
     # Proceed if all processes are ready.
     echo "$statuses" | grep -q "Waiting" || break
-
+    
     # Check if timeout exceeded
     local elapsed=$(($(date +%s) - start_time))
     (( elapsed >= timeout_seconds )) && { echo "Timeout waiting for services to start after ${timeout_seconds}s"; exit 1; }
