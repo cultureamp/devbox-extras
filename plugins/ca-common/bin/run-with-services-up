@@ -1,6 +1,5 @@
 #!/usr/bin/env bash
 
-# Return codes for wait_for_services
 readonly WAIT_PROCESS_ERROR=1
 readonly WAIT_TIMEOUT=2
 
@@ -96,17 +95,16 @@ main() {
   #  Error: process-compose is not running or it's config is missing. To start it, run `devbox services up`
   #  source: failed to find projectDir /var/folders/cp/kp1z7bk902qd09vnskdwr11r0000gp/T/tmp.cJGGFVeVuP in config.Instances
   #PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
-
   echo ""
 
-  # Wait for key services to start.
   wait_for_process_compose_api
 
-  echo "::group::Waiting for processes to start"
+  echo "::group::Waiting for services to start"
   wait_for_services
   local wait_result=$?
   echo "::endgroup::"
 
+  # Handle failure if any process failed or if we timed out.
   if [ $wait_result -ne 0 ]; then
     handle_wait_failure "$wait_result"
     exit 1
@@ -120,10 +118,7 @@ main() {
     exit 1
   fi
 
-  echo ""
-  echo "Running command: $*"
-  echo ""
-
+  echo "::group::Running command: $*"
   # Handle both quoted and unquoted command arguments.
   # If there's only one argument, try to execute it as a shell command.
   # Otherwise, execute all arguments directly.
@@ -135,7 +130,7 @@ main() {
     # Multiple arguments - execute directly
     "${@}" || { echo "Command failed: $*"; exit 1; }
   fi
-  echo ""
+  echo "::endgroup::"
 
 }
 
@@ -207,32 +202,6 @@ handle_wait_failure() {
   fi
 }
 
-list_failed_processes() {
-  jq -r '
-    [.data[] |
-      select(
-        .status != "Restarting" and
-        .status != "Disabled" and
-        .status != "Skipped" and
-        .exit_code != 0
-      ) | .name
-    ] | .[]
-  '
-}
-
-list_not_ready_processes() {
-  jq -r '
-    [.data[] |
-      select(
-        (.status != "Completed" or .exit_code != 0) and
-        .status != "Disabled" and
-        .status != "Skipped" and
-        (.has_ready_probe != true or .is_ready != "Ready")
-      ) | .name
-    ] | .[]
-  '
-}
-
 print_process_logs() {
   local pcport="$1"
   local header_prefix="$2"
@@ -274,5 +243,32 @@ list_process_statuses() {
     ] | add
   '
 }
+
+list_failed_processes() {
+  jq -r '
+    [.data[] |
+      select(
+        .status != "Restarting" and
+        .status != "Disabled" and
+        .status != "Skipped" and
+        .exit_code != 0
+      ) | .name
+    ] | .[]
+  '
+}
+
+list_not_ready_processes() {
+  jq -r '
+    [.data[] |
+      select(
+        (.status != "Completed" or .exit_code != 0) and
+        .status != "Disabled" and
+        .status != "Skipped" and
+        (.has_ready_probe != true or .is_ready != "Ready")
+      ) | .name
+    ] | .[]
+  '
+}
+
 
 main "${@}"
