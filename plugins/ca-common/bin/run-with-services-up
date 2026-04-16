@@ -99,7 +99,9 @@ main() {
   local start_time
   start_time=$(date +%s)
   while true; do
-    statuses=$(curl -s "http://localhost:$PCPORT/processes" | list_process_statuses)
+    local processes_response
+    processes_response=$(curl -s "http://localhost:$PCPORT/processes")
+    statuses=$(echo "$processes_response" | list_process_statuses)
 
     # If statuses is empty, the API isn't ready yet — keep waiting.
     if [[ -z "$statuses" ]]; then
@@ -112,7 +114,14 @@ main() {
     echo ""
 
     # Exit if any process has an error.
-    echo "$statuses" | grep -q "Error" && { echo -e "Error: A process failed.\n"; exit 1; }
+    if echo "$statuses" | grep -q "Error"; then
+      echo "Error: One or more processes failed."
+      echo ""
+      local failed_processes
+      mapfile -t failed_processes < <(echo "$processes_response" | list_failed_processes)
+      print_failed_process_logs "$PCPORT" "${failed_processes[@]}"
+      exit 1
+    fi
 
     # Proceed if all processes are ready.
     echo "$statuses" | grep -q "Waiting" || break
@@ -149,6 +158,32 @@ main() {
   fi
   echo ""
 
+}
+
+list_failed_processes() {
+  jq -r '
+    [.data[] |
+      select(
+        .status != "Restarting" and
+        .status != "Disabled" and
+        .status != "Skipped" and
+        .exit_code != 0
+      ) | .name
+    ] | .[]
+  '
+}
+
+print_failed_process_logs() {
+  local pcport="$1"
+  shift
+  local failed_processes=("$@")
+
+  for process_name in "${failed_processes[@]}"; do
+    echo "::group::Logs for failed process: $process_name"
+    curl -s "http://localhost:$pcport/process/logs/$process_name/0/0" | jq -r '.logs[]'
+    echo "::endgroup::"
+    echo ""
+  done
 }
 
 list_process_statuses() {

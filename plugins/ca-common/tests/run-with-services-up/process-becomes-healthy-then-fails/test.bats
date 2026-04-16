@@ -13,6 +13,6 @@ setup() {
 		echo "Command completed"
 
 	[ $status -eq 1 ]
-	[[ "$output" == *"Error: A process failed."* ]]
+	[[ "$output" == *"Error: One or more processes failed."* ]]
 	[[ "$output" != *"Command completed"* ]]
 }
