@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+readonly WAIT_PROCESS_ERROR=1
+readonly WAIT_TIMEOUT=2
+
 usage() {
   cat << EOF
 Usage: $0 [--timeout=SECONDS] [--service=SERVICE_NAME] [--process-compose-file=PATH] [--help] <command> [args...]
@@ -92,37 +95,20 @@ main() {
   #  Error: process-compose is not running or it's config is missing. To start it, run `devbox services up`
   #  source: failed to find projectDir /var/folders/cp/kp1z7bk902qd09vnskdwr11r0000gp/T/tmp.cJGGFVeVuP in config.Instances
   #PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
-
   echo ""
 
-  # Wait for key services to start.
-  local start_time
-  start_time=$(date +%s)
-  while true; do
-    statuses=$(curl -s "http://localhost:$PCPORT/processes" | list_process_statuses)
+  wait_for_process_compose_api
 
-    # If statuses is empty, the API isn't ready yet — keep waiting.
-    if [[ -z "$statuses" ]]; then
-      echo "Waiting for process-compose API to return process data..."
-      continue
-    fi
+  echo "::group::Waiting for services to start"
+  wait_for_services
+  local wait_result=$?
+  echo "::endgroup::"
 
-    # Print an update.
-    devbox services ls
-    echo ""
-
-    # Exit if any process has an error.
-    echo "$statuses" | grep -q "Error" && { echo -e "Error: A process failed.\n"; exit 1; }
-
-    # Proceed if all processes are ready.
-    echo "$statuses" | grep -q "Waiting" || break
-    
-    # Check if timeout exceeded
-    local elapsed=$(($(date +%s) - start_time))
-    (( elapsed >= timeout_seconds )) && { echo "Timeout waiting for services to start after ${timeout_seconds}s"; exit 1; }
-
-    sleep 3
-  done
+  # Handle failure if any process failed or if we timed out.
+  if [ $wait_result -ne 0 ]; then
+    handle_wait_failure "$wait_result"
+    exit 1
+  fi
 
   # Check if process-compose is still running before executing the command.
   # Wait a moment for process-compose to shut down if all processes have finished.
@@ -132,10 +118,7 @@ main() {
     exit 1
   fi
 
-  echo ""
-  echo "Running command: $*"
-  echo ""
-
+  echo "::group::Running command: $*"
   # Handle both quoted and unquoted command arguments.
   # If there's only one argument, try to execute it as a shell command.
   # Otherwise, execute all arguments directly.
@@ -147,8 +130,94 @@ main() {
     # Multiple arguments - execute directly
     "${@}" || { echo "Command failed: $*"; exit 1; }
   fi
-  echo ""
+  echo "::endgroup::"
 
+}
+
+wait_for_process_compose_api() {
+  while true; do
+    local statuses
+    statuses=$(curl -s "http://localhost:$PCPORT/processes" | list_process_statuses)
+    if [[ -n "$statuses" ]]; then
+      return
+    fi
+    echo "Waiting for process-compose API to return process data..."
+    sleep 3
+  done
+}
+
+wait_for_services() {
+  local start_time
+  start_time=$(date +%s)
+
+  while true; do
+    local processes_response
+    processes_response=$(curl -s "http://localhost:$PCPORT/processes")
+    local statuses
+    statuses=$(echo "$processes_response" | list_process_statuses)
+
+    devbox services ls
+    echo ""
+
+    # Fail if any process has an error.
+    if echo "$statuses" | grep -q "Error"; then
+      return $WAIT_PROCESS_ERROR
+    fi
+
+    # Timeout exceeded.
+    local elapsed=$(($(date +%s) - start_time))
+    if (( elapsed >= timeout_seconds )); then
+      return $WAIT_TIMEOUT
+    fi
+
+    # Succeed if no processes are still waiting.
+    if ! echo "$statuses" | grep -q "Waiting"; then
+      return 0
+    fi
+
+    sleep 3
+  done
+}
+
+handle_wait_failure() {
+  local wait_result="$1"
+  local processes_response
+  processes_response=$(curl -s "http://localhost:$PCPORT/processes")
+
+  if [ "$wait_result" -eq $WAIT_PROCESS_ERROR ]; then
+    echo ""
+    echo "Error: One or more processes failed."
+    echo ""
+    local failed_processes
+    mapfile -t failed_processes < <(echo "$processes_response" | list_failed_processes)
+    print_process_logs "$PCPORT" "Logs for failed process" "${failed_processes[@]}"
+  elif [ "$wait_result" -eq $WAIT_TIMEOUT ]; then
+    echo "Timeout waiting for services to start after ${timeout_seconds}s"
+    echo ""
+    local not_ready_processes
+    mapfile -t not_ready_processes < <(echo "$processes_response" | list_not_ready_processes)
+    if [ ${#not_ready_processes[@]} -gt 0 ]; then
+      print_process_logs "$PCPORT" "Logs for process" "${not_ready_processes[@]}"
+    fi
+  fi
+}
+
+print_process_logs() {
+  local pcport="$1"
+  local header_prefix="$2"
+  shift 2
+  local process_names=("$@")
+
+  for process_name in "${process_names[@]}"; do
+    echo "::group::${header_prefix}: $process_name"
+    local logs_response
+    logs_response=$(curl -s "http://localhost:$pcport/process/logs/$process_name/0/0")
+    if ! echo "$logs_response" | jq -r '.logs[]' 2>/dev/null; then
+      echo "(Could not retrieve logs for this process)"
+    fi
+    echo "::endgroup::"
+    echo ""
+  done
 }
 
 list_process_statuses() {
@@ -174,5 +243,32 @@ list_process_statuses() {
     ] | add
   '
 }
+
+list_failed_processes() {
+  jq -r '
+    [.data[] |
+      select(
+        .status != "Restarting" and
+        .status != "Disabled" and
+        .status != "Skipped" and
+        .exit_code != 0
+      ) | .name
+    ] | .[]
+  '
+}
+
+list_not_ready_processes() {
+  jq -r '
+    [.data[] |
+      select(
+        (.status != "Completed" or .exit_code != 0) and
+        .status != "Disabled" and
+        .status != "Skipped" and
+        (.has_ready_probe != true or .is_ready != "Ready")
+      ) | .name
+    ] | .[]
+  '
+}
+
 
 main "${@}"
