@@ -1,0 +1,30 @@
+version: "0.5"
+
+# flaky-daemon crashes on its first run, then process-compose's on_failure
+# policy restarts it and the second run serves HTTP. Pins: process-compose
+# keeps the previous run's non-zero exit_code in the process state for the
+# entire replacement run (status Running, exit_code 1), so failure
+# detection must key off terminal states only — a fail check that trips on
+# any non-zero exit_code aborts this healthy, recovering graph.
+processes:
+  flaky-daemon:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      if [ ! -f "$MARKER_DIR/flaky_daemon_crashed_once" ]; then
+        touch "$MARKER_DIR/flaky_daemon_crashed_once"
+        echo "crashing on purpose (first run)"
+        exit 1
+      fi
+      exec python3 -m http.server 7300
+    availability:
+      restart: on_failure
+      backoff_seconds: 1
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:7300
+
+  for-verify:
+    depends_on:
+      flaky-daemon:
+        condition: process_healthy

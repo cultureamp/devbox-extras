@@ -101,22 +101,30 @@ wait_for_port() {
 }
 
 # Map a depends_on condition onto the runtime requirement it places on the
-# dependency. An empty condition means process-compose applies no gating,
-# so "started" is all a dependent can assume; an unrecognised condition
-# maps to "completed" (the strictest) so new upstream conditions fail loud
-# (timeout) instead of silently passing.
+# dependency. /process/info serialises conditions as the ProcessCondition
+# integer enum (0=process_completed, 1=process_completed_successfully,
+# 2=process_healthy, 3=process_started, 4=process_log_ready — order stable
+# across process-compose v1.64.1..v1.110.0), so both forms are accepted.
+# An ABSENT condition is process_completed: 0 is the Go zero value and the
+# field is omitempty, so process_completed serialises as {} (observed live;
+# the runtime switch treats the zero value as wait-for-completion-any-exit).
+# Returns 1 on an unrecognised condition so expand_dependency_graph can
+# fail immediately and loudly, rather than guessing a requirement and
+# burning the whole timeout.
 condition_to_requirement() {
   case "$1" in
-    process_completed_successfully|process_completed) echo "completed" ;;
-    process_healthy) echo "healthy" ;;
-    process_started|process_log_ready|"") echo "started" ;;
-    *) echo "completed" ;;
+    process_completed_successfully|1) echo "completed" ;;
+    process_completed|0|"") echo "completed_any" ;;
+    process_healthy|2) echo "healthy" ;;
+    process_started|3|process_log_ready|4) echo "started" ;;
+    *) return 1 ;;
   esac
 }
 
 _requirement_rank() {
   case "$1" in
-    completed) echo 3 ;;
+    completed) echo 4 ;;
+    completed_any) echo 3 ;;
     healthy) echo 2 ;;
     started) echo 1 ;;
     *) echo 0 ;;
@@ -126,22 +134,26 @@ _requirement_rank() {
 # Whether a node's runtime state (from parse_processes_states) satisfies
 # the requirement its in-graph dependents (or, for a root, this tool)
 # place on it:
-#   completed — Completed with exit 0. A merely-running process is NOT
-#               satisfied: a slow one-shot mid-run must be waited out so
-#               its exit code is actually checked.
-#   healthy   — readiness_probe passing (or already completed cleanly).
-#   started   — running is enough (or either stronger state above).
-#   default   — roots/targets: ready or completed. Merely "running" is not
-#               accepted — without a probe or a dependent's condition, a
-#               running process is indistinguishable from a one-shot that
-#               hasn't finished, and accepting it would report success
-#               before the one-shot's exit code exists. Long-running
-#               targets therefore need a readiness_probe.
+#   completed     — Completed with exit 0. A merely-running process is NOT
+#                   satisfied: a slow one-shot mid-run must be waited out
+#                   so its exit code is actually checked.
+#   completed_any — Completed with any exit code (process-compose's
+#                   process_completed condition explicitly tolerates
+#                   failure).
+#   healthy       — readiness_probe passing (or already completed cleanly).
+#   started       — running is enough (or either stronger state above).
+#   default       — roots/targets: ready or completed. Merely "running" is
+#                   not accepted — without a probe or a dependent's
+#                   condition, a running process is indistinguishable from
+#                   a one-shot that hasn't finished, and accepting it would
+#                   report success before the one-shot's exit code exists.
+#                   Long-running targets therefore need a readiness_probe.
 node_satisfied() {
   local state="$1"
   local requirement="$2"
   case "$requirement" in
     completed) [ "$state" = "completed_ok" ] ;;
+    completed_any) [ "$state" = "completed_ok" ] || [ "$state" = "completed_failed" ] ;;
     started) [ "$state" = "running" ] || [ "$state" = "ready" ] || [ "$state" = "completed_ok" ] ;;
     *) [ "$state" = "ready" ] || [ "$state" = "completed_ok" ] ;;
   esac
@@ -198,7 +210,10 @@ expand_dependency_graph() {
       [ -z "$dep" ] && continue
       deps_of[$name]+="$dep"$'\n'
       local req
-      req=$(condition_to_requirement "$condition")
+      req=$(condition_to_requirement "$condition") || {
+        echo "Error: unrecognised depends_on condition '$condition' on '$dep' (dependent: '$name')." >&2
+        return 1
+      }
       if [ "$(_requirement_rank "$req")" -gt "$(_requirement_rank "${requirement[$dep]:-}")" ]; then
         requirement[$dep]="$req"
       fi
@@ -274,15 +289,19 @@ post_process() {
 }
 
 # Emit one TSV row per process in a /processes response:
-#   name<TAB>state<TAB>failed<TAB>action
+#   name<TAB>state<TAB>failed
 # where:
-#   state  ∈ {completed_ok, ready, running, pending}
-#     completed_ok — Completed with exit code 0
-#     ready        — readiness_probe defined and passing
-#     running      — forked and running (probe, if any, not yet passing)
-#     pending      — everything else (not yet started, restarting, …)
-#   failed ∈ {ok, fail}  — non-transient non-zero exits are "fail"
-#   action ∈ {completed, ready, running, restart, start}
+#   state  ∈ {completed_ok, completed_failed, ready, running, pending}
+#     completed_ok     — Completed with exit code 0
+#     completed_failed — Completed with a non-zero exit code
+#     ready            — readiness_probe defined and passing
+#     running          — forked and running (probe, if any, not yet passing)
+#     pending          — everything else (not yet started, restarting, …)
+#   failed ∈ {ok, fail}  — TERMINAL failures only: Completed with a
+#     non-zero exit, or status Error (failed to launch). A Running process
+#     is never "fail": process-compose keeps the previous run's non-zero
+#     exit_code in the state while a policy-restarted replacement is
+#     already running, so a live exit_code must not abort the run.
 #
 # Whether a state satisfies a node depends on the node's requirement — see
 # node_satisfied. Callers read this once per polling iteration into
@@ -295,75 +314,77 @@ parse_processes_states() {
     [
       .name,
       (if (.status == "Completed" and .exit_code == 0) then "completed_ok"
+       elif (.status == "Completed") then "completed_failed"
        elif (.has_ready_probe == true and .is_ready == "Ready") then "ready"
        elif (.is_running == true) then "running"
        else "pending" end),
-      (if (.exit_code != 0 and
-           .status != "Restarting" and
-           .status != "Disabled" and
-           .status != "Skipped") then "fail" else "ok" end),
-      (if (.status == "Completed" and .exit_code == 0) then "completed"
-       elif (.has_ready_probe == true and .is_ready == "Ready") then "ready"
-       elif (.is_running == true) then "running"
-       elif (.status == "Completed" and .exit_code != 0) then "restart"
-       else "start" end)
+      (if ((.status == "Completed" and .exit_code != 0) or
+           .status == "Error") then "fail" else "ok" end)
     ] | @tsv
   '
 }
 
-# Read the /processes response into three associative arrays scoped to the
-# caller. Callers must `declare -A` the three arrays and pass their names.
+# Read the /processes response into two associative arrays scoped to the
+# caller. Callers must `declare -A` the two arrays and pass their names.
 # Requires bash 4.3+ (nameref).
 load_state_maps() {
   local processes_response="$1"
   local -n _state="$2"
   local -n _fail="$3"
-  local -n _action="$4"
-  local name state failed action
+  local name state failed
   # SC2004 misfires here: nameref targets are associative arrays (callers
   # `declare -A`), so `$name` is a string subscript, not arithmetic.
   # shellcheck disable=SC2004
-  while IFS=$'\t' read -r name state failed action; do
+  while IFS=$'\t' read -r name state failed; do
     _state[$name]=$state
     _fail[$name]=$failed
-    _action[$name]=$action
   done < <(parse_processes_states "$processes_response")
 }
 
 # Iterate the dependency graph once, calling post_process to start/restart
-# every member that isn't already satisfied. Buffers a per-process report
-# and emits it only if at least one process needed work — a no-op warm
-# start stays quiet. Requires $PCPORT.
+# every member that isn't already satisfied. $2 names the caller's
+# associative array of node requirements (from expand_dependency_graph) —
+# a node that already satisfies its requirement is left alone, so e.g. a
+# process_completed dep that Completed with a non-zero (tolerated) exit is
+# not pointlessly re-run. Buffers a per-process report and emits it only
+# if at least one process needed work — a no-op warm start stays quiet.
+# Returns 1 if the /processes fetch fails: guessing "start everything"
+# from an empty snapshot would re-run already-completed one-shots.
+# Requires $PCPORT.
 start_dependency_graph_services() {
   local dependency_graph="$1"
+  local -n _start_requirements="$2"
   local processes_response
   processes_response=$(curl -s "http://localhost:$PCPORT/processes")
+  if [ -z "$processes_response" ] || ! echo "$processes_response" | jq -e . >/dev/null 2>&1; then
+    echo "Error: process-compose API not responding; cannot start the dependency graph." >&2
+    return 1
+  fi
 
-  # state_map and fail_map are required by load_state_maps's signature but
-  # unused here.
+  # fail_map is required by load_state_maps's signature but unused here.
   # shellcheck disable=SC2034
-  declare -A state_map fail_map action_map
-  load_state_maps "$processes_response" state_map fail_map action_map
+  declare -A state_map fail_map
+  load_state_maps "$processes_response" state_map fail_map
 
   local lines=""
   local needs_report=0
   local name
   while IFS= read -r name; do
     [ -z "$name" ] && continue
-    local action="${action_map[$name]:-start}"
-    case "$action" in
-      completed)
-        lines+="  - $name: already completed."$'\n' ;;
-      ready)
-        lines+="  - $name: already ready."$'\n' ;;
-      running)
+    local state="${state_map[$name]:-pending}"
+    if node_satisfied "$state" "${_start_requirements[$name]:-default}"; then
+      lines+="  - $name: already satisfied."$'\n'
+      continue
+    fi
+    case "$state" in
+      ready|running)
         lines+="  - $name: in progress."$'\n'
         needs_report=1 ;;
-      restart)
+      completed_failed)
         lines+="  - $name: previously failed, restarting."$'\n'
         needs_report=1
         post_process "$name" "restart" ;;
-      start)
+      *)
         lines+="  - $name: starting."$'\n'
         needs_report=1
         post_process "$name" "start" ;;
@@ -398,10 +419,8 @@ handle_dependency_graph_failure() {
   fi
   echo ""
 
-  # action_map is required by load_state_maps's signature but unused here.
-  # shellcheck disable=SC2034
-  declare -A state_map fail_map action_map
-  load_state_maps "$processes_response" state_map fail_map action_map
+  declare -A state_map fail_map
+  load_state_maps "$processes_response" state_map fail_map
 
   local name
   while IFS= read -r name; do

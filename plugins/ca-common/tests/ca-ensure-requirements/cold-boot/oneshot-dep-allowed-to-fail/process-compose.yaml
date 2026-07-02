@@ -1,0 +1,18 @@
+version: "0.5"
+
+# optional-task exits non-zero, but for-verify depends on it with
+# condition process_completed — which process-compose satisfies on ANY
+# exit code. Pins: a node whose strongest requirement is process_completed
+# neither blocks the graph nor fails the run when it exits non-zero, and
+# ca-ensure-requirements reports overall success just as process-compose
+# itself would proceed.
+processes:
+  optional-task:
+    command: |
+      echo "failing, but this dep is allowed to fail"
+      exit 1
+
+  for-verify:
+    depends_on:
+      optional-task:
+        condition: process_completed

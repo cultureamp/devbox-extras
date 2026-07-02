@@ -9,15 +9,22 @@
 # "Satisfied" is per-node, driven by the strongest depends_on condition
 # the node's in-graph dependents declare on it (see node_satisfied in
 # _lib.bash):
-#   - required completed (process_completed*): Completed AND exit_code == 0
-#   - required healthy (process_healthy):      readiness_probe Ready
-#   - required started (process_started):      is_running == true
-#   - the target itself (no dependents):       Ready, or Completed w/ exit 0
+#   - process_completed_successfully: Completed AND exit_code == 0
+#   - process_completed:              Completed with ANY exit code — the
+#                                     condition explicitly tolerates failure,
+#                                     so a non-zero exit neither blocks nor
+#                                     fails the run for such a node
+#   - process_healthy:                readiness_probe Ready
+#   - process_started:                is_running == true
+#   - the target itself (no dependents): Ready, or Completed w/ exit 0
 # A merely-running probe-less process never satisfies a "completed" or
 # target requirement: a slow one-shot mid-run is indistinguishable from a
 # probe-less daemon, and accepting it would report success before the
 # one-shot's exit code exists. Long-running processes therefore need a
 # readiness_probe (or a dependent that only declares process_started).
+# Failure detection is terminal-state only (Completed with non-zero exit,
+# or Error): a Running process may still carry the previous run's non-zero
+# exit_code after a policy restart and must not abort the run.
 # Success waits for every node in the dependency graph.
 #
 # Cold start uses `devbox services up --background --pcflags=--keep-project`
@@ -209,7 +216,8 @@ run_dependency_graph() {
     requirement_of[$name]="$req"
   done <<< "$graph_tsv"
 
-  start_dependency_graph_services "$dependency_graph"
+  start_dependency_graph_services "$dependency_graph" requirement_of \
+    || { echo "Failed to start dependency graph services." >&2; exit 1; }
 
   local wait_snapshot=""
   wait_for_dependency_graph_satisfied "$dependency_graph" "$timeout_seconds" wait_snapshot requirement_of
@@ -260,18 +268,22 @@ wait_for_dependency_graph_satisfied() {
       return 1
     fi
 
-    # action_map is required by load_state_maps's signature but unused here.
-    # shellcheck disable=SC2034
-    declare -A state_map fail_map action_map
-    load_state_maps "$processes_response" state_map fail_map action_map
+    declare -A state_map fail_map
+    load_state_maps "$processes_response" state_map fail_map
 
     local pending_count=0 name
     while IFS= read -r name; do
       [ -z "$name" ] && continue
-      [ "${fail_map[$name]:-ok}" = "fail" ] && return 1
+      local requirement="${_requirements[$name]:-default}"
+      # A terminal failure aborts the run — unless the node's strongest
+      # requirement is process_completed, which tolerates any exit code
+      # (node_satisfied then accepts the completed_failed state).
+      if [ "${fail_map[$name]:-ok}" = "fail" ] && [ "$requirement" != "completed_any" ]; then
+        return 1
+      fi
       # A name missing from the snapshot defaults to state "pending" — a
       # graph member the API doesn't report must never count as satisfied.
-      node_satisfied "${state_map[$name]:-pending}" "${_requirements[$name]:-default}" \
+      node_satisfied "${state_map[$name]:-pending}" "$requirement" \
         || pending_count=$((pending_count + 1))
     done <<< "$dependency_graph"
 
@@ -297,7 +309,7 @@ wait_for_dependency_graph_satisfied() {
       return 2
     fi
     sleep 1
-    unset state_map fail_map action_map
+    unset state_map fail_map
   done
 }
 
