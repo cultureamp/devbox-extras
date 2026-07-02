@@ -1,0 +1,20 @@
+version: "0.5"
+
+# A one-shot target that depends on a long-running daemon. The invocation
+# should succeed AND leave process-compose running, because a daemon is in
+# the graph and needs to stay reachable to subsequent commands.
+processes:
+  daemon:
+    command: python3 -m http.server 7100
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:7100
+
+  oneshot-target:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/oneshot_target.ran"
+    depends_on:
+      daemon:
+        condition: process_healthy

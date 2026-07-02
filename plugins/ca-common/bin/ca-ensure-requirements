@@ -1,0 +1,277 @@
+#!/usr/bin/env bash
+
+# Ensures a named process (or meta-process) and its full dependency graph
+# is satisfied. Autodetects mode from the runtime state after the graph
+# is satisfied:
+#   - Any node still is_running == true → daemon-mode: PC is left running.
+#   - Every node has already Completed  → command-mode: PC is reaped.
+#
+# "Satisfied" is per-node:
+#   - Daemon w/ readiness_probe: is_ready == "Ready"
+#   - Daemon w/o readiness_probe: is_running == true  (best-effort — this
+#     fires as soon as PC forks the process, before the command has bound
+#     its port or done any actual work. If callers need a stronger signal,
+#     add a readiness_probe to the fixture.)
+#   - One-shot: status == "Completed" AND exit_code == 0
+# Success waits for every node in the dependency graph.
+#
+# Cold start uses `devbox services up --background --pcflags=--keep-project`
+# so the API stays reachable even if the graph turns out to be pure
+# one-shots (which would otherwise drain PC's process list before we can
+# poll). Warm start uses the API and doesn't touch PC lifecycle.
+#
+# Design notes:
+#   - No graph-shape rejection. A one-shot target that transitively depends
+#     on a daemon is legal and results in daemon-mode (PC left up so the
+#     daemon stays reachable to subsequent commands).
+#   - The daemon-vs-oneshot lifecycle decision is made from runtime state
+#     (is_running after the graph is satisfied), not from the static
+#     `isDaemon` config or the presence of a readiness_probe. A one-shot
+#     that happens to carry a readiness_probe is treated as a one-shot for
+#     PC-lifecycle purposes.
+
+readonly DEFAULT_TIMEOUT=600
+
+SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
+# shellcheck source=_lib.bash disable=SC1091
+source "$SCRIPT_DIR/_lib.bash"
+
+usage() {
+  cat <<EOF
+Usage: $(basename "$0") [--timeout=SECONDS] [--process-compose-file=PATH] [--help] <name>
+
+Ensures the named process (or meta-process) and its dependency graph are
+satisfied — daemons are Ready/Running, one-shots are Completed with exit 0.
+process-compose is left running iff the graph contains a long-running daemon.
+
+Options:
+  --timeout=SECONDS           Timeout for the dependency graph (default: $DEFAULT_TIMEOUT)
+  --process-compose-file=PATH Path to process-compose file
+                              (default: \$DEVBOX_PROJECT_ROOT/process-compose.yaml, falling back to .yml)
+  --help                      Show this help message
+EOF
+}
+
+main() {
+  local timeout_seconds=$DEFAULT_TIMEOUT
+  local pcfile=""
+  while [[ $# -gt 0 ]]; do
+    case $1 in
+      --timeout=*)
+        local value="${1#*=}"
+        if ! [[ "$value" =~ ^[0-9]+$ ]] || [ "$value" -le 0 ]; then
+          echo "Invalid --timeout value '$value'. It must be a positive integer." >&2
+          exit 1
+        fi
+        timeout_seconds="$value"
+        shift ;;
+      --process-compose-file=*)
+        pcfile="${1#*=}"
+        shift ;;
+      --help|-h)
+        usage
+        exit 0 ;;
+      *)
+        break ;;
+    esac
+  done
+
+  echo ""
+
+  if [[ -z "$DEVBOX_PROJECT_ROOT" ]]; then
+    echo "Error: This script must be run inside a devbox shell." >&2
+    exit 1
+  fi
+
+  if [ -z "$pcfile" ]; then
+    pcfile="$DEVBOX_PROJECT_ROOT/process-compose.yaml"
+    if [ ! -f "$pcfile" ] && [ -f "$DEVBOX_PROJECT_ROOT/process-compose.yml" ]; then
+      pcfile="$DEVBOX_PROJECT_ROOT/process-compose.yml"
+    fi
+  fi
+
+  if [ "$#" -ne 1 ]; then
+    echo "Error: exactly one process name is required." >&2
+    usage >&2
+    exit 1
+  fi
+
+  local target="$1"
+
+  PCPORT=$(pcport_if_running)
+  if [ -z "$PCPORT" ]; then
+    # Arm the reaper BEFORE booting so any early failure inside cold_start
+    # (partial devbox up, wait_for_port timeout, expand/classify errors,
+    # graph failure) triggers cleanup. The happy path disarms iff the graph
+    # has a daemon that should keep PC alive.
+    arm_reaper "$pcfile"
+    cold_start "$target" "$pcfile" "$timeout_seconds"
+  else
+    export PCPORT
+    warm_start "$target" "$timeout_seconds"
+  fi
+}
+
+cold_start() {
+  local target="$1"
+  local pcfile="$2"
+  local timeout_seconds="$3"
+
+  if [ ! -f "$pcfile" ]; then
+    echo "Error: process-compose file not found at '$pcfile'." >&2
+    echo "  Pass --process-compose-file=PATH or place process-compose.yaml (or .yml) at the project root." >&2
+    exit 1
+  fi
+
+  echo "process-compose is not running — booting via \`devbox services up --background\`."
+  # --keep-project keeps PC alive if the dependency graph turns out to be
+  # pure one-shots (which would drain PC's process list). We always tear
+  # PC down again after unless the graph has a real daemon.
+  devbox_services_up_background --pcflags=--keep-project --process-compose-file="$pcfile" "$target" \
+    || { echo "Failed to start process-compose." >&2; exit 1; }
+
+  PCPORT=$(wait_for_port)
+  if [ -z "$PCPORT" ]; then
+    echo "Error: process-compose did not become reachable in ${API_WAIT_TIMEOUT_SECONDS}s." >&2
+    exit 1
+  fi
+  export PCPORT
+  echo "process-compose booted on port $PCPORT."
+  echo ""
+
+  run_dependency_graph "$target" "$timeout_seconds"
+}
+
+warm_start() {
+  local target="$1"
+  local timeout_seconds="$2"
+  echo "process-compose already running on port $PCPORT — using API."
+  echo ""
+
+  run_dependency_graph "$target" "$timeout_seconds"
+}
+
+# Echo "yes" if any dependency graph member is currently a running service
+# (is_running == true), else "no". Operates on the /processes response
+# snapshot passed in (typically the one the wait loop just used to decide
+# the graph was satisfied) rather than fetching again — the two-fetch
+# variant races when a probe-less daemon flaps is_running between wait
+# success and classification, causing a healthy PC to be reaped.
+# Using runtime state (over the static `isDaemon` config field) also
+# correctly treats a one-shot that carries a readiness_probe as a one-shot
+# for the PC-lifecycle decision.
+graph_has_long_running_process() {
+  local dependency_graph="$1"
+  local processes_response="$2"
+  local name
+  while IFS= read -r name; do
+    [ -z "$name" ] && continue
+    local is_running
+    is_running=$(echo "$processes_response" \
+      | jq -r --arg n "$name" '.data[] | select(.name == $n) | .is_running')
+    if [ "$is_running" = "true" ]; then
+      echo "yes"
+      return 0
+    fi
+  done <<< "$dependency_graph"
+  echo "no"
+}
+
+# On failure paths (expand/classify errors, dep-graph failure, timeout) the
+# EXIT trap set by main() reaps PC. On the happy path we classify the graph
+# and either clear the trap (daemon-mode: leave PC up) or let it fire
+# (command-mode: reap PC).
+run_dependency_graph() {
+  local target="$1"
+  local timeout_seconds="$2"
+
+  local dependency_graph
+  dependency_graph=$(expand_dependency_graph "$target") \
+    || { echo "Failed to expand dependency graph." >&2; exit 1; }
+
+  start_dependency_graph_services "$dependency_graph"
+
+  local wait_snapshot=""
+  wait_for_dependency_graph_satisfied "$dependency_graph" "$timeout_seconds" wait_snapshot
+  local rc=$?
+
+  if [ $rc -ne 0 ]; then
+    handle_dependency_graph_failure "$dependency_graph" "$rc" \
+      "Timeout: dependency graph did not become ready after ${timeout_seconds}s."
+    exit 1
+  fi
+
+  local has_daemon
+  has_daemon=$(graph_has_long_running_process "$dependency_graph" "$wait_snapshot")
+  if [ "$has_daemon" = "yes" ]; then
+    disarm_reaper
+    echo "'$target' and dependencies are ready. Leaving process-compose running."
+  else
+    echo "'$target' and dependencies completed successfully."
+  fi
+}
+
+wait_for_dependency_graph_satisfied() {
+  local dependency_graph="$1"
+  local timeout_seconds="$2"
+  # Output param: nameref to the caller's variable that receives the
+  # /processes response body from the iteration that decided the graph
+  # was satisfied. Reused by the classifier so its lifecycle decision is
+  # made from the same snapshot as the success decision.
+  local -n _snapshot="$3"
+  _snapshot=""
+  local start_time
+  start_time=$(date +%s)
+  local first_iter=1
+  # Group markers are emitted lazily so a no-op warm start doesn't leave
+  # an empty `::group::` ... `::endgroup::`.
+  local printed_group=0
+  trap '[ "$printed_group" = "1" ] && echo "::endgroup::"' RETURN
+
+  while true; do
+    local processes_response
+    processes_response=$(curl -s "http://localhost:$PCPORT/processes")
+    if [ -z "$processes_response" ] || ! echo "$processes_response" | jq -e . >/dev/null 2>&1; then
+      echo "  process-compose API not responding."
+      return 1
+    fi
+
+    # action_map is required by load_state_maps's signature but unused here.
+    # shellcheck disable=SC2034
+    declare -A sat_map fail_map action_map
+    load_state_maps "$processes_response" sat_map fail_map action_map
+
+    local pending_count=0 name
+    while IFS= read -r name; do
+      [ -z "$name" ] && continue
+      [ "${fail_map[$name]:-ok}" = "fail" ] && return 1
+      [ "${sat_map[$name]:-}" = "pending" ] && pending_count=$((pending_count + 1))
+    done <<< "$dependency_graph"
+
+    if [ "$pending_count" -eq 0 ]; then
+      _snapshot="$processes_response"
+      return 0
+    fi
+
+    if [ "$printed_group" = "0" ]; then
+      echo "::group::Waiting for dependency graph to be ready"
+      printed_group=1
+    fi
+
+    if [ "$first_iter" = "1" ]; then
+      first_iter=0
+    else
+      echo ""
+    fi
+    print_processes_table "$processes_response"
+
+    local elapsed=$(( $(date +%s) - start_time ))
+    if (( elapsed >= timeout_seconds )); then
+      return 2
+    fi
+    sleep 1
+    unset sat_map fail_map action_map
+  done
+}
+
+main "$@"

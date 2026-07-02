@@ -1,0 +1,19 @@
+version: "0.5"
+
+# A one-shot node that happens to carry a readiness_probe. Once its command
+# has Completed, is_running is false, so ca-ensure-requirements treats this as
+# command-mode and reaps process-compose.
+processes:
+  probe_oneshot:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/probe_oneshot.ran"
+    readiness_probe:
+      exec:
+        command: "true"
+
+  for-verify:
+    depends_on:
+      probe_oneshot:
+        condition: process_completed_successfully

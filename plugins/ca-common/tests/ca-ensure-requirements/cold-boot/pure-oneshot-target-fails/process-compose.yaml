@@ -1,0 +1,15 @@
+version: "0.5"
+
+# `for-verify` depends on a one-shot that exits non-zero.
+# ca-ensure-requirements should surface a dependency-graph failure and reap
+# process-compose.
+processes:
+  failing_oneshot:
+    command: |
+      echo "failing on purpose"
+      exit 1
+
+  for-verify:
+    depends_on:
+      failing_oneshot:
+        condition: process_completed_successfully

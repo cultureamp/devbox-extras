@@ -1,0 +1,90 @@
+version: "0.5"
+
+# A realistic app boot graph: a one-shot setup task, a database daemon,
+# and dependents that need the setup and database to be ready before they
+# themselves start. for-verify's dependency graph covers one-shots,
+# long-running services with readiness probes, and depends_on with both
+# process_completed_successfully and process_healthy conditions.
+processes:
+  # required for verify
+  install-dependencies:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/install_dependencies.ran"
+
+  # not required for verify
+  web-server:
+    command: python3 -m http.server 5055
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:5055
+    depends_on:
+      install-dependencies:
+        condition: process_completed_successfully
+
+  # not required for verify
+  kafka-consumer:
+    command: python3 -m http.server 6060
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:6060
+
+  # required for verify
+  database-server:
+    command: python3 -m http.server 6090
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:6090
+
+  # required for verify
+  database-migrations:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/database_migrations.ran"
+    depends_on:
+      install-dependencies:
+        condition: process_completed_successfully
+      database-server:
+        condition: process_healthy
+
+  # not required for verify
+  background-worker:
+    command: python3 -m http.server 6070
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:6070
+    depends_on:
+      database-migrations:
+        condition: process_completed_successfully
+      kafka-consumer:
+        condition: process_healthy
+
+  compile-assets:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/compile_assets.ran"
+    depends_on:
+      install-dependencies:
+        condition: process_completed_successfully
+
+  frontend:
+    command: python3 -m http.server 6080
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:6080
+    depends_on:
+      compile-assets:
+        condition: process_completed_successfully
+
+  disabled-process:
+    command: exit 1
+    disabled: true
+
+  # Meta group covering the deps required to consider the app "ready".
+  for-verify:
+    depends_on:
+      database-migrations:
+        condition: process_completed_successfully

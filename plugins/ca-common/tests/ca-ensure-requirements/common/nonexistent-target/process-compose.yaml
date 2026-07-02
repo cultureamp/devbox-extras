@@ -1,0 +1,12 @@
+version: "0.5"
+
+# Any valid config — the point of this fixture is to invoke ca-ensure-requirements
+# with a target name that isn't defined here. devbox refuses to start
+# process-compose for an unknown target; the test verifies the EXIT trap
+# still reaps whatever partial state that leaves behind.
+processes:
+  some_daemon:
+    command: python3 -m http.server 6543
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:6543

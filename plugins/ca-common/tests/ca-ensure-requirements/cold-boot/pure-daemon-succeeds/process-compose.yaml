@@ -1,0 +1,16 @@
+version: "0.5"
+
+# `for-verify` depends on a long-running daemon with a readiness probe.
+# ca-ensure-requirements should autodetect daemon-mode and leave process-compose
+# running so the daemon stays reachable to subsequent commands.
+processes:
+  daemon:
+    command: python3 -m http.server 5055
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:5055
+
+  for-verify:
+    depends_on:
+      daemon:
+        condition: process_healthy

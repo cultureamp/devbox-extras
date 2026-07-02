@@ -1,0 +1,31 @@
+version: "0.5"
+
+# Fixture covers two warm-start scenarios where an unrelated daemon is
+# already running: (a) target's graph is pure one-shot, (b) target's graph
+# is a daemon. In both cases ca-ensure-requirements should start the missing
+# services under the target's graph and leave PC alone.
+processes:
+  unrelated_daemon:
+    command: python3 -m http.server 7000
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:7000
+
+  daemon:
+    command: python3 -m http.server 5055
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:5055
+
+  oneshot:
+    command: touch "$MARKER_DIR/oneshot.ran"
+
+  for-verify-daemon:
+    depends_on:
+      daemon:
+        condition: process_healthy
+
+  for-verify-oneshot:
+    depends_on:
+      oneshot:
+        condition: process_completed_successfully

@@ -5,7 +5,9 @@
   "readme": "README.md",
   "create_files": {
     "{{.Virtenv}}/bin/ca-get-xcode-python": "bin/ca-get-xcode-python",
-    "{{.Virtenv}}/bin/run-with-services-up": "bin/run-with-services-up"
+    "{{.Virtenv}}/bin/run-with-services-up": "bin/run-with-services-up",
+    "{{.Virtenv}}/bin/_lib.bash": "bin/_lib.bash",
+    "{{.Virtenv}}/bin/ca-ensure-requirements": "bin/ca-ensure-requirements"
   },
   "shell": {
     "init_hook": [

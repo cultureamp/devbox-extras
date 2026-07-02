@@ -1,0 +1,23 @@
+version: "0.5"
+
+# failing_daemon exits non-zero so for-verify (which needs it healthy) can
+# never satisfy. keepalive_daemon stays running so process-compose remains
+# observable long enough for ca-ensure-requirements to surface the failure.
+processes:
+  failing_daemon:
+    command: |
+      echo "failing on purpose"
+      exit 1
+
+  keepalive_daemon:
+    command: python3 -m http.server 7100
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:7100
+
+  for-verify:
+    depends_on:
+      failing_daemon:
+        condition: process_healthy
+      keepalive_daemon:
+        condition: process_healthy
