@@ -1,0 +1,15 @@
+version: "0.5"
+
+# Any valid config with a daemon to keep process-compose alive. The test
+# invokes ca-ensure-requirements with a name that isn't defined here while
+# process-compose is already running (warm start, so devbox's own
+# unknown-target rejection never fires). process-compose answers
+# /process/info/<unknown> with HTTP 400 and a JSON error body, so the
+# existence check must key off the status code — treating "any JSON" as
+# success made this invocation exit 0.
+processes:
+  unrelated_daemon:
+    command: python3 -m http.server 7000
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:7000

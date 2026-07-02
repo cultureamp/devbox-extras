@@ -100,46 +100,143 @@ wait_for_port() {
   return 1
 }
 
-# Resolve the depends_on dependency graph of one or more roots. Echoes one
-# name per line, deps before dependents. Requires $PCPORT.
+# Map a depends_on condition onto the runtime requirement it places on the
+# dependency. An empty condition means process-compose applies no gating,
+# so "started" is all a dependent can assume; an unrecognised condition
+# maps to "completed" (the strictest) so new upstream conditions fail loud
+# (timeout) instead of silently passing.
+condition_to_requirement() {
+  case "$1" in
+    process_completed_successfully|process_completed) echo "completed" ;;
+    process_healthy) echo "healthy" ;;
+    process_started|process_log_ready|"") echo "started" ;;
+    *) echo "completed" ;;
+  esac
+}
+
+_requirement_rank() {
+  case "$1" in
+    completed) echo 3 ;;
+    healthy) echo 2 ;;
+    started) echo 1 ;;
+    *) echo 0 ;;
+  esac
+}
+
+# Whether a node's runtime state (from parse_processes_states) satisfies
+# the requirement its in-graph dependents (or, for a root, this tool)
+# place on it:
+#   completed — Completed with exit 0. A merely-running process is NOT
+#               satisfied: a slow one-shot mid-run must be waited out so
+#               its exit code is actually checked.
+#   healthy   — readiness_probe passing (or already completed cleanly).
+#   started   — running is enough (or either stronger state above).
+#   default   — roots/targets: ready or completed. Merely "running" is not
+#               accepted — without a probe or a dependent's condition, a
+#               running process is indistinguishable from a one-shot that
+#               hasn't finished, and accepting it would report success
+#               before the one-shot's exit code exists. Long-running
+#               targets therefore need a readiness_probe.
+node_satisfied() {
+  local state="$1"
+  local requirement="$2"
+  case "$requirement" in
+    completed) [ "$state" = "completed_ok" ] ;;
+    started) [ "$state" = "running" ] || [ "$state" = "ready" ] || [ "$state" = "completed_ok" ] ;;
+    *) [ "$state" = "ready" ] || [ "$state" = "completed_ok" ] ;;
+  esac
+}
+
+# Resolve the depends_on dependency graph of one or more roots. Emits one
+# TSV row per node — name<TAB>requirement — in dependency order: a real
+# topological sort (depth-first post-order), so every node appears after
+# all of its deps. (Reversed BFS order is NOT topological: for
+# root -> {A, B} with B -> A, it emits B before A.)
+#
+# requirement is the strongest condition any in-graph dependent declares
+# on the node (see condition_to_requirement); roots get "default".
+# Requires $PCPORT.
 expand_dependency_graph() {
-  declare -A visited=()
-  local order=()
-  local queue=("$@")
+  declare -A deps_of=() requirement=() fetched=()
+  local roots=("$@")
+  local queue=("${roots[@]}")
 
   while [ "${#queue[@]}" -gt 0 ]; do
     local name="${queue[0]}"
     queue=("${queue[@]:1}")
-    if [ -n "${visited[$name]+x}" ]; then
+    if [ -n "${fetched[$name]+x}" ]; then
       continue
     fi
-    visited[$name]=1
+    fetched[$name]=1
 
-    local info
+    local response http_code info
     # $PCPORT is a caller-set global (see file-header docstring), not a typo of `pcport`.
     # shellcheck disable=SC2153
-    info=$(curl -s --connect-timeout 2 "http://localhost:$PCPORT/process/info/$name") || {
+    response=$(curl -s -w $'\n%{http_code}' --connect-timeout 2 \
+                 "http://localhost:$PCPORT/process/info/$name") || {
       echo "Error: failed to fetch /process/info/$name" >&2
       return 1
     }
+    http_code="${response##*$'\n'}"
+    info="${response%$'\n'*}"
+    # process-compose answers an unknown name with HTTP 400 and a JSON body
+    # ({"error":"no such process: ..."}), so the status code — not jq
+    # parseability — is the existence check.
+    if [ "$http_code" != "200" ]; then
+      echo "Error: /process/info/$name returned HTTP $http_code — does process '$name' exist in the process-compose file?" >&2
+      [ -n "$info" ] && echo "  $info" >&2
+      return 1
+    fi
     if [ -z "$info" ] || ! echo "$info" | jq -e . >/dev/null 2>&1; then
-      echo "Error: /process/info/$name returned no JSON (does the service exist?)" >&2
+      echo "Error: /process/info/$name returned no JSON." >&2
       return 1
     fi
 
-    local deps
-    deps=$(echo "$info" | jq -r '(.dependsOn // {}) | keys[]')
-    while IFS= read -r dep; do
+    deps_of[$name]=""
+    local dep condition
+    while IFS=$'\t' read -r dep condition; do
       [ -z "$dep" ] && continue
+      deps_of[$name]+="$dep"$'\n'
+      local req
+      req=$(condition_to_requirement "$condition")
+      if [ "$(_requirement_rank "$req")" -gt "$(_requirement_rank "${requirement[$dep]:-}")" ]; then
+        requirement[$dep]="$req"
+      fi
       queue+=("$dep")
-    done <<< "$deps"
-
-    order+=("$name")
+    done < <(echo "$info" | jq -r '(.dependsOn // {}) | to_entries[] | [.key, (.value.condition // "")] | @tsv')
   done
 
-  local i
-  for (( i=${#order[@]}-1 ; i>=0 ; i-- )); do
-    echo "${order[i]}"
+  # Iterative depth-first post-order. A dep edge reaching a node that is
+  # still "visiting" is a back-edge, i.e. a dependency cycle.
+  declare -A state=()
+  local order=() stack=("${roots[@]}")
+  while [ "${#stack[@]}" -gt 0 ]; do
+    local top=$(( ${#stack[@]} - 1 ))
+    local n="${stack[top]}"
+    if [ -z "${state[$n]:-}" ]; then
+      state[$n]="visiting"
+      local d
+      while IFS= read -r d; do
+        [ -z "$d" ] && continue
+        case "${state[$d]:-}" in
+          "") stack+=("$d") ;;
+          visiting)
+            echo "Error: dependency cycle detected involving '$d'." >&2
+            return 1 ;;
+        esac
+      done <<< "${deps_of[$n]}"
+    else
+      unset "stack[top]"
+      if [ "${state[$n]}" = "visiting" ]; then
+        state[$n]="done"
+        order+=("$n")
+      fi
+    fi
+  done
+
+  local node
+  for node in "${order[@]}"; do
+    printf '%s\t%s\n' "$node" "${requirement[$node]:-default}"
   done
 }
 
@@ -177,25 +274,29 @@ post_process() {
 }
 
 # Emit one TSV row per process in a /processes response:
-#   name<TAB>satisfied<TAB>failed<TAB>action
+#   name<TAB>state<TAB>failed<TAB>action
 # where:
-#   satisfied ∈ {ok, pending}   — ready daemons, completed one-shots, and
-#                                  probe-less running daemons are "ok"
-#   failed    ∈ {ok, fail}      — non-transient non-zero exits are "fail"
-#   action    ∈ {completed, ready, running, restart, start}
+#   state  ∈ {completed_ok, ready, running, pending}
+#     completed_ok — Completed with exit code 0
+#     ready        — readiness_probe defined and passing
+#     running      — forked and running (probe, if any, not yet passing)
+#     pending      — everything else (not yet started, restarting, …)
+#   failed ∈ {ok, fail}  — non-transient non-zero exits are "fail"
+#   action ∈ {completed, ready, running, restart, start}
 #
-# Callers read this once per polling iteration into associative arrays and
-# do O(graph) lookups instead of spawning O(graph) jq subprocesses per
-# check.
+# Whether a state satisfies a node depends on the node's requirement — see
+# node_satisfied. Callers read this once per polling iteration into
+# associative arrays and do O(graph) lookups instead of spawning O(graph)
+# jq subprocesses per check.
 parse_processes_states() {
   local processes_response="$1"
   echo "$processes_response" | jq -r '
     .data[] |
     [
       .name,
-      (if (.has_ready_probe == true and .is_ready == "Ready") then "ok"
-       elif (.status == "Completed" and .exit_code == 0) then "ok"
-       elif (.has_ready_probe != true and .is_running == true) then "ok"
+      (if (.status == "Completed" and .exit_code == 0) then "completed_ok"
+       elif (.has_ready_probe == true and .is_ready == "Ready") then "ready"
+       elif (.is_running == true) then "running"
        else "pending" end),
       (if (.exit_code != 0 and
            .status != "Restarting" and
@@ -215,15 +316,15 @@ parse_processes_states() {
 # Requires bash 4.3+ (nameref).
 load_state_maps() {
   local processes_response="$1"
-  local -n _sat="$2"
+  local -n _state="$2"
   local -n _fail="$3"
   local -n _action="$4"
-  local name sat failed action
+  local name state failed action
   # SC2004 misfires here: nameref targets are associative arrays (callers
   # `declare -A`), so `$name` is a string subscript, not arithmetic.
   # shellcheck disable=SC2004
-  while IFS=$'\t' read -r name sat failed action; do
-    _sat[$name]=$sat
+  while IFS=$'\t' read -r name state failed action; do
+    _state[$name]=$state
     _fail[$name]=$failed
     _action[$name]=$action
   done < <(parse_processes_states "$processes_response")
@@ -238,8 +339,11 @@ start_dependency_graph_services() {
   local processes_response
   processes_response=$(curl -s "http://localhost:$PCPORT/processes")
 
-  declare -A sat_map fail_map action_map
-  load_state_maps "$processes_response" sat_map fail_map action_map
+  # state_map and fail_map are required by load_state_maps's signature but
+  # unused here.
+  # shellcheck disable=SC2034
+  declare -A state_map fail_map action_map
+  load_state_maps "$processes_response" state_map fail_map action_map
 
   local lines=""
   local needs_report=0
@@ -273,13 +377,16 @@ start_dependency_graph_services() {
 }
 
 # Emit the failure-mode header and dump logs for every dependency graph
-# member that is either failed, or (on timeout, rc == 2) still pending.
+# member that is either failed, or (on timeout, rc == 2) still unsatisfied.
 # $timeout_message is printed when $rc == 2; otherwise a generic "one or
-# more services failed" message is printed. Requires $PCPORT.
+# more services failed" message is printed. $4 names the caller's
+# associative array of node requirements (from expand_dependency_graph).
+# Requires $PCPORT.
 handle_dependency_graph_failure() {
   local dependency_graph="$1"
   local rc="$2"
   local timeout_message="$3"
+  local -n _requirements="$4"
   local processes_response
   processes_response=$(curl -s "http://localhost:$PCPORT/processes")
 
@@ -291,15 +398,18 @@ handle_dependency_graph_failure() {
   fi
   echo ""
 
-  declare -A sat_map fail_map action_map
-  load_state_maps "$processes_response" sat_map fail_map action_map
+  # action_map is required by load_state_maps's signature but unused here.
+  # shellcheck disable=SC2034
+  declare -A state_map fail_map action_map
+  load_state_maps "$processes_response" state_map fail_map action_map
 
   local name
   while IFS= read -r name; do
     [ -z "$name" ] && continue
-    local sat="${sat_map[$name]:-}"
     local failed="${fail_map[$name]:-ok}"
-    if [ "$failed" = "fail" ] || { [ "$rc" -eq 2 ] && [ "$sat" = "pending" ]; }; then
+    if [ "$failed" = "fail" ] \
+      || { [ "$rc" -eq 2 ] \
+           && ! node_satisfied "${state_map[$name]:-pending}" "${_requirements[$name]:-default}"; }; then
       print_process_logs "$PCPORT" "Logs for $name" "$name"
     fi
   done <<< "$dependency_graph"

@@ -1,0 +1,12 @@
+version: "0.5"
+
+# The target is a probe-less one-shot that runs for a few seconds and then
+# exits non-zero. Pins: the exit code of a slow one-shot is actually
+# checked — success must not be reported while the command is still
+# running (before its failure exists).
+processes:
+  slow-failing-oneshot:
+    command: |
+      echo "doing some work before failing"
+      sleep 3
+      exit 1

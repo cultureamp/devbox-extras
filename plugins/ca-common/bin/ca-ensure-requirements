@@ -6,13 +6,18 @@
 #   - Any node still is_running == true → daemon-mode: PC is left running.
 #   - Every node has already Completed  → command-mode: PC is reaped.
 #
-# "Satisfied" is per-node:
-#   - Daemon w/ readiness_probe: is_ready == "Ready"
-#   - Daemon w/o readiness_probe: is_running == true  (best-effort — this
-#     fires as soon as PC forks the process, before the command has bound
-#     its port or done any actual work. If callers need a stronger signal,
-#     add a readiness_probe to the fixture.)
-#   - One-shot: status == "Completed" AND exit_code == 0
+# "Satisfied" is per-node, driven by the strongest depends_on condition
+# the node's in-graph dependents declare on it (see node_satisfied in
+# _lib.bash):
+#   - required completed (process_completed*): Completed AND exit_code == 0
+#   - required healthy (process_healthy):      readiness_probe Ready
+#   - required started (process_started):      is_running == true
+#   - the target itself (no dependents):       Ready, or Completed w/ exit 0
+# A merely-running probe-less process never satisfies a "completed" or
+# target requirement: a slow one-shot mid-run is indistinguishable from a
+# probe-less daemon, and accepting it would report success before the
+# one-shot's exit code exists. Long-running processes therefore need a
+# readiness_probe (or a dependent that only declares process_started).
 # Success waits for every node in the dependency graph.
 #
 # Cold start uses `devbox services up --background --pcflags=--keep-project`
@@ -41,7 +46,8 @@ usage() {
 Usage: $(basename "$0") [--timeout=SECONDS] [--process-compose-file=PATH] [--help] <name>
 
 Ensures the named process (or meta-process) and its dependency graph are
-satisfied — daemons are Ready/Running, one-shots are Completed with exit 0.
+satisfied — daemons are Ready (via readiness_probe), one-shots are Completed
+with exit 0.
 process-compose is left running iff the graph contains a long-running daemon.
 
 Options:
@@ -185,19 +191,34 @@ run_dependency_graph() {
   local target="$1"
   local timeout_seconds="$2"
 
-  local dependency_graph
-  dependency_graph=$(expand_dependency_graph "$target") \
+  # expand emits "name<TAB>requirement" rows in dependency order; split
+  # into the name list the helpers iterate and the per-node requirement map.
+  local graph_tsv
+  graph_tsv=$(expand_dependency_graph "$target") \
     || { echo "Failed to expand dependency graph." >&2; exit 1; }
+
+  local dependency_graph
+  dependency_graph=$(cut -f1 <<< "$graph_tsv")
+  declare -A requirement_of=()
+  local name req
+  # SC2034 misfires: requirement_of is consumed via nameref (passed by
+  # name below).
+  # shellcheck disable=SC2034
+  while IFS=$'\t' read -r name req; do
+    [ -z "$name" ] && continue
+    requirement_of[$name]="$req"
+  done <<< "$graph_tsv"
 
   start_dependency_graph_services "$dependency_graph"
 
   local wait_snapshot=""
-  wait_for_dependency_graph_satisfied "$dependency_graph" "$timeout_seconds" wait_snapshot
+  wait_for_dependency_graph_satisfied "$dependency_graph" "$timeout_seconds" wait_snapshot requirement_of
   local rc=$?
 
   if [ $rc -ne 0 ]; then
     handle_dependency_graph_failure "$dependency_graph" "$rc" \
-      "Timeout: dependency graph did not become ready after ${timeout_seconds}s."
+      "Timeout: dependency graph did not become ready after ${timeout_seconds}s." \
+      requirement_of
     exit 1
   fi
 
@@ -219,6 +240,9 @@ wait_for_dependency_graph_satisfied() {
   # was satisfied. Reused by the classifier so its lifecycle decision is
   # made from the same snapshot as the success decision.
   local -n _snapshot="$3"
+  # Name of the caller's associative array holding each node's requirement
+  # (from expand_dependency_graph).
+  local -n _requirements="$4"
   _snapshot=""
   local start_time
   start_time=$(date +%s)
@@ -238,14 +262,17 @@ wait_for_dependency_graph_satisfied() {
 
     # action_map is required by load_state_maps's signature but unused here.
     # shellcheck disable=SC2034
-    declare -A sat_map fail_map action_map
-    load_state_maps "$processes_response" sat_map fail_map action_map
+    declare -A state_map fail_map action_map
+    load_state_maps "$processes_response" state_map fail_map action_map
 
     local pending_count=0 name
     while IFS= read -r name; do
       [ -z "$name" ] && continue
       [ "${fail_map[$name]:-ok}" = "fail" ] && return 1
-      [ "${sat_map[$name]:-}" = "pending" ] && pending_count=$((pending_count + 1))
+      # A name missing from the snapshot defaults to state "pending" — a
+      # graph member the API doesn't report must never count as satisfied.
+      node_satisfied "${state_map[$name]:-pending}" "${_requirements[$name]:-default}" \
+        || pending_count=$((pending_count + 1))
     done <<< "$dependency_graph"
 
     if [ "$pending_count" -eq 0 ]; then
@@ -270,7 +297,7 @@ wait_for_dependency_graph_satisfied() {
       return 2
     fi
     sleep 1
-    unset sat_map fail_map action_map
+    unset state_map fail_map action_map
   done
 }
 
