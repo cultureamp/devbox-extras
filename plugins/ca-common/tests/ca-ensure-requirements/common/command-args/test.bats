@@ -46,6 +46,21 @@ teardown() {
 	[[ "$output" == *"Invalid --timeout value"* ]]
 }
 
+# The argument-count check requires exactly one positional target. It runs
+# after the devbox-shell guard, so DEVBOX_PROJECT_ROOT must be set to reach
+# it; --process-compose-file skips the default-file lookup.
+@test "rejects invocation with no target" {
+	DEVBOX_PROJECT_ROOT="$BATS_TEST_TMPDIR" run ca-ensure-requirements --process-compose-file=/dev/null
+	[ "$status" -ne 0 ]
+	[[ "$output" == *"exactly one process name is required"* ]]
+}
+
+@test "rejects invocation with multiple targets" {
+	DEVBOX_PROJECT_ROOT="$BATS_TEST_TMPDIR" run ca-ensure-requirements --process-compose-file=/dev/null target1 target2
+	[ "$status" -ne 0 ]
+	[[ "$output" == *"exactly one process name is required"* ]]
+}
+
 # When --process-compose-file is omitted, the script falls back to
 # \$DEVBOX_PROJECT_ROOT/process-compose.yaml. A successful run of a trivial
 # one-shot proves the default resolved.
