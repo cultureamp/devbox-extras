@@ -1,7 +1,10 @@
 version: "0.5"
 
-# All processes finish and nothing is left running and there's an error.
+# A graph of only one-shots that all finish, but one exits non-zero. The
+# failure must abort the run before the command is executed.
 
 processes:
-  README:
-    command: "sleep 1 && exit 0"
+  ok_task:
+    command: echo "ok task done" && exit 0
+  failing_task:
+    command: echo "failing task done" && exit 1

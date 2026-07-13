@@ -12,6 +12,9 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
+    # Backstop so a hung test fails the job in minutes instead of burning the
+    # 6-hour GitHub Actions ceiling. The suite normally finishes in ~5 minutes.
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v6
       - uses: jetify-com/devbox-install-action@v0.14.0
