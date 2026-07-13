@@ -44,6 +44,11 @@ main() {
         ;;
       --process-compose-file=*)
         pcfile="${1#*=}"
+        # Resolve relative paths so the EXIT-trap reaper's pkill pattern matches
+        # the actual process-compose command line (devbox resolves internally).
+        if [[ "$pcfile" != /* ]]; then
+          pcfile="$(cd "${DEVBOX_PROJECT_ROOT:-.}" && realpath "$pcfile" 2>/dev/null || echo "$pcfile")"
+        fi
         shift 1
         ;;
       --help|-h)
