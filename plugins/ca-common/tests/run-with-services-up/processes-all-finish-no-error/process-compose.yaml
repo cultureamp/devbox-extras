@@ -1,7 +1,11 @@
 version: "0.5"
 
-# All processes finish and nothing is left running.
+# A graph of only one-shots, all of which complete successfully and leave
+# nothing running. process-compose is kept alive (via --keep-project) long
+# enough to observe completion, then torn down once the command has run.
 
 processes:
-  README:
-    command: "sleep 1 && exit 0"
+  task_one:
+    command: echo "task one done" && exit 0
+  task_two:
+    command: echo "task two done" && exit 0

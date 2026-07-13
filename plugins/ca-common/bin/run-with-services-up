@@ -2,6 +2,7 @@
 
 readonly WAIT_PROCESS_ERROR=1
 readonly WAIT_TIMEOUT=2
+readonly PC_STOP_REAP_TIMEOUT_SECONDS=5
 
 usage() {
   cat << EOF
@@ -25,7 +26,7 @@ main() {
   # Parse optional flags
   local timeout_seconds=600 # default to 10 minutes
   local service_name=""
-  local process_compose_file_flag=""
+  local pcfile=""
   while [[ $# -gt 0 ]]; do
     case $1 in
       --timeout=*)
@@ -42,8 +43,12 @@ main() {
         shift 1
         ;;
       --process-compose-file=*)
-        local value="${1#*=}"
-        process_compose_file_flag="--process-compose-file=$value"
+        pcfile="${1#*=}"
+        # Resolve relative paths so the EXIT-trap reaper's pkill pattern matches
+        # the actual process-compose command line (devbox resolves internally).
+        if [[ "$pcfile" != /* ]]; then
+          pcfile="$(cd "${DEVBOX_PROJECT_ROOT:-.}" && realpath "$pcfile" 2>/dev/null || echo "$pcfile")"
+        fi
         shift 1
         ;;
       --help|-h)
@@ -64,20 +69,39 @@ main() {
     exit 1
   fi
 
+  # Resolve the process-compose file up front so the EXIT-trap reaper can
+  # target this exact instance. Mirror devbox's own default when the flag is
+  # omitted (process-compose.yaml at the project root, falling back to .yml).
+  if [ -z "$pcfile" ]; then
+    pcfile="$DEVBOX_PROJECT_ROOT/process-compose.yaml"
+    if [ ! -f "$pcfile" ] && [ -f "$DEVBOX_PROJECT_ROOT/process-compose.yml" ]; then
+      pcfile="$DEVBOX_PROJECT_ROOT/process-compose.yml"
+    fi
+  fi
+
   # Ensure that process-compose is not already running.
   if devbox services ls 2>&1 | grep -q "Services running in process-compose:"; then
     echo "Devbox is already running. Please stop it before using run-with-services-up."
     exit 1
   fi
 
-  # Always stop services on exit to ensure a clean state for subsequent runs.
-  trap 'devbox services stop' EXIT
+  # Always stop AND reap services on exit. Plain `devbox services stop` does
+  # not reliably kill the background process-compose master, and --keep-project
+  # makes it more likely to linger — a leaked master keeps its child processes
+  # alive and holding ports, breaking later runs. arm_reaper installs a
+  # pcfile-scoped reaper that actively kills the master.
+  arm_reaper "$pcfile"
 
-  # Start services with "devbox services up".
-  local devbox_command=(devbox services up --background)
-  [ -n "$process_compose_file_flag" ] && devbox_command+=("$process_compose_file_flag")
-  [ -n "$service_name" ] && devbox_command+=("$service_name")
-  output=$("${devbox_command[@]}" 2>&1)
+  # Start services in the background. --keep-project keeps process-compose
+  # alive even if the graph turns out to be pure one-shots that all complete —
+  # without it PC drains its process list and shuts down, and the API polling
+  # below then waits forever for data that never comes. The EXIT trap tears PC
+  # back down regardless. devbox_services_up_background closes inherited FDs so
+  # the backgrounded master can't hold the caller's pipes open (a known cause
+  # of hangs when the master outlives the invocation).
+  local up_args=(--pcflags=--keep-project --process-compose-file="$pcfile")
+  [ -n "$service_name" ] && up_args+=("$service_name")
+  output=$(devbox_services_up_background "${up_args[@]}" 2>&1)
 
   # Get the process-compose port from the output.
   local pcport_output
@@ -97,7 +121,7 @@ main() {
   #PCPORT=$(devbox services pcport) || { echo "Failed to get process-compose port"; exit 1; }
   echo ""
 
-  wait_for_process_compose_api
+  wait_for_process_compose_api "$timeout_seconds" || exit 1
 
   echo "::group::Waiting for services to start"
   wait_for_services
@@ -110,14 +134,10 @@ main() {
     exit 1
   fi
 
-  # Check if process-compose is still running before executing the command.
-  # Wait a moment for process-compose to shut down if all processes have finished.
-  sleep 2
-  if ! curl -s "http://localhost:$PCPORT/live" > /dev/null 2>&1; then
-    echo "Error: process-compose is no longer running on port $PCPORT"
-    exit 1
-  fi
-
+  # Services are up (daemons ready, one-shots completed successfully). Run the
+  # command against them. A graph of only one-shots that all completed is a
+  # valid outcome — same as ca-ensure-requirements' command-mode — not an
+  # error; process-compose is torn down by the EXIT trap once we're done.
   echo "::group::Running command: $*"
   # Handle both quoted and unquoted command arguments.
   # If there's only one argument, try to execute it as a shell command.
@@ -135,12 +155,25 @@ main() {
 }
 
 wait_for_process_compose_api() {
+  local timeout_seconds="$1"
+  local start_time
+  start_time=$(date +%s)
+
   while true; do
     local statuses
     statuses=$(curl -s "http://localhost:$PCPORT/processes" | list_process_statuses)
     if [[ -n "$statuses" ]]; then
-      return
+      return 0
     fi
+
+    # Bounded so a process-compose that never serves process data (e.g. it
+    # crashed, or drained and shut down) fails fast instead of looping forever.
+    local elapsed=$(($(date +%s) - start_time))
+    if (( elapsed >= timeout_seconds )); then
+      echo "Error: process-compose API did not return process data within ${timeout_seconds}s."
+      return 1
+    fi
+
     echo "Waiting for process-compose API to return process data..."
     sleep 3
   done
@@ -268,6 +301,49 @@ list_not_ready_processes() {
       ) | .name
     ] | .[]
   '
+}
+
+# --- process-compose lifecycle helpers ---
+
+# EXIT-trap reaper. arm_reaper records the pcfile and installs the trap; the
+# trap body is single-quoted so the current value of _REAPER_PCFILE is read at
+# trap-fire time (not trap-set time) and passed as an argv, keeping paths with
+# shell metacharacters safe.
+arm_reaper() {
+  _REAPER_PCFILE="$1"
+  trap 'stop_and_reap_services "$_REAPER_PCFILE"' EXIT
+}
+
+# `devbox services up --background` forks a process-compose master that
+# inherits every FD 3+ from the parent (test IPC pipes, CI capture pipes, IDE
+# terminals). Without closing them the orphan can hold the parent's pipes open
+# indefinitely and callers hang. Run devbox in a subshell with those FDs shut.
+devbox_services_up_background() {
+  ( for fd in $(seq 3 20); do eval "exec $fd>&-" 2>/dev/null; done
+    devbox services up --background "$@" )
+}
+
+# `devbox services stop` doesn't always reap the `process-compose … -f $pcfile`
+# master. Actively kill any leftover master tied to the given pcfile and wait
+# for it to exit so inherited FDs and bound ports are released. pcfile is
+# interpolated into a pkill/pgrep -f regex, so regex metacharacters are escaped
+# — otherwise nix store / user paths containing `.`, `[`, `(`, `+` etc. would
+# match too loosely or not at all.
+stop_and_reap_services() {
+  local pcfile="$1"
+  devbox services stop >/dev/null 2>&1 || true
+  [ -z "$pcfile" ] && return 0
+  local pcfile_re
+  pcfile_re=$(printf '%s' "$pcfile" | sed -E 's/[][(){}.+*?^$|\\]/\\&/g')
+  pkill -f "process-compose .* -f $pcfile_re" 2>/dev/null || true
+  local deadline=$((SECONDS + PC_STOP_REAP_TIMEOUT_SECONDS))
+  while pgrep -f "process-compose .* -f $pcfile_re" >/dev/null 2>&1; do
+    if [ $SECONDS -ge $deadline ]; then
+      pkill -9 -f "process-compose .* -f $pcfile_re" 2>/dev/null || true
+      break
+    fi
+    sleep 0.1
+  done
 }
 
 
