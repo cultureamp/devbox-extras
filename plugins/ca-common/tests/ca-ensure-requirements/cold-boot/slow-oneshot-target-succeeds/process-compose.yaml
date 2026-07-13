@@ -1,0 +1,13 @@
+version: "0.5"
+
+# The target is a probe-less one-shot that takes a few seconds. Pins:
+# success is reported only once the one-shot has Completed with exit 0 —
+# a merely-running one-shot must not count as satisfied — and the graph
+# is then command-mode, so process-compose is reaped.
+processes:
+  slow-oneshot:
+    command: |
+      sleep 3
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/slow_oneshot.ran"

@@ -1,0 +1,14 @@
+version: "0.5"
+
+# Same shape as cold-boot/pure-oneshot-succeeds; used to verify that when
+# process-compose has already been brought up (e.g. by a previous init
+# hook) ca-ensure-requirements is a no-op past confirming the graph is
+# satisfied, and never touches PC lifecycle.
+processes:
+  oneshot:
+    command: touch "$MARKER_DIR/oneshot.ran"
+
+  for-verify:
+    depends_on:
+      oneshot:
+        condition: process_completed_successfully

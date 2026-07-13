@@ -1,0 +1,48 @@
+version: "0.5"
+
+# Reproduces the graph shape where reversed-BFS emission ordered a
+# dependent before its dep: for-verify depends on {install-deps,
+# migrations} and migrations itself depends on install-deps. BFS from
+# for-verify visits install-deps before migrations, so the reversed order
+# started migrations first — and process-compose's start API runs a
+# process immediately when its dep hasn't been started yet, so migrations
+# would run before install-deps completed. A true topological sort starts
+# install-deps first, and process-compose then gates migrations on the
+# running install-deps.
+#
+# unrelated_daemon keeps process-compose alive so the target's graph is
+# entirely unstarted when ca-ensure-requirements takes the warm-start
+# (API) path.
+processes:
+  unrelated_daemon:
+    command: python3 -m http.server 7000
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:7000
+
+  install-deps:
+    command: |
+      sleep 2
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/install_deps.ran"
+
+  migrations:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      if [ -f "$MARKER_DIR/install_deps.ran" ]; then
+        echo "after" > "$MARKER_DIR/migrations_saw_install_deps"
+      else
+        echo "before" > "$MARKER_DIR/migrations_saw_install_deps"
+      fi
+    depends_on:
+      install-deps:
+        condition: process_completed_successfully
+
+  for-verify:
+    depends_on:
+      install-deps:
+        condition: process_completed_successfully
+      migrations:
+        condition: process_completed_successfully

@@ -1,0 +1,20 @@
+version: "0.5"
+
+# never_ready's probe checks a port the process doesn't serve and
+# failure_threshold is very high, so PC keeps it Running/Not Ready instead
+# of marking it failed. ready-check depends on never_ready with condition:
+# process_healthy — that condition never satisfies, so ca-ensure-requirements
+# should hit its --timeout.
+processes:
+  never_ready:
+    command: python3 -m http.server 5055
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:9999
+      period_seconds: 1
+      failure_threshold: 9999
+
+  ready-check:
+    depends_on:
+      never_ready:
+        condition: process_healthy

@@ -1,0 +1,15 @@
+version: "0.5"
+
+# `for-verify` is a meta-process depending on a one-shot that touches a
+# marker file. ca-ensure-requirements should autodetect command-mode
+# (no daemons), boot process-compose with --keep-project so the API
+# survives the one-shot terminating, then reap process-compose after
+# the graph completes.
+processes:
+  oneshot:
+    command: touch "$MARKER_DIR/oneshot.ran"
+
+  for-verify:
+    depends_on:
+      oneshot:
+        condition: process_completed_successfully

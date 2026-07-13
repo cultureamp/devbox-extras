@@ -1,0 +1,15 @@
+version: "0.5"
+
+# Same shape as cold-boot/pure-daemon-succeeds; used to verify warm-start
+# leaves PC alone when the graph is already ready.
+processes:
+  daemon:
+    command: python3 -m http.server 5055
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:5055
+
+  for-verify:
+    depends_on:
+      daemon:
+        condition: process_healthy
