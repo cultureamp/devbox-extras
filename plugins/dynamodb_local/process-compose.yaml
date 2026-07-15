@@ -8,5 +8,18 @@ processes:
     # prettier-ignore
     working_dir: {{ .Virtenv }}
     command: dynamodb_local
+    readiness_probe:
+      period_seconds: 2
+      failure_threshold: 30
+      exec:
+        # DynamoDB Local returns HTTP 400 for a plain GET, so http_get (which
+        # expects 2xx/3xx) can't be used. Instead issue a real ListTables API
+        # call: -f makes curl fail on a non-2xx response, so readiness only
+        # passes once the service actually answers DynamoDB requests.
+        command: >-
+          curl -sf -o /dev/null http://localhost:${DYNAMODB_PORT}
+          -H 'Authorization: Credential=x/x/aws4_request'
+          -H 'X-Amz-Target: DynamoDB_20120810.ListTables'
+          -d '{}'
     availability:
       restart: on_failure
