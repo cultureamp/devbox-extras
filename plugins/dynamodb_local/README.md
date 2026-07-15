@@ -4,12 +4,10 @@ Plugin [DynamoDB local](https://docs.aws.amazon.com/amazondynamodb/latest/develo
 
 ## Use and activation
 
-1. Add the `dynamodb_local` package from this repo to your `devbox.json`
-2. Add this plugin to the `include` section of your `devbox.json`
+Add this plugin to the `include` section of your `devbox.json`
 
 ```json
 {
-  "packages": ["github:cultureamp/devbox-extras#dynamodb_local"],
   "include": ["github:cultureamp/devbox-extras?dir=plugins/dynamodb_local"]
 }
 ```
