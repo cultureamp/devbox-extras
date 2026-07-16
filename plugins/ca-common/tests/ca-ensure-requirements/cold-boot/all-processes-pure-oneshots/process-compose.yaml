@@ -1,0 +1,26 @@
+version: "0.5"
+
+# All-mode over a graph of only one-shots: every process must Complete
+# with exit 0 and process-compose must then be reaped (command-mode).
+processes:
+  install-dependencies:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/install_dependencies.ran"
+
+  database-migrations:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/database_migrations.ran"
+    depends_on:
+      install-dependencies:
+        condition: process_completed_successfully
+
+  # No dependents and nothing depends on it — a root only all-mode reaches.
+  compile-assets:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/compile_assets.ran"

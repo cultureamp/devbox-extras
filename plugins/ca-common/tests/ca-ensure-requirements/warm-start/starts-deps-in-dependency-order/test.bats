@@ -17,7 +17,7 @@ teardown() {
 @test "deps are started before dependents on the warm-start API path" {
 	setup_unrelated_daemon_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" for-verify
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=for-verify
 
 	assert_succeeded
 	[ -f "$MARKER_DIR/install_deps.ran" ]

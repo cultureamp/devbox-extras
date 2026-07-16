@@ -16,7 +16,7 @@ teardown() {
 @test "one-shot target with a daemon dep succeeds and process-compose is left running" {
 	setup_nothing_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" oneshot-target
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=oneshot-target
 
 	assert_succeeded
 	[ -f "$MARKER_DIR/oneshot_target.ran" ]

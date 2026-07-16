@@ -1,0 +1,64 @@
+version: "0.5"
+
+# A realistic app boot graph for all-mode: one-shots, daemons with
+# readiness probes, a meta-process, and a disabled process. Unlike the
+# target-mode mixed-graph fixture, every enabled process here — including
+# ones outside the for-verify meta's dependency graph — must be started
+# and satisfied when the command runs with no --process.
+processes:
+  install-dependencies:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/install_dependencies.ran"
+
+  database-server:
+    command: python3 -m http.server 6190
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:6190
+
+  database-migrations:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/database_migrations.ran"
+    depends_on:
+      install-dependencies:
+        condition: process_completed_successfully
+      database-server:
+        condition: process_healthy
+
+  # Outside the for-verify graph — target mode would never start this, but
+  # all-mode must.
+  web-server:
+    command: python3 -m http.server 5155
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:5155
+    depends_on:
+      install-dependencies:
+        condition: process_completed_successfully
+
+  # Also outside the for-verify graph.
+  background-worker:
+    command: python3 -m http.server 6170
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:6170
+    depends_on:
+      database-migrations:
+        condition: process_completed_successfully
+
+  disabled-process:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/disabled_process.ran"
+      exit 1
+    disabled: true
+
+  for-verify:
+    depends_on:
+      database-migrations:
+        condition: process_completed_successfully

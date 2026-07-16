@@ -13,7 +13,7 @@ teardown() {
 @test "mixed graph succeeds and process-compose is left running" {
 	setup_nothing_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" for-verify
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=for-verify
 
 	assert_succeeded
 	[ -f "$MARKER_DIR/install_dependencies.ran" ]

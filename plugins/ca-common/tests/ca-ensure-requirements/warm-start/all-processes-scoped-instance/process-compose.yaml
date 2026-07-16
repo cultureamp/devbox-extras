@@ -1,0 +1,26 @@
+version: "0.5"
+
+# Documents warm-start all-mode's scope rule. When process-compose was
+# booted with a target, the non-requested processes are reported by the
+# API as Disabled — indistinguishable from config `disabled: true` — so
+# all-mode ensures only the processes the running instance has enabled.
+# (When ca-ensure-requirements boots PC itself it always boots targetless,
+# so the cold path covers the full `devbox services up` set.)
+processes:
+  already-up-daemon:
+    command: python3 -m http.server 7155
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:7155
+
+  not-requested-daemon:
+    command: python3 -m http.server 7165
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:7165
+
+  not-requested-oneshot:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/not_requested_oneshot.ran"

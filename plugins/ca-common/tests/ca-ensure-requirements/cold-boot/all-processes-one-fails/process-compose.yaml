@@ -1,0 +1,15 @@
+version: "0.5"
+
+# All-mode failure reporting: one process fails while another succeeds.
+# The run must exit non-zero and dump the failing process's logs.
+processes:
+  healthy-oneshot:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/healthy_oneshot.ran"
+
+  failing-oneshot:
+    command: |
+      echo "distinctive-failure-log-line"
+      exit 1

@@ -13,7 +13,7 @@ teardown() {
 @test "pure one-shot: warm-start is a no-op past confirming the graph is satisfied" {
 	setup_services_already_up for-verify
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" for-verify
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=for-verify
 
 	assert_succeeded
 	[[ "$output" == *"already running on port"* ]]

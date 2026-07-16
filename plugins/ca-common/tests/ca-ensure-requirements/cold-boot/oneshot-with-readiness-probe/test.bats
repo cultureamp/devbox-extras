@@ -18,7 +18,7 @@ teardown() {
 @test "one-shot with readiness_probe is treated as command-mode and reaps process-compose" {
 	setup_nothing_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" for-verify
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=for-verify
 
 	assert_succeeded
 	[ -f "$MARKER_DIR/probe_oneshot.ran" ]

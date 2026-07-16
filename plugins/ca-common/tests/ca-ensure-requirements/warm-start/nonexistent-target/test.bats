@@ -13,7 +13,7 @@ teardown() {
 @test "warm-start with an unknown target exits non-zero and leaves process-compose running" {
 	setup_unrelated_daemon_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" no-such-target
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=no-such-target
 
 	[ "$status" -ne 0 ]
 	[[ "$output" == *"no-such-target"* ]]

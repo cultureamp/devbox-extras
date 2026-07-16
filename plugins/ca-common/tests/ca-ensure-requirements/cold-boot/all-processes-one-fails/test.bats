@@ -10,12 +10,15 @@ teardown() {
 	common_teardown
 }
 
-@test "slow one-shot target that exits non-zero fails and reaps process-compose" {
+@test "all-mode fails and dumps logs when any process fails" {
 	setup_nothing_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=slow-failing-oneshot
+	run ca-ensure-requirements --process-compose-file="$PCFILE"
 
 	assert_failed_with_dependency_graph_error
+	[[ "$output" == *"Logs for failing-oneshot"* ]]
+	[[ "$output" == *"distinctive-failure-log-line"* ]]
+
 	# Failure path: reaper trap fires.
 	assert_pc_reaped
 }

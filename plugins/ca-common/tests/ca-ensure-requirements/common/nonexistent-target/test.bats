@@ -13,7 +13,7 @@ teardown() {
 @test "typo'd target exits non-zero and reaps process-compose" {
 	setup_nothing_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" no-such-target
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=no-such-target
 
 	[ "$status" -ne 0 ]
 	[[ "$output" == *"Failed to start process-compose"* ]]

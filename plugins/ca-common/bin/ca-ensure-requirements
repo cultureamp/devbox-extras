@@ -1,8 +1,21 @@
 #!/usr/bin/env bash
 
-# Ensures a named process (or meta-process) and its full dependency graph
-# is satisfied. Autodetects mode from the runtime state after the graph
-# is satisfied:
+# Runs the equivalent of `devbox services up`, waits for every process to
+# be ready or completed, and logs errors on failure. With --process=NAME it
+# instead ensures only the named process (or meta-process) and its full
+# dependency graph.
+#
+# In both modes the process set is resolved through process-compose itself
+# (devbox merges plugin-contributed process-compose files at boot). On a
+# cold start the default mode boots PC with no target, so it covers exactly
+# what a bare `devbox services up` starts — every process not marked
+# `disabled: true`. On a warm start it ensures every process the running
+# instance has *enabled*: PC reports processes excluded by a targeted boot
+# (`devbox services up <name>`) as Disabled, indistinguishable from config
+# `disabled: true`, so a target-scoped instance keeps its scope.
+#
+# Autodetects lifecycle from the runtime state after the graph is
+# satisfied:
 #   - Any node still is_running == true → daemon-mode: PC is left running.
 #   - Every node has already Completed  → command-mode: PC is reaped.
 #
@@ -50,14 +63,17 @@ source "$SCRIPT_DIR/_lib.bash"
 
 usage() {
   cat <<EOF
-Usage: $(basename "$0") [--timeout=SECONDS] [--process-compose-file=PATH] [--help] <name>
+Usage: $(basename "$0") [--process=NAME] [--timeout=SECONDS] [--process-compose-file=PATH] [--help]
 
-Ensures the named process (or meta-process) and its dependency graph are
-satisfied — daemons are Ready (via readiness_probe), one-shots are Completed
-with exit 0.
+Runs the equivalent of \`devbox services up\`, waits for every process to be
+ready or completed, and logs errors on failure. Daemons must become Ready
+(via readiness_probe), one-shots must Complete with exit 0 — a long-running
+process without a readiness_probe cannot be verified and times out.
 process-compose is left running iff the graph contains a long-running daemon.
 
 Options:
+  --process=NAME              Ensure only the named process (or meta-process)
+                              and its dependency graph, instead of every process
   --timeout=SECONDS           Timeout for the dependency graph (default: $DEFAULT_TIMEOUT)
   --process-compose-file=PATH Path to process-compose file
                               (default: \$DEVBOX_PROJECT_ROOT/process-compose.yaml, falling back to .yml)
@@ -68,8 +84,16 @@ EOF
 main() {
   local timeout_seconds=$DEFAULT_TIMEOUT
   local pcfile=""
+  local target=""
   while [[ $# -gt 0 ]]; do
     case $1 in
+      --process=*)
+        target="${1#*=}"
+        if [ -z "$target" ]; then
+          echo "Error: --process requires a non-empty process name." >&2
+          exit 1
+        fi
+        shift ;;
       --timeout=*)
         local value="${1#*=}"
         if ! [[ "$value" =~ ^[0-9]+$ ]] || [ "$value" -le 0 ]; then
@@ -103,13 +127,11 @@ main() {
     fi
   fi
 
-  if [ "$#" -ne 1 ]; then
-    echo "Error: exactly one process name is required." >&2
+  if [ "$#" -ne 0 ]; then
+    echo "Error: positional process names are no longer accepted. Use --process=$1 instead." >&2
     usage >&2
     exit 1
   fi
-
-  local target="$1"
 
   PCPORT=$(pcport_if_running)
   if [ -z "$PCPORT" ]; then
@@ -139,8 +161,12 @@ cold_start() {
   echo "process-compose is not running — booting via \`devbox services up --background\`."
   # --keep-project keeps PC alive if the dependency graph turns out to be
   # pure one-shots (which would drain PC's process list). We always tear
-  # PC down again after unless the graph has a real daemon.
-  devbox_services_up_background --pcflags=--keep-project --process-compose-file="$pcfile" "$target" \
+  # PC down again after unless the graph has a real daemon. All-mode boots
+  # with no target, so devbox starts everything — same as a bare
+  # `devbox services up`.
+  local up_args=(--pcflags=--keep-project --process-compose-file="$pcfile")
+  [ -n "$target" ] && up_args+=("$target")
+  devbox_services_up_background "${up_args[@]}" \
     || { echo "Failed to start process-compose." >&2; exit 1; }
 
   PCPORT=$(wait_for_port)
@@ -152,7 +178,7 @@ cold_start() {
   echo "process-compose booted on port $PCPORT."
   echo ""
 
-  run_dependency_graph "$target" "$timeout_seconds"
+  run_target_or_all "$target" "$timeout_seconds"
 }
 
 warm_start() {
@@ -161,7 +187,38 @@ warm_start() {
   echo "process-compose already running on port $PCPORT — using API."
   echo ""
 
-  run_dependency_graph "$target" "$timeout_seconds"
+  run_target_or_all "$target" "$timeout_seconds"
+}
+
+# Resolve the run's graph roots — the named process in --process mode, or
+# every enabled process otherwise — and hand off to the shared flow. The
+# all-mode root set comes from the process-compose API, which reports the
+# full merged configuration (root file + plugin-contributed files).
+# Disabled processes are excluded, as `devbox services up` doesn't run
+# them; note PC also reports processes excluded by a targeted boot as
+# Disabled (see the file-header docstring for the scope rule this
+# implies). Requires $PCPORT.
+run_target_or_all() {
+  local target="$1"
+  local timeout_seconds="$2"
+
+  if [ -n "$target" ]; then
+    run_dependency_graph "$timeout_seconds" "'$target' and dependencies" "$target"
+    return
+  fi
+
+  local names
+  names=$(list_enabled_process_names) \
+    || { echo "Failed to enumerate processes from the process-compose API." >&2; exit 1; }
+  local roots=() name
+  while IFS= read -r name; do
+    [ -n "$name" ] && roots+=("$name")
+  done <<< "$names"
+  if [ "${#roots[@]}" -eq 0 ]; then
+    echo "Error: no enabled processes found in the process-compose configuration." >&2
+    exit 1
+  fi
+  run_dependency_graph "$timeout_seconds" "All processes" "${roots[@]}"
 }
 
 # Echo "yes" if any dependency graph member is currently a running service
@@ -195,13 +252,17 @@ graph_has_long_running_process() {
 # and either clear the trap (daemon-mode: leave PC up) or let it fire
 # (command-mode: reap PC).
 run_dependency_graph() {
-  local target="$1"
-  local timeout_seconds="$2"
+  local timeout_seconds="$1"
+  # Human-readable subject for the final status messages, e.g.
+  # "'foo' and dependencies" or "All processes".
+  local label="$2"
+  shift 2
+  # Remaining args: the graph roots.
 
   # expand emits "name<TAB>requirement" rows in dependency order; split
   # into the name list the helpers iterate and the per-node requirement map.
   local graph_tsv
-  graph_tsv=$(expand_dependency_graph "$target") \
+  graph_tsv=$(expand_dependency_graph "$@") \
     || { echo "Failed to expand dependency graph." >&2; exit 1; }
 
   local dependency_graph
@@ -234,9 +295,9 @@ run_dependency_graph() {
   has_daemon=$(graph_has_long_running_process "$dependency_graph" "$wait_snapshot")
   if [ "$has_daemon" = "yes" ]; then
     disarm_reaper
-    echo "'$target' and dependencies are ready. Leaving process-compose running."
+    echo "$label are ready. Leaving process-compose running."
   else
-    echo "'$target' and dependencies completed successfully."
+    echo "$label completed successfully."
   fi
 }
 
