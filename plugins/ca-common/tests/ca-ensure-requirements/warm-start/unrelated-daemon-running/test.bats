@@ -13,7 +13,7 @@ teardown() {
 @test "one-shot target succeeds when an unrelated daemon is already running" {
 	setup_unrelated_daemon_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" for-verify-oneshot
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=for-verify-oneshot
 
 	assert_succeeded
 	[ -f "$MARKER_DIR/oneshot.ran" ]
@@ -27,7 +27,7 @@ teardown() {
 @test "daemon target succeeds when an unrelated daemon is already running" {
 	setup_unrelated_daemon_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" for-verify-daemon
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=for-verify-daemon
 
 	assert_succeeded
 

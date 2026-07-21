@@ -46,19 +46,27 @@ teardown() {
 	[[ "$output" == *"Invalid --timeout value"* ]]
 }
 
-# The argument-count check requires exactly one positional target. It runs
-# after the devbox-shell guard, so DEVBOX_PROJECT_ROOT must be set to reach
-# it; --process-compose-file skips the default-file lookup.
-@test "rejects invocation with no target" {
-	DEVBOX_PROJECT_ROOT="$BATS_TEST_TMPDIR" run ca-ensure-requirements --process-compose-file=/dev/null
+# Positional targets are no longer accepted (the old contract); the error
+# names the --process= replacement. The check runs after the devbox-shell
+# guard, so DEVBOX_PROJECT_ROOT must be set to reach it;
+# --process-compose-file skips the default-file lookup.
+@test "rejects a positional target with --process= guidance" {
+	DEVBOX_PROJECT_ROOT="$BATS_TEST_TMPDIR" run ca-ensure-requirements --process-compose-file=/dev/null target1
 	[ "$status" -ne 0 ]
-	[[ "$output" == *"exactly one process name is required"* ]]
+	[[ "$output" == *"positional process names are no longer accepted"* ]]
+	[[ "$output" == *"--process=target1"* ]]
 }
 
-@test "rejects invocation with multiple targets" {
+@test "rejects multiple positional targets" {
 	DEVBOX_PROJECT_ROOT="$BATS_TEST_TMPDIR" run ca-ensure-requirements --process-compose-file=/dev/null target1 target2
 	[ "$status" -ne 0 ]
-	[[ "$output" == *"exactly one process name is required"* ]]
+	[[ "$output" == *"positional process names are no longer accepted"* ]]
+}
+
+@test "rejects an empty --process= value" {
+	run ca-ensure-requirements --process=
+	[ "$status" -ne 0 ]
+	[[ "$output" == *"--process requires a non-empty process name"* ]]
 }
 
 # When --process-compose-file is omitted, the script falls back to
@@ -74,7 +82,7 @@ processes:
     command: "true"
 YAML
 
-	DEVBOX_PROJECT_ROOT="$proj_root" run ca-ensure-requirements some-oneshot
+	DEVBOX_PROJECT_ROOT="$proj_root" run ca-ensure-requirements --process=some-oneshot
 	[ "$status" -eq 0 ]
 	[[ "$output" == *"completed successfully"* ]]
 }
@@ -83,7 +91,7 @@ YAML
 	local proj_root="$BATS_TEST_TMPDIR/empty-proj"
 	mkdir -p "$proj_root"
 
-	DEVBOX_PROJECT_ROOT="$proj_root" run ca-ensure-requirements some-target
+	DEVBOX_PROJECT_ROOT="$proj_root" run ca-ensure-requirements --process=some-target
 	[ "$status" -ne 0 ]
 	[[ "$output" == *"process-compose file not found"* ]]
 	[[ "$output" == *"$proj_root/process-compose.yaml"* ]]
@@ -101,7 +109,7 @@ processes:
     command: "true"
 YAML
 
-	DEVBOX_PROJECT_ROOT="$proj_root" run ca-ensure-requirements some-oneshot
+	DEVBOX_PROJECT_ROOT="$proj_root" run ca-ensure-requirements --process=some-oneshot
 	[ "$status" -eq 0 ]
 	[[ "$output" == *"completed successfully"* ]]
 }

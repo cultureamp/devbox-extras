@@ -1,0 +1,23 @@
+version: "0.5"
+
+# Warm-start all-mode over a process-compose instance that was booted with
+# no target (the full `devbox services up` set): everything is already
+# satisfied, so the run is a no-op past confirming that.
+processes:
+  web-server:
+    command: python3 -m http.server 7155
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:7155
+
+  database-server:
+    command: python3 -m http.server 7165
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:7165
+
+  some-oneshot:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/some_oneshot.ran"

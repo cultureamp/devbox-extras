@@ -1,0 +1,20 @@
+version: "0.5"
+
+# All-mode must exclude disabled processes, matching `devbox services up`.
+# The disabled process both leaves a marker and exits non-zero, so if
+# all-mode started or waited on it the run would fail — success plus a
+# missing marker proves it was skipped entirely.
+processes:
+  some-oneshot:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/some_oneshot.ran"
+
+  disabled-failing-process:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/disabled_failing_process.ran"
+      exit 1
+    disabled: true

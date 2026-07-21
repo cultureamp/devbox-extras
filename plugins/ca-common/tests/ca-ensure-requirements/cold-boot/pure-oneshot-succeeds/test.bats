@@ -13,7 +13,7 @@ teardown() {
 @test "pure one-shot graph succeeds and process-compose is reaped" {
 	setup_nothing_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" for-verify
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=for-verify
 
 	assert_succeeded
 	[ -f "$MARKER_DIR/oneshot.ran" ]

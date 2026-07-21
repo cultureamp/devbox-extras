@@ -13,7 +13,7 @@ teardown() {
 @test "daemon that crashes once and is policy-restarted succeeds" {
 	setup_nothing_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" for-verify
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=for-verify
 
 	assert_succeeded
 	# The first run really did crash…

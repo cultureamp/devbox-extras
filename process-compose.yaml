@@ -12,3 +12,8 @@ version: "0.5"
 processes:
   README:
     command: "Project all set up. You can close this window; tail -f /dev/null"
+    # Long-running processes need a readiness_probe to be verifiable by
+    # ca-ensure-requirements; this placeholder is trivially always ready.
+    readiness_probe:
+      exec:
+        command: "true"

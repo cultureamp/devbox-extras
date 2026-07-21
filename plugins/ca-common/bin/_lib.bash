@@ -100,6 +100,26 @@ wait_for_port() {
   return 1
 }
 
+# Emit the name of every enabled process in the running process-compose
+# instance, one per line. The API reports the full merged configuration
+# (root file + plugin-contributed files), so on an instance booted with no
+# target this is exactly the set a bare `devbox services up` starts.
+# Processes with status "Disabled" are excluded: that status covers both
+# config `disabled: true` (which devbox doesn't run either) and processes
+# excluded by a targeted boot — PC serialises the two identically, so a
+# target-scoped instance keeps its scope. Returns 1 (no output) if the API
+# is unreachable or returns non-JSON. Requires $PCPORT.
+list_enabled_process_names() {
+  local processes_response
+  # $PCPORT is a caller-set global (see file-header docstring), not a typo of `pcport`.
+  # shellcheck disable=SC2153
+  processes_response=$(curl -s --connect-timeout 2 "http://localhost:$PCPORT/processes") || return 1
+  if [ -z "$processes_response" ] || ! echo "$processes_response" | jq -e . >/dev/null 2>&1; then
+    return 1
+  fi
+  echo "$processes_response" | jq -r '.data[] | select(.status != "Disabled") | .name'
+}
+
 # Map a depends_on condition onto the runtime requirement it places on the
 # dependency. /process/info serialises conditions as the ProcessCondition
 # integer enum (0=process_completed, 1=process_completed_successfully,

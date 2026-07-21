@@ -18,7 +18,7 @@ teardown() {
 @test "slow one-shot target succeeds only after completion and reaps process-compose" {
 	setup_nothing_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" slow-oneshot
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=slow-oneshot
 
 	assert_succeeded
 	[[ "$output" == *"completed successfully"* ]]

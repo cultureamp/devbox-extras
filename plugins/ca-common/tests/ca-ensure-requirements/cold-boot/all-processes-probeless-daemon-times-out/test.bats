@@ -10,17 +10,15 @@ teardown() {
 	common_teardown
 }
 
-@test "fails when a dep never passes its readiness probe" {
+@test "all-mode times out on a long-running process without a readiness probe" {
 	setup_nothing_running
 
-	run \
-		ca-ensure-requirements \
-		--process-compose-file="$PCFILE" \
-		--timeout=5 \
-		--process=ready-check
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --timeout=5
 
 	[ "$status" -ne 0 ]
 	[[ "$output" == *"Timeout: dependency graph did not become ready after 5s"* ]]
+	[[ "$output" == *"Logs for probeless-daemon"* ]]
+
 	# Timeout path: reaper trap fires.
 	assert_pc_reaped
 }

@@ -13,7 +13,7 @@ teardown() {
 @test "dep with condition process_completed may exit non-zero without failing the run" {
 	setup_nothing_running
 
-	run ca-ensure-requirements --process-compose-file="$PCFILE" for-verify
+	run ca-ensure-requirements --process-compose-file="$PCFILE" --process=for-verify
 
 	assert_succeeded
 	[[ "$output" == *"completed successfully"* ]]

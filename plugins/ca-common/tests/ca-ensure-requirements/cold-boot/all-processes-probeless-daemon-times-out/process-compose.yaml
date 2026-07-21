@@ -1,0 +1,16 @@
+version: "0.5"
+
+# Documents all-mode's strictness: a root gets the `default` requirement
+# (Ready or Completed-0), and a long-running process without a
+# readiness_probe can satisfy neither — it is indistinguishable from a
+# slow one-shot mid-run. `devbox services up` would happily run this;
+# all-mode must time out instead of reporting an unverifiable success.
+processes:
+  probeless-daemon:
+    command: python3 -m http.server 7175
+
+  quick-oneshot:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      touch "$MARKER_DIR/quick_oneshot.ran"
