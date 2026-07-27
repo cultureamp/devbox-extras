@@ -15,13 +15,14 @@ stdenv.mkDerivation {
   inherit pname version;
 
   src = fetchzip {
-    # Google's Maven Central mirror first, falling back to Central itself.
+    # Google's Maven Central mirrors (APAC, then US), falling back to Central itself.
     # See: https://cloudplatform.googleblog.com/2015/11/faster-builds-for-Java-developers-with-Maven-Central-mirror.html
     #
-    # fetchurl tries these in order and stops at the first success, so the second
-    # URL is only used if the mirror fails (e.g. 404 or connection error).
+    # fetchurl tries these in order and stops at the first success, so each URL is
+    # only used if the ones above it fail (e.g. 404 or connection error).
     urls = [
       "https://maven-central-asia.storage-download.googleapis.com/maven2/io/debezium/debezium-server-dist/${version}/${tarballName}"
+      "https://maven-central.storage-download.googleapis.com/maven2/io/debezium/debezium-server-dist/${version}/${tarballName}"
       "https://repo1.maven.org/maven2/io/debezium/debezium-server-dist/${version}/${tarballName}"
     ];
     hash = "sha256-RiMBvg9925qcBL04XQ6mKfRg/OznvliSYGjo+HOFzJc=";
