@@ -3,7 +3,7 @@
   "version": "0.0.3",
   "description": "Environment variables and tools to interact with `kafka-local` in your service",
   "readme": "README.md",
-  "packages": ["kafkactl@5.7.0", "kcat@1", "envsubst", "kaf"],
+  "packages": ["kafkactl@5.7.0", "kcat@1", "gettext", "kaf"],
   "env": {
     "PATH": "{{ .Virtenv }}/bin:$PATH",
     "KAFKA_BROKERS": "localhost:14231",
