@@ -1,4 +1,4 @@
-{ system, lib, stdenv, fetchzip }:
+{ lib, stdenv, fetchzip }:
 let
   inherit (lib) licenses;
   pname = "bento-${version}";
@@ -10,6 +10,7 @@ let
     runHook postInstall
   '';
   dontStrip = true;
+  inherit (stdenv.hostPlatform) system;
   meta = with lib; {
     description = "Fancy stream processing made operationally mundane";
     license = licenses.mit;

@@ -1,7 +1,7 @@
 # get updated hashs with:
 # `nix-hash --to-sri --type sha256 $(nix-prefetch-url --unpack https://github.com/lindell/multi-gitter/releases/download/v${version}/multi-gitter_${version}_Darwin_${arch}.tar.gz)`
 
-{ system, lib, stdenv, fetchzip }:
+{ lib, stdenv, fetchzip }:
 let
   inherit (lib) licenses;
   pname = "multi-gitter-${version}";
@@ -13,6 +13,7 @@ let
     runHook postInstall
   '';
   dontStrip = true;
+  inherit (stdenv.hostPlatform) system;
   meta = with lib; {
     description = "A tool to manage multiple git repositories";
     license = licenses.asl20;

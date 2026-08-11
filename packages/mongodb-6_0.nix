@@ -1,4 +1,4 @@
-{ system, stdenv, fetchzip, mongodb-6_0 }:
+{ stdenv, fetchzip, mongodb-6_0 }:
 # compiling mongodb is slow (10-30mins) so for macOS we pull in the binary from mongo's
 # download page (same as homebrew's package does)
 # see: https://www.mongodb.com/download-center/community/releases
@@ -13,6 +13,7 @@ let
     runHook postInstall
   '';
   dontStrip = true; # this is a binary package, we don't need to strip debug info
+  inherit (stdenv.hostPlatform) system;
 in
 
 if system == "x86_64-darwin" then
