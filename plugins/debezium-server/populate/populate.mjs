@@ -1,7 +1,7 @@
 import pgPromise from "pg-promise";
 import { SchemaRegistry, SchemaType } from "@kafkajs/confluent-schema-registry";
-import { readFileSync } from "fs";
-import { v4 as uuid } from "uuid";
+import { readFileSync } from "node:fs";
+import { randomUUID as uuid } from "node:crypto";
 
 // Schema and sample data configuration
 const registry = new SchemaRegistry({
@@ -22,7 +22,8 @@ const dbName = process.env.DB_NAME;
 const dbUsername = process.env.DB_USERNAME;
 const dbPassword = process.env.DB_PASSWORD;
 
-let db: pgPromise.IDatabase<{}>;
+/** @type {import("pg-promise").IDatabase<{}>} */
+let db;
 
 const connectDatabase = () => {
   db = pgPromise()({
@@ -49,13 +50,13 @@ const registerSchema = async () => {
   return id;
 };
 
-const encodePayload = async (schemaId: number, payload: any) => {
+const encodePayload = async (schemaId, payload) => {
   const encodedPayload = await registry.encode(schemaId, payload);
 
   return encodedPayload;
 };
 
-const addToOutboxTable = async (payload: Buffer) => {
+const addToOutboxTable = async (payload) => {
   const id = uuid();
   const messageKey = uuid();
   const partitionKey = uuid();
@@ -90,10 +91,11 @@ const addToOutboxTable = async (payload: Buffer) => {
     const schemaId = await registerSchema();
     for (const payload of sampleJson) {
       const encodedPayload = await encodePayload(schemaId, payload);
-      addToOutboxTable(encodedPayload);
+      await addToOutboxTable(encodedPayload);
     }
-    disconnectDatabase();
+    await disconnectDatabase();
   } catch (error) {
     console.error("Error: ", error);
+    process.exitCode = 1;
   }
 })();

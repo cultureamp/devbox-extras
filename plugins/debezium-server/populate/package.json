@@ -1,0 +1,22 @@
+{
+  "name": "debezium-populate",
+  "version": "1.0.0",
+  "description": "Seeds Avro-encoded sample rows into a Debezium outbox table",
+  "type": "module",
+  "bin": {
+    "debezium-populate": "populate.mjs"
+  },
+  "files": [
+    "populate.mjs"
+  ],
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@kafkajs/confluent-schema-registry": "^3.3.0",
+    "pg-promise": "^11.9.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.4.1"
+  }
+}
