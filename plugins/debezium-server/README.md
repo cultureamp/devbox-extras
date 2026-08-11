@@ -15,7 +15,7 @@ What it provides:
 - Various CLI tools
     - Kafka CLI tools are included for creating the heartbeat topic
     - psql is provided and used for setting up Postgresql
-    - A nodejs based populate script.  This uses kafkajs to Avro-encode sample data provided according to the defined schema, before inserting this data into your outbox table
+    - A `debezium-populate` script.  This Avro-encodes the sample data provided according to the defined schema, before inserting this data into your outbox table.  It ships as a prebuilt nix package (see [packages/debezium-populate.nix](../../packages/debezium-populate.nix)), so the plugin does not put `node` or a node package manager on your `PATH`, and does not install anything when you enter the shell.  Run it with `devbox run populate`, or override the `populate` script in your own `devbox.json` if you do your own seeding.
 
 ## Usage
 

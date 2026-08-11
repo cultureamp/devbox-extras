@@ -64,7 +64,7 @@ const addToOutboxTable = async (payload) => {
   const createdAt = new Date().toISOString();
 
   console.log(
-    `Publishing encoded payload to table ${dbSchema}.${outboxTable} with target topic ${targetTopic}`
+    `Publishing encoded payload to table ${dbSchema}.${outboxTable} with target topic ${targetTopic}`,
   );
 
   await db.none(
@@ -77,7 +77,7 @@ const addToOutboxTable = async (payload) => {
       payload: payload,
       account_id: accountId,
       created_at: createdAt,
-    }
+    },
   );
 };
 
