@@ -69,6 +69,17 @@ setup_unrelated_daemon_running() {
   wait_for_unrelated_daemon_ready
 }
 
+# Bring the whole graph up and wait until $1 has terminally failed
+# (Completed with a non-zero exit). Fixtures using this must include a
+# long-running daemon to keep the API alive (so no --keep-project needed).
+# Stages a warm start where a process is already in completed_failed before
+# ca-ensure-requirements runs.
+setup_process_already_failed() {
+  local proc="$1"
+  devbox_services_up_background --process-compose-file="$PCFILE"
+  wait_for_process_failed "$proc"
+}
+
 # --- Polling helpers ---
 
 wait_for_meta_completed() {
@@ -88,6 +99,20 @@ wait_for_meta_completed() {
 wait_for_unrelated_daemon_ready() {
   for _ in {1..30}; do
     curl --silent --fail http://localhost:7000 >/dev/null 2>&1 && return 0
+    sleep 1
+  done
+  return 1
+}
+
+wait_for_process_failed() {
+  local proc="$1"
+  local pcport
+  pcport=$(devbox services pcport 2>/dev/null)
+  local state
+  for _ in {1..30}; do
+    state=$(curl -s "http://localhost:$pcport/processes" 2>/dev/null \
+      | jq -r --arg n "$proc" '.data[] | select(.name == $n) | "\(.status):\(.exit_code)"')
+    [ "$state" = "Completed:1" ] && return 0
     sleep 1
   done
   return 1
