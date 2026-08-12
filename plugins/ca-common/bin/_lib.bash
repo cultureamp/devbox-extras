@@ -361,12 +361,15 @@ load_state_maps() {
   done < <(parse_processes_states "$processes_response")
 }
 
-# Iterate the dependency graph once, calling post_process to start/restart
-# every member that isn't already satisfied. $2 names the caller's
-# associative array of node requirements (from expand_dependency_graph) —
-# a node that already satisfies its requirement is left alone, so e.g. a
-# process_completed dep that Completed with a non-zero (tolerated) exit is
-# not pointlessly re-run. Buffers a per-process report and emits it only
+# Iterate the dependency graph once, calling post_process to start every
+# member that isn't already satisfied and hasn't started yet. $2 names the
+# caller's associative array of node requirements (from
+# expand_dependency_graph) — a node that already satisfies its requirement
+# is left alone, so e.g. a process_completed dep that Completed with a
+# non-zero (tolerated) exit is not pointlessly re-run. A member that has
+# already terminally failed (completed_failed) is NOT restarted: recovery is
+# process-compose's job via a restart policy, so it is left in place for the
+# wait loop to report and fail fast on. Buffers a per-process report and emits it only
 # if at least one process needed work — a no-op warm start stays quiet.
 # Returns 1 if the /processes fetch fails: guessing "start everything"
 # from an empty snapshot would re-run already-completed one-shots.
@@ -401,9 +404,14 @@ start_dependency_graph_services() {
         lines+="  - $name: in progress."$'\n'
         needs_report=1 ;;
       completed_failed)
-        lines+="  - $name: previously failed, restarting."$'\n'
-        needs_report=1
-        post_process "$name" "restart" ;;
+        # Already terminally failed. Don't restart it — recovery is
+        # process-compose's job via a restart policy (a policy-restarted
+        # process reports as Running, not completed_failed, so it never
+        # reaches this branch). Leaving the failed state in place lets the
+        # wait loop report it and fail fast, instead of restarting it into a
+        # fresh boot and waiting out the whole timeout.
+        lines+="  - $name: already failed (non-zero exit); not restarting."$'\n'
+        needs_report=1 ;;
       *)
         lines+="  - $name: starting."$'\n'
         needs_report=1

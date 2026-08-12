@@ -1,0 +1,30 @@
+version: "0.5"
+
+# Warm-start regression: a one-shot that has ALREADY terminally failed
+# (Completed, exit 1) before ca-ensure-requirements runs must be reported as
+# a failure — not silently restarted and waited out. `keep-alive-daemon`
+# keeps process-compose (and its API) up so the run is a genuine warm start.
+#
+# failing-oneshot records every invocation. On its first run it fails; if
+# ca-ensure-requirements wrongly restarts it, the second invocation hangs
+# instead of quickly re-failing, so the buggy behaviour surfaces
+# deterministically as a timeout (and a run count of 2) rather than an
+# incidental fast re-fail that would mask the bug.
+processes:
+  keep-alive-daemon:
+    command: exec python3 -m http.server 7350
+    readiness_probe:
+      exec:
+        command: curl -f http://localhost:7350
+
+  failing-oneshot:
+    command: |
+      MARKER_DIR="${MARKER_DIR:-./.tmp}"
+      mkdir -p "$MARKER_DIR"
+      echo "run" >>"$MARKER_DIR/failing_oneshot.runs"
+      if [ "$(wc -l <"$MARKER_DIR/failing_oneshot.runs")" -gt 1 ]; then
+        echo "restarted-when-it-should-not-be"
+        exec sleep 600
+      fi
+      echo "distinctive-failure-log-line"
+      exit 1
