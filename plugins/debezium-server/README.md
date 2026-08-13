@@ -6,7 +6,7 @@ Use this plugin to run Debezium Server locally and capture an outbox table withi
 
 What it provides:
 
-- Environment variables.  See [plugin.json](./plugin.json) for which variables are supplied and their values.  These variables control configuration for the source Postgresql instance and Kafka sink.  By default, the Kafka sink configuration assumes the environment variables imported by `ca-kafka-local`.  Configuration is also provided for the seeding of data in the outbox table.
+- Environment variables.  See [plugin.json](./plugin.json) for which variables are supplied and their values.  These variables control configuration for the source Postgresql instance and Kafka sink.  By default, the Kafka sink configuration assumes the environment variables imported by `ca-kafka-local`.
 - Process compose job
   - Debezium Server instance pre-configured with the outbox event router
   - readme detailing environment variables and basic usage
@@ -15,7 +15,12 @@ What it provides:
 - Various CLI tools
     - Kafka CLI tools are included for creating the heartbeat topic
     - psql is provided and used for setting up Postgresql
-    - A nodejs based populate script.  This uses kafkajs to Avro-encode sample data provided according to the defined schema, before inserting this data into your outbox table
+
+## Seeding data
+
+This plugin does **not** seed your outbox table, and deliberately does not define a `populate` script.  Seeding is repo-specific: the payload has to match your schema, and `devbox run populate` is an org-wide convention that each repo implements for itself.  Define your own `populate` script in your `devbox.json`, as `goals-service` (`hanami db seed`), `conversations-api` (`bin/rake sample_data:basic`) and `debezium-server` (`pnpm -C test run populate`) all do.
+
+For a worked example of Avro-encoding a record and inserting it into the outbox table, see [`test/populate.ts`](https://github.com/cultureamp/debezium-server/blob/main/test/populate.ts) in `cultureamp/debezium-server`.
 
 ## Usage
 

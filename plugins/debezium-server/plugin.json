@@ -1,14 +1,11 @@
 {
   "name": "debezium-server",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Plugin for running Debezium Server locally",
   "packages": [
-    "nodejs@22.4.1",
-    "pnpm@9.7.0",
     "github:cultureamp/devbox-extras#debezium-server"
   ],
   "env": {
-    "DEVBOX_COREPACK_ENABLED": "true",
     "CONNECTOR_CONF_PATH": "{{.Virtenv}}",
     "DEBEZIUM_OPTS": "",
     "JAVA_OPTS": ""
@@ -33,11 +30,7 @@
       "export OFFSET_TOPIC=my_test_offset_topic",
       "export PUBLICATION_NAME=dbz_publication",
       "export OUTBOX_TABLE=outbox_table",
-      "export HEARTBEAT_TABLE=debezium_heartbeat",
-      "export TARGET_TOPIC=my_target_topic",
-      "export SCHEMA_PATH=com.cultureamp.test.user.v1-value.avsc",
-      "export SAMPLE_DATA_PATH=sample-data.json",
-      "pnpm install -C {{.Virtenv}}"
+      "export HEARTBEAT_TABLE=debezium_heartbeat"
     ],
     "scripts": {
       "init_outbox": [
@@ -58,9 +51,6 @@
       "create_heartbeat_topic": [
         "kaf topic create _${FARM}.${INTERNAL_TOPIC_PREFIX}.debezium-heartbeat-table -p 1 -r 1 || true"
       ],
-      "populate": [
-        "pnpm run -C {{.Virtenv}} populate"
-      ],
       "reset_offset": [
         "devbox services stop debezium_server && \\",
         "PID=$(ps aux | grep '[i]o.debezium.server.Main' | awk '{print $2}' | head -n 1) && \\",
@@ -80,11 +70,6 @@
     "{{.Virtenv}}/application.properties": "config/debezium-server/application.properties",
     "{{.Virtenv}}/init_outbox.sql": "config/debezium-server/init_outbox.sql",
     "{{.Virtenv}}/bin/debezium-server-readme": "bin/debezium-server-readme",
-    "{{.Virtenv}}/bin/postgres-version-check": "bin/postgres-version-check",
-    "{{.Virtenv}}/package.json": "config/populate/package.json",
-    "{{.Virtenv}}/tsconfig.json": "config/populate/tsconfig.json",
-    "{{.Virtenv}}/sample-data.json": "config/populate/sample-data.json",
-    "{{.Virtenv}}/populate.ts": "bin/populate.ts",
-    "{{.Virtenv}}/com.cultureamp.test.user.v1-value.avsc": "config/populate/com.cultureamp.test.user.v1-value.avsc"
+    "{{.Virtenv}}/bin/postgres-version-check": "bin/postgres-version-check"
   }
 }
