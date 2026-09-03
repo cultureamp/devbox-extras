@@ -8,7 +8,7 @@
 }:
 let
   pname = "debezium-server";
-  version = "3.0.0.Final";
+  version = "3.6.1.Final";
   tarballName = "debezium-server-dist-${version}.tar.gz";
 in
 stdenv.mkDerivation {
@@ -25,7 +25,7 @@ stdenv.mkDerivation {
       "https://maven-central.storage-download.googleapis.com/maven2/io/debezium/debezium-server-dist/${version}/${tarballName}"
       "https://repo1.maven.org/maven2/io/debezium/debezium-server-dist/${version}/${tarballName}"
     ];
-    hash = "sha256-RiMBvg9925qcBL04XQ6mKfRg/OznvliSYGjo+HOFzJc=";
+    hash = "sha256-S38nPWLPbZBAWfWx3HuWU/flRgGws2Wp7FrCtrijD6A=";
   };
 
   installPhase = ''
