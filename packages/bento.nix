@@ -13,7 +13,7 @@ let
   meta = with lib; {
     description = "Fancy stream processing made operationally mundane";
     license = licenses.mit;
-    platforms = platforms.darwin;
+    platforms = platforms.darwin ++ [ "aarch64-linux" ];
   };
 in
 
@@ -37,6 +37,18 @@ else if system == "aarch64-darwin" then
     src = fetchzip {
       url = "https://github.com/warpstreamlabs/bento/releases/download/v${version}/bento_${version}_darwin_arm64.tar.gz";
       hash = "sha256-Db1u1MmPRLLcH8q4sGqr29UqJqNJf7XTNAoxU023K60=";
+      stripRoot = false;
+    };
+  }
+
+else if system == "aarch64-linux" then
+  stdenv.mkDerivation
+  {
+    inherit pname version installPhase dontStrip meta;
+
+    src = fetchzip {
+      url = "https://github.com/warpstreamlabs/bento/releases/download/v${version}/bento_${version}_linux_arm64.tar.gz";
+      hash = "sha256-jNz/LXbfwHkDdyy4EFGIbp3P2sq6fFedCU7trYryhlg=";
       stripRoot = false;
     };
   }
