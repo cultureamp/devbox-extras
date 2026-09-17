@@ -10,6 +10,9 @@ version: "0.5"
 #    --process-compose-file flag unless this file is present.
 
 processes:
+  install:
+    command: "echo 'All dependencies are devbox packages — nothing additional to install.'"
+
   README:
     command: "Project all set up. You can close this window; tail -f /dev/null"
     # Long-running processes need a readiness_probe to be verifiable by
