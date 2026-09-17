@@ -35,5 +35,5 @@ devbox run check    # read-only lint + tests — use after every small change
 
 ## Gotchas
 
-- The bats test suite under `plugins/ca-common/tests/` needs process-compose to run. Scope test runs with `devbox run test plugins/ca-common` to run only those tests.
+- The bats tests under `plugins/ca-common/tests/` start their own process-compose instances internally — no services need to be pre-started, but the process-compose binary must be available. Scope to just those tests with `devbox run test plugins/ca-common`.
 - `shfmt` and `shellcheck` use `**/*.{sh,bats}` globs that require bash globstar to expand recursively — they may silently match only top-level files in some shells.

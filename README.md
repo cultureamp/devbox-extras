@@ -25,6 +25,14 @@ This repo is public as it's only used to configure open source software, there w
 
 Once we're happy with there plugins we'll attempt to upstream them as appropriate.
 
+# Local development
+
+Ensure devbox is set up as per [Local Dev Environments (LDEs) — Getting Started](https://cultureamp.atlassian.net/wiki/spaces/DE/pages/3342434338/Devbox+setup).
+
+Run setup:
+
+    devbox services up
+
 # Formatting and linting
 
 ```sh
