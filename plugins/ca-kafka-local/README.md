@@ -13,6 +13,7 @@ What it provides:
 - Various Kafka CLI Tools (each with configuration to connect to `kafka-local`)
   - [kafkactl](https://deviceinsight.github.io/kafkactl/)
   - [kcat](https://github.com/edenhill/kcat)
+    - Pinned to nixpkgs `7525d999`: on newer revisions its `libserdes` dependency fails to build, so it isn't in the nix binary cache.
   - [kaf](https://github.com/birdayz/kaf)
 - Helper scripts
   - `kafka-local-register-schema [topic-name] [path/to/schema.avsc]`
